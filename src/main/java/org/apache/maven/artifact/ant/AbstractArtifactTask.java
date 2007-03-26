@@ -35,13 +35,13 @@ import org.apache.maven.usability.diagnostics.ErrorDiagnostics;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
-import org.codehaus.plexus.classworlds.ClassWorld;
-import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
-import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.classworlds.ClassWorld;
+import org.codehaus.classworlds.DuplicateRealmException;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.embed.Embedder;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -92,8 +92,9 @@ public abstract class AbstractArtifactTask
         Authentication authentication = repository.getAuthentication();
         if ( authentication != null )
         {
-            manager.addAuthenticationInfo( repository.getId(), authentication.getUserName(), authentication.getPassword(),
-                                           authentication.getPrivateKey(), authentication.getPassphrase() );
+            manager.addAuthenticationInfo( repository.getId(), authentication.getUserName(),
+                                           authentication.getPassword(), authentication.getPrivateKey(),
+                                           authentication.getPassphrase() );
         }
 
         Proxy proxy = repository.getProxy();
@@ -270,7 +271,8 @@ public abstract class AbstractArtifactTask
         }
     }
 
-    protected Object lookup( String role, String roleHint )
+    protected Object lookup( String role,
+                             String roleHint )
     {
         try
         {
@@ -308,8 +310,11 @@ public abstract class AbstractArtifactTask
 
                     classWorld.newRealm( "plexus.core", getClass().getClassLoader() );
 
-                    container = new DefaultPlexusContainer( null, null, classWorld );
+                    Embedder embedder = new Embedder();
 
+                    embedder.start( classWorld );
+
+                    container = embedder.getContainer();
                 }
                 catch ( PlexusContainerException e )
                 {
@@ -320,14 +325,15 @@ public abstract class AbstractArtifactTask
                     throw new BuildException( "Unable to create embedder ClassRealm", e );
                 }
 
-                getProject().addReference( PlexusContainer.class.getName(),container );
+                getProject().addReference( PlexusContainer.class.getName(), container );
             }
         }
 
         return container;
     }
 
-    public Pom buildPom( MavenProjectBuilder projectBuilder, ArtifactRepository localArtifactRepository )
+    public Pom buildPom( MavenProjectBuilder projectBuilder,
+                         ArtifactRepository localArtifactRepository )
     {
         if ( pomRefId != null && pom != null )
         {
@@ -442,9 +448,7 @@ public abstract class AbstractArtifactTask
         return policy;
     }
 
-    /**
-     * @noinspection RefusedBequest
-     */
+    /** @noinspection RefusedBequest */
     public void execute()
     {
         try
