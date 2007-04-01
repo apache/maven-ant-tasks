@@ -32,7 +32,7 @@
 
     <artifact:localRepository id="local.repository" location="${basedir}/target/local-repo" layout="default"/>
 
-    <artifact:remoteRepository id="deploy.repository" url="file://localhost/${basedir}/target/deployment-repo" layout="legacy"/>
+    <artifact:remoteRepository id="deploy.repository" url="file://localhost/${basedir}/target/deployment-repo" layout="default"/>
 
     <artifact:pom file="pom.xml" id="maven.project"/>
 
@@ -217,6 +217,26 @@
       <pom file="sample-build-test.pom" />
       <remoteRepository refid="deploy.repository" />
     </artifact:deploy>
+  </target>
+  
+  <target name="test-deploy-attached" depends="initTaskDefs">
+    <echo message="test" file="${basedir}/target/sample-build-test.pom.asc"/>
+    
+    <artifact:deploy file="sample-build-test.pom">
+      <pom file="sample-build-test.pom" />
+      <remoteRepository refid="deploy.repository" />
+      <attach file="${basedir}/target/sample-build-test.pom.asc" type="pom.asc"/>
+    </artifact:deploy>
+  </target>
+  
+  <target name="test-install-attached" depends="initTaskDefs">
+    <echo message="test" file="${basedir}/target/sample-build-test.pom.asc"/>
+    
+    <artifact:install file="sample-build-test.pom">
+      <pom file="sample-build-test.pom" />
+      <localRepository refid="local.repository"/>
+      <attach file="${basedir}/target/sample-build-test.pom.asc" type="pom.asc"/>
+    </artifact:install>
   </target>
 </project>
 

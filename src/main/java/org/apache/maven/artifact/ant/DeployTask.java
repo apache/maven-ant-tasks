@@ -1,19 +1,22 @@
 package org.apache.maven.artifact.ant;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 import org.apache.maven.artifact.Artifact;
@@ -26,7 +29,7 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.tools.ant.BuildException;
 
-import java.io.File;
+import java.util.Iterator;
 
 /**
  * Deploy task, using maven-artifact.
@@ -35,13 +38,11 @@ import java.io.File;
  * @version $Id$
  */
 public class DeployTask
-    extends AbstractArtifactTask
+    extends InstallDeployTaskSupport
 {
     private RemoteRepository remoteRepository;
 
     private RemoteRepository remoteSnapshotRepository;
-
-    private File file;
 
     protected void doExecute()
     {
@@ -121,6 +122,24 @@ public class DeployTask
             throw new BuildException(
                 "Error deploying artifact '" + artifact.getDependencyConflictId() + "': " + e.getMessage(), e );
         }
+
+        // Deploy any attached artifacts
+        if (attachedArtifacts != null) {
+            Iterator iter = attachedArtifacts.iterator();
+
+            while (iter.hasNext()) {
+                AttachedArtifact attached = (AttachedArtifact)iter.next();
+                Artifact attachedArtifact = createArtifactFromAttached(attached, artifact);
+
+                try {
+                    deployer.deploy( attachedArtifact.getFile(), attachedArtifact, deploymentRepository, localRepo );
+                }
+                catch (ArtifactDeploymentException e) {
+                    throw new BuildException(
+                        "Error deploying attached artifact '" + attachedArtifact.getDependencyConflictId() + "': " + e.getMessage(), e );
+                }
+            }
+        }
     }
 
     public RemoteRepository getRemoteRepository()
@@ -136,15 +155,5 @@ public class DeployTask
     public void addRemoteRepository( RemoteRepository remoteRepository )
     {
         this.remoteRepository = remoteRepository;
-    }
-
-    public File getFile()
-    {
-        return file;
-    }
-
-    public void setFile( File file )
-    {
-        this.file = file;
     }
 }
