@@ -22,23 +22,40 @@ package org.apache.maven.artifact.ant;
 import java.io.File;
 
 /**
- * Local repository type.
+ * Container for specification of an attached artifact.
  *
- * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
+ * @author <a href="mailto:jdillon@apache.org">Jason Dillon</a>
+ * @version $Rev$ $Date$
  */
-public class LocalRepository
-    extends Repository
+public class AttachedArtifact
 {
-    private File location;
+    private File file;
 
-    public File getLocation()
-    {
-        return ( (LocalRepository) getInstance() ).location;
+    private String type = "jar";
+
+    private String classifier;
+
+    public File getFile() {
+        return file;
     }
 
-    public void setLocation( File location )
-    {
-        this.location = location;
+    public void setFile(final File file) {
+        this.file = file;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(final String type) {
+        this.type = type;
+    }
+
+    public String getClassifier() {
+        return classifier;
+    }
+
+    public void setClassifier(final String classifier) {
+        this.classifier = classifier;
     }
 }

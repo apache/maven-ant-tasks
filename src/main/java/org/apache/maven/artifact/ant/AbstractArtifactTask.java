@@ -1,19 +1,22 @@
 package org.apache.maven.artifact.ant;
 
 /*
- * Copyright 2001-2005 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 import org.apache.maven.artifact.Artifact;
@@ -178,29 +181,7 @@ public abstract class AbstractArtifactTask
 
             if ( settingsFile.exists() )
             {
-                FileReader reader = null;
-                try
-                {
-                    reader = new FileReader( settingsFile );
-
-                    SettingsXpp3Reader modelReader = new SettingsXpp3Reader();
-
-                    settings = modelReader.read( reader );
-                }
-                catch ( IOException e )
-                {
-                    log( "Error reading settings file '" + settingsFile + "' - ignoring. Error was: " + e.getMessage(),
-                         Project.MSG_WARN );
-                }
-                catch ( XmlPullParserException e )
-                {
-                    log( "Error parsing settings file '" + settingsFile + "' - ignoring. Error was: " + e.getMessage(),
-                         Project.MSG_WARN );
-                }
-                finally
-                {
-                    IOUtil.close( reader );
-                }
+                loadSettings(settingsFile);
             }
 
             if ( StringUtils.isEmpty( settings.getLocalRepository() ) )
@@ -210,6 +191,38 @@ public abstract class AbstractArtifactTask
             }
         }
         return settings;
+    }
+
+    private void loadSettings(File settingsFile) {
+        FileReader reader = null;
+        try
+        {
+            reader = new FileReader( settingsFile );
+
+            SettingsXpp3Reader modelReader = new SettingsXpp3Reader();
+
+            settings = modelReader.read( reader );
+        }
+        catch ( IOException e )
+        {
+            log( "Error reading settings file '" + settingsFile + "' - ignoring. Error was: " + e.getMessage(),
+                 Project.MSG_WARN );
+        }
+        catch ( XmlPullParserException e )
+        {
+            log( "Error parsing settings file '" + settingsFile + "' - ignoring. Error was: " + e.getMessage(),
+                 Project.MSG_WARN );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+    }
+    
+    public void setSettingsFile(File settingsFile) {
+        if (!settingsFile.exists()) throw new BuildException("settingsFile does not exist: " + settingsFile.getAbsolutePath());
+        settings = new Settings();
+        loadSettings(settingsFile);
     }
 
     protected RemoteRepository createAntRemoteRepository( org.apache.maven.model.Repository pomRepository )
