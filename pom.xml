@@ -28,6 +28,16 @@
   <version>2.1-SNAPSHOT</version>
   <name>Maven Ant Task</name>
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/maven/ant-tasks/tags</tagBase>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>      
     <plugins>
       <plugin>
         <artifactId>shade-maven-plugin</artifactId>
