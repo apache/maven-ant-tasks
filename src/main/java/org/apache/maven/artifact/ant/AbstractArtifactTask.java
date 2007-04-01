@@ -181,29 +181,7 @@ public abstract class AbstractArtifactTask
 
             if ( settingsFile.exists() )
             {
-                FileReader reader = null;
-                try
-                {
-                    reader = new FileReader( settingsFile );
-
-                    SettingsXpp3Reader modelReader = new SettingsXpp3Reader();
-
-                    settings = modelReader.read( reader );
-                }
-                catch ( IOException e )
-                {
-                    log( "Error reading settings file '" + settingsFile + "' - ignoring. Error was: " + e.getMessage(),
-                         Project.MSG_WARN );
-                }
-                catch ( XmlPullParserException e )
-                {
-                    log( "Error parsing settings file '" + settingsFile + "' - ignoring. Error was: " + e.getMessage(),
-                         Project.MSG_WARN );
-                }
-                finally
-                {
-                    IOUtil.close( reader );
-                }
+                loadSettings(settingsFile);
             }
 
             if ( StringUtils.isEmpty( settings.getLocalRepository() ) )
@@ -213,6 +191,38 @@ public abstract class AbstractArtifactTask
             }
         }
         return settings;
+    }
+
+    private void loadSettings(File settingsFile) {
+        FileReader reader = null;
+        try
+        {
+            reader = new FileReader( settingsFile );
+
+            SettingsXpp3Reader modelReader = new SettingsXpp3Reader();
+
+            settings = modelReader.read( reader );
+        }
+        catch ( IOException e )
+        {
+            log( "Error reading settings file '" + settingsFile + "' - ignoring. Error was: " + e.getMessage(),
+                 Project.MSG_WARN );
+        }
+        catch ( XmlPullParserException e )
+        {
+            log( "Error parsing settings file '" + settingsFile + "' - ignoring. Error was: " + e.getMessage(),
+                 Project.MSG_WARN );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+    }
+    
+    public void setSettingsFile(File settingsFile) {
+        if (!settingsFile.exists()) throw new BuildException("settingsFile does not exist: " + settingsFile.getAbsolutePath());
+        settings = new Settings();
+        loadSettings(settingsFile);
     }
 
     protected RemoteRepository createAntRemoteRepository( org.apache.maven.model.Repository pomRepository )
