@@ -64,6 +64,8 @@ public class DependenciesTask
 
     private String filesetId;
 
+    private String sourcesFilesetId;
+
     private String useScope;
 
     private String type;
@@ -117,6 +119,13 @@ public class DependenciesTask
 
         ArtifactResolutionResult result;
         Set artifacts;
+        List remoteRepositories = getRemoteRepositories();
+
+        RemoteRepository remoteRepository = getDefaultRemoteRepository();
+        remoteRepositories.add( remoteRepository );
+
+        List remoteArtifactRepositories = createRemoteArtifactRepositories( remoteRepositories );
+
         try
         {
             artifacts = MavenMetadataSource.createArtifacts( artifactFactory, dependencies, null, null, null );
@@ -129,13 +138,6 @@ public class DependenciesTask
             {
                 listeners = Collections.singletonList( new AntResolutionListener( getProject() ) );
             }
-
-            List remoteRepositories = getRemoteRepositories();
-
-            RemoteRepository remoteRepository = getDefaultRemoteRepository();
-            remoteRepositories.add( remoteRepository );
-
-            List remoteArtifactRepositories = createRemoteArtifactRepositories( remoteRepositories );
 
             // TODO: managed dependencies
             Map managedDependencies = Collections.EMPTY_MAP;
@@ -187,11 +189,22 @@ public class DependenciesTask
             throw new BuildException( "Reference ID " + filesetId + " already exists" );
         }
 
+        if ( sourcesFilesetId != null && getProject().getReference( sourcesFilesetId ) != null )
+        {
+            throw new BuildException( "Reference ID " + sourcesFilesetId + " already exists" );
+        }
+
         FileList fileList = new FileList();
         fileList.setDir( getLocalRepository().getLocation() );
 
         FileSet fileSet = new FileSet();
         fileSet.setDir( fileList.getDir( getProject() ) );
+
+        FileList sourcesFileList = new FileList();
+        sourcesFileList.setDir( getLocalRepository().getLocation() );
+
+        FileSet sourcesFileSet = new FileSet();
+        sourcesFileSet.setDir( sourcesFileList.getDir( getProject() ) );
 
         if ( result.getArtifacts().isEmpty() )
         {
@@ -210,6 +223,37 @@ public class DependenciesTask
                 fileList.addConfiguredFile( file );
 
                 fileSet.createInclude().setName( filename );
+
+                if ( sourcesFilesetId != null )
+                {
+                    // get sources
+                    Artifact sourcesArtifact =
+                        artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
+                                                                      artifact.getVersion(), "java-source", "sources" );
+                    if ( sourcesArtifact != null )
+                    {
+                        try
+                        {
+                            resolver.resolve( sourcesArtifact, remoteArtifactRepositories, localRepo );
+                            String sourcesFilename = localRepo.pathOf( sourcesArtifact );
+
+                            FileList.FileName sourcesFile = new FileList.FileName();
+                            sourcesFile.setName( sourcesFilename );
+
+                            sourcesFileList.addConfiguredFile( sourcesFile );
+
+                            sourcesFileSet.createInclude().setName( sourcesFilename );
+                        }
+                        catch ( ArtifactResolutionException e )
+                        {
+                            throw new BuildException( "Unable to resolve artifact: " + e.getMessage(), e );
+                        }
+                        catch ( ArtifactNotFoundException e )
+                        {
+                            // no sources available: no problem
+                        }
+                    }
+                }
             }
         }
 
@@ -223,6 +267,11 @@ public class DependenciesTask
         if ( filesetId != null )
         {
             getProject().addReference( filesetId, fileSet );
+        }
+
+        if ( sourcesFilesetId != null )
+        {
+            getProject().addReference( sourcesFilesetId, sourcesFileSet );
         }
     }
 
@@ -269,6 +318,16 @@ public class DependenciesTask
     public String getFilesetId()
     {
         return filesetId;
+    }
+
+    public void setSourcesFilesetId( String filesetId )
+    {
+        this.sourcesFilesetId = filesetId;
+    }
+
+    public String getSourcesFilesetId()
+    {
+        return sourcesFilesetId;
     }
 
     public void setFilesetId( String filesetId )

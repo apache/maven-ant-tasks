@@ -69,7 +69,7 @@
   </target>
 
   <target name="foo" depends="initTaskDefs">
-    <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset">
+    <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset" sourcesFilesetId="sources.fileset">
       <dependency groupId="org.apache.maven.wagon" artifactId="wagon-provider-test" version="1.0-alpha-4">
         <exclusion groupId="junit" artifactId="junit"/>
       </dependency>
@@ -85,6 +85,10 @@
     <copy todir="target/files">
       <fileset refid="dependency.fileset"/>
     </copy>
+    <copy todir="target/files/sources">
+      <fileset refid="sources.fileset"/>
+    </copy>
+
 
     <artifact:dependencies filesetId="my.dependency.fileset" verbose="true">
       <pom refid="maven.project"/>
@@ -212,7 +216,7 @@
     <artifact:deploy file="sample-build-test.pom">
       <pom file="sample-build-test.pom" />
       <remoteRepository refid="deploy.repository" />
-    </artifact:deploy>  
+    </artifact:deploy>
   </target>
 </project>
 
