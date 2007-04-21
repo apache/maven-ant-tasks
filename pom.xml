@@ -51,7 +51,7 @@
               <artifactSet>
                 <excludes>
                   <exclude>junit:junit</exclude>
-                  <exclude>jmock:jmock</exclude>
+                  <exclude>jtidy:jtidy</exclude>
                   <exclude>xml-apis:xml-apis</exclude>
                   <exclude>ant:ant</exclude>
                 </excludes>
