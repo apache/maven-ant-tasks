@@ -103,13 +103,11 @@
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-file</artifactId>
       <version>1.0-beta-2</version>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-http-lightweight</artifactId>
       <version>1.0-beta-2</version>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>ant</groupId>
