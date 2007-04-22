@@ -41,6 +41,7 @@
       <plugin>
         <artifactId>shade-maven-plugin</artifactId>
         <groupId>org.codehaus.mojo</groupId>
+        <version>1.0-alpha-5</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -109,6 +110,11 @@
       <artifactId>wagon-http-lightweight</artifactId>
       <version>1.0-beta-2</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-</artifactId>
+      <version>1.0-beta-2</version>
+    </dependency>    
     <dependency>
       <groupId>ant</groupId>
       <artifactId>ant</artifactId>
