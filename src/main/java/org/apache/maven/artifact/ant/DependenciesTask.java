@@ -106,7 +106,7 @@ public class DependenciesTask
             {
                 Repository pomRepository = (Repository) i.next();
 
-                remoteRepositories.add( createAntRemoteRepository( pomRepository ) );
+                addRemoteRepository( createAntRemoteRepository( pomRepository ) );
             }
         }
         else
@@ -128,12 +128,13 @@ public class DependenciesTask
 
         ArtifactResolutionResult result;
         Set artifacts;
-        List remoteRepositories = getRemoteRepositories();
 
-        RemoteRepository remoteRepository = getDefaultRemoteRepository();
-        remoteRepositories.add( remoteRepository );
+        if ( getRemoteRepositories().isEmpty() )
+        {
+            addRemoteRepository( getDefaultRemoteRepository() );
+        }
 
-        List remoteArtifactRepositories = createRemoteArtifactRepositories( remoteRepositories );
+        List remoteArtifactRepositories = createRemoteArtifactRepositories( getRemoteRepositories() );
 
         try
         {
