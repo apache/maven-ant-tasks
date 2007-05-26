@@ -197,6 +197,7 @@ public abstract class AbstractArtifactTask
         FileReader reader = null;
         try
         {
+            log( "Loading Maven settings file: " + settingsFile.getPath(), Project.MSG_VERBOSE );
             reader = new FileReader( settingsFile );
 
             SettingsXpp3Reader modelReader = new SettingsXpp3Reader();
@@ -441,6 +442,7 @@ public abstract class AbstractArtifactTask
         if ( profiles != null )
         {
             // TODO: not sure this is the best way to do this...
+            log( "Profiles not yet supported, ignoring profiles '" + profiles + "'", Project.MSG_WARN );
 //            System.setProperty( ProfileActivationUtils.ACTIVE_PROFILE_IDS, profiles );
         }
     }
