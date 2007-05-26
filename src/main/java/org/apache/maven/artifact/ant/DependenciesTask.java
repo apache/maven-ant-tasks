@@ -204,6 +204,7 @@ public class DependenciesTask
         fileList.setDir( getLocalRepository().getLocation() );
 
         FileSet fileSet = new FileSet();
+        fileSet.setProject( getProject() );
         fileSet.setDir( fileList.getDir( getProject() ) );
 
         FileList sourcesFileList = new FileList();
