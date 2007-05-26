@@ -32,8 +32,8 @@ import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.codehaus.plexus.PlexusContainerException;
-
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -129,6 +129,8 @@ public class InstallWagonProviderTask
         {
             throw new BuildException( "Unable to locate wagon provider in remote repository", e );
         }
+        
+        log( "Protocols now supported: " + getSupportedProtocolsAsString(), Project.MSG_VERBOSE );
     }
 
 }
