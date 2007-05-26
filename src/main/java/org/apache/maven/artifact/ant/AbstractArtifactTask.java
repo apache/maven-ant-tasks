@@ -39,6 +39,7 @@ import org.apache.maven.wagon.Wagon;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.Execute;
 import org.codehaus.classworlds.ClassWorld;
 import org.codehaus.classworlds.DuplicateRealmException;
 import org.codehaus.plexus.PlexusContainer;
@@ -182,6 +183,24 @@ public abstract class AbstractArtifactTask
             if ( !settingsFile.exists() )
             {
                 settingsFile = new File( System.getProperty( "user.home" ), ".m2/settings.xml" );
+            }
+            if ( !settingsFile.exists() )
+            {
+                settingsFile = new File( System.getProperty( "ant.home" ), "etc/settings.xml" );
+            }
+            if ( !settingsFile.exists() )
+            { // look in ${M2_HOME}/conf
+                List env = Execute.getProcEnvironment();
+                for ( Iterator iter = env.iterator(); iter.hasNext(); )
+                {
+                    String var = (String) iter.next();
+                    if ( var.startsWith( "M2_HOME=" ) )
+                    {
+                        String m2_home = var.substring( "M2_HOME=".length() );
+                        settingsFile = new File( m2_home, "conf/settings.xml" );
+                        break;
+                    }
+                }
             }
 
             if ( settingsFile.exists() )
