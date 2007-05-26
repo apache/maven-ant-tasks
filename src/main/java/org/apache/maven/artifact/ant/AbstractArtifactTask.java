@@ -35,6 +35,7 @@ import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
 import org.apache.maven.usability.diagnostics.ErrorDiagnostics;
+import org.apache.maven.wagon.Wagon;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -52,6 +53,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Base class for artifact tasks.
@@ -388,7 +393,31 @@ public abstract class AbstractArtifactTask
 
         return pom;
     }
+    
+    public String[] getSupportedProtocols()
+    {
+        try
+        {
+            Map wagonMap = getContainer().lookupMap( Wagon.ROLE );
+            List protocols = new ArrayList();
+            for ( Iterator iter = wagonMap.entrySet().iterator(); iter.hasNext(); )
+            {
+                Map.Entry entry = (Map.Entry) iter.next();
+                protocols.add( entry.getKey() );
+            }
+            return (String[]) protocols.toArray( new String[protocols.size()] );
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new BuildException( "Unable to lookup Wagon providers", e );
+        }
+    }
 
+    public String getSupportedProtocolsAsString()
+    {
+        return StringUtils.join( getSupportedProtocols(), ", " );
+    }
+    
     public void diagnoseError( Throwable error )
     {
         try
