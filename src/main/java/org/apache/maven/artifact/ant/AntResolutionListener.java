@@ -36,10 +36,13 @@ public class AntResolutionListener
     private String indent = "";
 
     private final Project project;
+    
+    private int logLevel;
 
-    public AntResolutionListener( Project project )
+    public AntResolutionListener( Project project, boolean verbose )
     {
         this.project = project;
+        logLevel = verbose ? Project.MSG_INFO : Project.MSG_VERBOSE;
     }
 
     public void testArtifact( Artifact node )
@@ -58,40 +61,40 @@ public class AntResolutionListener
 
     public void includeArtifact( Artifact artifact )
     {
-        project.log( indent + artifact + " (selected)" );
+        project.log( indent + artifact + " (selected)", logLevel );
     }
 
     public void omitForNearer( Artifact omitted, Artifact kept )
     {
-        project.log( indent + omitted + " (removed - nearer found: " + kept.getVersion() + ")" );
+        project.log( indent + omitted + " (removed - nearer found: " + kept.getVersion() + ")", logLevel );
     }
 
     public void omitForCycle( Artifact omitted )
     {
-        project.log( indent + omitted + " (removed - causes a cycle in the graph)" );
+        project.log( indent + omitted + " (removed - causes a cycle in the graph)", logLevel );
     }
 
     public void updateScope( Artifact artifact, String scope )
     {
-        project.log( indent + artifact + " (setting scope to: " + scope + ")" );
+        project.log( indent + artifact + " (setting scope to: " + scope + ")", logLevel );
     }
 
     public void updateScopeCurrentPom( Artifact artifact, String scope )
     {
         project.log( indent + artifact + " (not setting scope to: " + scope + "; local scope " + artifact.getScope() +
-            " wins)" );
+            " wins)", logLevel );
     }
 
     public void selectVersionFromRange( Artifact artifact )
     {
         project.log( indent + artifact + " (setting version to: " + artifact.getVersion() + " from range: " +
-            artifact.getVersionRange() + ")" );
+            artifact.getVersionRange() + ")", logLevel );
     }
 
     public void restrictRange( Artifact artifact, Artifact replacement, VersionRange newRange )
     {
         project.log( indent + artifact + " (range restricted from: " + artifact.getVersionRange() + " and: " +
-            replacement.getVersionRange() + " to: " + newRange + " )" );
+            replacement.getVersionRange() + " to: " + newRange + " )", logLevel );
     }
 
     public void manageArtifact( Artifact artifact, Artifact replacement )
@@ -107,6 +110,6 @@ public class AntResolutionListener
             msg += "applying scope: " + replacement.getScope();
         }
         msg += ")";
-        project.log( msg );
+        project.log( msg, logLevel );
     }
 }

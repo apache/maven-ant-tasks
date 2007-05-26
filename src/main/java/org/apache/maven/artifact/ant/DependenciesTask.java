@@ -43,11 +43,14 @@ import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -77,7 +80,10 @@ public class DependenciesTask
 
     protected void doExecute()
     {
+        showVersion();
+        
         ArtifactRepository localRepo = createLocalArtifactRepository();
+        log( "Using local repository: " + localRepo.getBasedir(), Project.MSG_VERBOSE );
 
         ArtifactResolver resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
         MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
@@ -136,11 +142,7 @@ public class DependenciesTask
             Artifact pomArtifact = artifactFactory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(), pom
                 .getVersion(), pom.getPackaging() );
 
-            List listeners = Collections.EMPTY_LIST;
-            if ( verbose )
-            {
-                listeners = Collections.singletonList( new AntResolutionListener( getProject() ) );
-            }
+            List listeners = Collections.singletonList( new AntResolutionListener( getProject(), verbose ) );
 
             // TODO: managed dependencies
             Map managedDependencies = Collections.EMPTY_MAP;
@@ -229,6 +231,7 @@ public class DependenciesTask
 
                 if ( sourcesFilesetId != null )
                 {
+                    log( "Resolving dependencies sources...", Project.MSG_VERBOSE );
                     // get sources
                     Artifact sourcesArtifact =
                         artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
@@ -278,12 +281,35 @@ public class DependenciesTask
         }
     }
 
+    private static String statusAsString( RepositoryPolicy policy )
+    {
+        return (policy == null) || policy.isEnabled() ? "enabled" : "disabled";
+    }
+
     private List createRemoteArtifactRepositories( List remoteRepositories )
     {
+        log( "Using remote repositories:", Project.MSG_VERBOSE );
         List list = new ArrayList();
         for ( Iterator i = remoteRepositories.iterator(); i.hasNext(); )
         {
-            list.add( createRemoteArtifactRepository( (RemoteRepository) i.next() ) );
+            RemoteRepository remoteRepository = (RemoteRepository) i.next();
+
+            StringBuffer msg = new StringBuffer();
+            msg.append( "  - id=" + remoteRepository.getId() );
+            msg.append( ", url=" + remoteRepository.getUrl() );
+            msg.append( ", releases=" + statusAsString( remoteRepository.getReleases() ) );
+            msg.append( ", snapshots=" + statusAsString( remoteRepository.getSnapshots() ) );
+            if ( remoteRepository.getAuthentication() != null )
+            {
+                msg.append( ", authentication=" + remoteRepository.getAuthentication().getUserName() );
+            }
+            if ( remoteRepository.getProxy() != null )
+            {
+                msg.append( ", proxy=" + remoteRepository.getProxy().getHost() );
+            }
+            getProject().log( msg.toString(), Project.MSG_VERBOSE );
+
+            list.add( createRemoteArtifactRepository( remoteRepository ) );
         }
         return list;
     }
@@ -353,5 +379,29 @@ public class DependenciesTask
         this.type = type;
     }
 
+    private void showVersion()
+    {
+        InputStream resourceAsStream;
+        try
+        {
+            Properties properties = new Properties();
+            resourceAsStream = DependenciesTask.class.getClassLoader().getResourceAsStream(
+                "META-INF/maven/org.apache.maven/maven-ant-tasks/pom.properties" );
+            properties.load( resourceAsStream );
 
+            if ( properties.getProperty( "builtOn" ) != null )
+            {
+                log( "Maven Ant Tasks version: " + properties.getProperty( "version", "unknown" ) + " built on "
+                                + properties.getProperty( "builtOn" ), Project.MSG_VERBOSE );
+            }
+            else
+            {
+                log( "Maven Ant Tasks version: " + properties.getProperty( "version", "unknown" ), Project.MSG_VERBOSE );
+            }
+        }
+        catch ( IOException e )
+        {
+            log( "Unable determine version from Maven Ant Tasks JAR file: " + e.getMessage(), Project.MSG_WARN );
+        }
+    }
 }
