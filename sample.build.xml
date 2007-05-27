@@ -30,7 +30,7 @@
       <classpath refid="maven.classpath"/>
     </typedef>
 
-    <artifact:localRepository id="local.repository" location="${basedir}/target/local-repo" layout="default"/>
+    <artifact:localRepository id="local.repository" path="${basedir}/target/local-repo" layout="default"/>
 
     <artifact:remoteRepository id="deploy.repository" url="file://localhost/${basedir}/target/deployment-repo" layout="default"/>
 
@@ -63,7 +63,7 @@
   <target name="test-legacy-pom" depends="initTaskDefs">
     <artifact:dependencies>
       <dependency groupId="geronimo-spec" artifactId="geronimo-spec-javamail" version="1.3.1-rc5" />
-      <localRepository location="${basedir}/target/local-repo-legacy" />
+      <localRepository path="${basedir}/target/local-repo-legacy" />
       <remoteRepository url="http://repo1.maven.org/maven" layout="legacy" id="central" />
     </artifact:dependencies>
   </target>
@@ -168,7 +168,7 @@
       <arg line="create ${repo.path.unix}"/>
     </exec>
 
-    <artifact:localRepository id="local.repository" location="${basedir}/target/local-repo" layout="default"/>
+    <artifact:localRepository id="local.repository" path="${basedir}/target/local-repo" layout="default"/>
 
     <artifact:remoteRepository id="deploy.repository" url="scm:svn:${scm.url}" layout="default"/>
 
@@ -189,7 +189,7 @@
       <arg line="co ${scm.url} -N local-repo-scm"/>
     </exec>
 
-    <artifact:localRepository id="local.repository.scm" location="${basedir}/target/local-repo-scm" layout="default"/>
+    <artifact:localRepository id="local.repository.scm" path="${basedir}/target/local-repo-scm" layout="default"/>
 
     <artifact:dependencies pathId="dependency.classpath.scm">
       <dependency groupId="org.apache.maven.wagon" artifactId="wagon-provider-test" version="1.0-alpha-4"/>

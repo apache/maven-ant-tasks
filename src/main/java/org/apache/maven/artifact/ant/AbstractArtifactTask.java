@@ -88,7 +88,7 @@ public abstract class AbstractArtifactTask
         ArtifactRepositoryLayout repositoryLayout =
             (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, localRepository.getLayout() );
 
-        return new DefaultArtifactRepository( "local", "file://" + localRepository.getLocation(), repositoryLayout );
+        return new DefaultArtifactRepository( "local", "file://" + localRepository.getPath(), repositoryLayout );
     }
 
     protected ArtifactRepository createRemoteArtifactRepository( RemoteRepository repository )
@@ -169,7 +169,7 @@ public abstract class AbstractArtifactTask
         Settings settings = getSettings();
         LocalRepository localRepository = new LocalRepository();
         localRepository.setId( "local" );
-        localRepository.setLocation( new File( settings.getLocalRepository() ) );
+        localRepository.setPath( new File( settings.getLocalRepository() ) );
         return localRepository;
     }
 

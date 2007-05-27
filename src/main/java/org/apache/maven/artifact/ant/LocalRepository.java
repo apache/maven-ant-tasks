@@ -30,15 +30,15 @@ import java.io.File;
 public class LocalRepository
     extends Repository
 {
-    private File location;
+    private File path;
 
-    public File getLocation()
+    public File getPath()
     {
-        return ( (LocalRepository) getInstance() ).location;
+        return ( (LocalRepository) getInstance() ).path;
     }
 
-    public void setLocation( File location )
+    public void setPath( File path )
     {
-        this.location = location;
+        this.path = path;
     }
 }
