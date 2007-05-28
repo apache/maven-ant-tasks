@@ -1,4 +1,4 @@
-<project name="foo" default="foo" xmlns:artifact="urn:maven-artifact-ant">
+<project name="maven-ant-tasks" default="test-all" xmlns:artifact="urn:maven-artifact-ant">
 <!--
 <project name="foo" default="foo" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 -->
@@ -21,9 +21,9 @@
   -->
 
   <target name="initTaskDefs">
-    <!-- don't forget to update the version! -->
+  	<xmlproperty file="pom.xml" prefix="pom.xml" />
     <path id="maven.classpath">
-      <pathelement location="target/maven-ant-tasks-2.1-SNAPSHOT-uber.jar" />
+      <pathelement location="target/maven-ant-tasks-${pom.xml.project.version}.jar" />
     </path>
 
     <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant">
@@ -35,7 +35,23 @@
     <artifact:remoteRepository id="deploy.repository" url="file://localhost/${basedir}/target/deployment-repo" layout="default"/>
 
     <artifact:pom file="pom.xml" id="maven.project"/>
+  </target>
 
+  <target name="installSshProvider" depends="initTaskDefs">
+    <artifact:install-provider artifactId="wagon-ssh" version="1.0-beta-2"/>
+  </target>
+  
+  <target name="test-all-deps" description="All dependencies tests"
+    depends="test-pom,test-no-deps,test-deps,test-legacy-pom">
+    <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
+  </target>
+
+  <target name="test-all-pubs" description="All publication tests (install/deploy)"
+    depends="test-deploy-spaces,test-deploy,test-no-dist-mgmt,test-install-attached,test-deploy-attached"/>
+
+  <target name="test-all" description="All tests"
+    depends="test-all-deps,test-all-pubs">
+    <echo>test-scm not run, since it fails...</echo>
   </target>
 
   <target name="test-no-deps" depends="initTaskDefs">
@@ -68,7 +84,7 @@
     </artifact:dependencies>
   </target>
 
-  <target name="foo" depends="initTaskDefs">
+  <target name="test-deps" depends="initTaskDefs">
     <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset" sourcesFilesetId="sources.fileset">
       <dependency groupId="org.apache.maven.wagon" artifactId="wagon-provider-test" version="1.0-alpha-4">
         <exclusion groupId="junit" artifactId="junit"/>
@@ -76,6 +92,7 @@
       <dependency groupId="org.apache.maven.archiva" artifactId="archiva-configuration" version="1.0-SNAPSHOT"/>
       <dependency groupId="org.apache.maven" artifactId="maven-core-it-support-old-location" version="1.1"/>
       <localRepository refid="local.repository"/>
+      <remoteRepository url="http://repo1.maven.org/maven2" id="central" />
       <remoteRepository url="http://people.apache.org/repo/m2-snapshot-repository">
         <snapshots enabled="true"/>
         <releases enabled="false"/>
@@ -110,15 +127,9 @@
       <fileset refid="my.compile.dependency.fileset"/>
       <mapper type="flatten" />
     </copy>
-
-    <antcall target="test-deploy" />
-
-    <antcall target="test-legacy-pom" />
   </target>
 
-  <target name="test-deploy-spaces" depends="initTaskDefs">
-    <artifact:install-provider artifactId="wagon-ssh" version="1.0-alpha-5"/>
-
+  <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">
     <echo file="target/test file.txt">dummy</echo>
     <artifact:deploy file="target/test file.txt">
       <remoteRepository url="scp://localhost/tmp/deployment-repo" />
@@ -126,7 +137,7 @@
     </artifact:deploy>
   </target>
 
-  <target name="test-deploy" depends="initTaskDefs">
+  <target name="test-deploy" depends="initTaskDefs,installSshProvider">
     <property name="outJar" value="${maven.project.build.directory}/${maven.project.build.finalName}.jar"/>
 
     <artifact:install file="${outJar}">
@@ -139,11 +150,9 @@
       <pom refid="maven.project"/>
     </artifact:deploy>
 
-    <artifact:install-provider artifactId="wagon-ssh" version="1.0-alpha-5"/>
-
     <artifact:deploy file="${outJar}">
       <remoteRepository url="scp://localhost/tmp/deployment-repo">
-        <authentication username="brett" privateKey="${user.home}/.ssh/id_dsa"/>
+        <authentication username="${user.name}" privateKey="${user.home}/.ssh/id_dsa"/>
       </remoteRepository>
       <pom refid="maven.project"/>
     </artifact:deploy>
