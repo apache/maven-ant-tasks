@@ -185,10 +185,13 @@ public class DependenciesTask
             throw new BuildException( e.getMessage(), e );
         }
 
+        /*
+        MANTTASKS-37: Do what other ant tasks do and just override the path id.
         if ( pathId != null && getProject().getReference( pathId ) != null )
         {
             throw new BuildException( "Reference ID " + pathId + " already exists" );
         }
+        */
 
         if ( filesetId != null && getProject().getReference( filesetId ) != null )
         {
