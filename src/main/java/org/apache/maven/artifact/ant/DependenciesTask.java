@@ -42,11 +42,14 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
+import org.codehaus.plexus.util.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +74,8 @@ public class DependenciesTask
     private String filesetId;
 
     private String sourcesFilesetId;
+    
+    private String versionsId;
 
     private String useScope;
 
@@ -216,6 +221,8 @@ public class DependenciesTask
         FileSet sourcesFileSet = new FileSet();
         sourcesFileSet.setDir( sourcesFileList.getDir( getProject() ) );
 
+        Set versions = new HashSet();
+        
         if ( result.getArtifacts().isEmpty() )
         {
             fileSet.createExclude().setName( "**/**" );
@@ -233,6 +240,8 @@ public class DependenciesTask
                 fileList.addConfiguredFile( file );
 
                 fileSet.createInclude().setName( filename );
+                
+                versions.add( artifact.getBaseVersion() );
 
                 if ( sourcesFilesetId != null )
                 {
@@ -283,6 +292,12 @@ public class DependenciesTask
         if ( sourcesFilesetId != null )
         {
             getProject().addReference( sourcesFilesetId, sourcesFileSet );
+        }
+        
+        if ( versionsId != null )
+        {
+            String versionsValue = StringUtils.join( versions.iterator(), File.pathSeparator );
+            getProject().setNewProperty( versionsId, versionsValue );
         }
     }
 
@@ -367,6 +382,16 @@ public class DependenciesTask
     public void setFilesetId( String filesetId )
     {
         this.filesetId = filesetId;
+    }
+
+    public String getVersionsId()
+    {
+        return versionsId;
+    }
+
+    public void setVersionsId( String versionsId )
+    {
+        this.versionsId = versionsId;
     }
 
     public void setVerbose( boolean verbose )
