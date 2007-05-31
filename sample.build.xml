@@ -22,13 +22,10 @@
 
   <target name="initTaskDefs">
   	<xmlproperty file="pom.xml" prefix="pom.xml" />
-    <path id="maven.classpath">
-      <pathelement location="target/maven-ant-tasks-${pom.xml.project.version}.jar" />
-    </path>
 
-    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant">
-      <classpath refid="maven.classpath"/>
-    </typedef>
+    <path id="maven-ant-tasks.classpath" path="target/maven-ant-tasks-${pom.xml.project.version}.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
+             classpathref="maven-ant-tasks.classpath"/>
 
     <artifact:localRepository id="local.repository" path="${basedir}/target/local-repo" layout="default"/>
 
@@ -42,7 +39,7 @@
   </target>
   
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom,test-no-deps,test-deps,test-legacy-pom">
+    depends="test-pom,test-no-deps,test-pom-deps,test-deps,test-legacy-pom">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -85,11 +82,13 @@
   </target>
 
   <target name="test-deps" depends="initTaskDefs">
-    <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset" sourcesFilesetId="sources.fileset">
+    <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset" sourcesFilesetId="sources.fileset" verbose="true">
       <dependency groupId="org.apache.maven.wagon" artifactId="wagon-provider-test" version="1.0-alpha-4">
         <exclusion groupId="junit" artifactId="junit"/>
       </dependency>
-      <dependency groupId="org.apache.maven.archiva" artifactId="archiva-configuration" version="1.0-SNAPSHOT"/>
+      <dependency groupId="org.apache.maven.archiva" artifactId="archiva-configuration" version="1.0-SNAPSHOT">
+        <exclusion groupId="junit" artifactId="junit"/>
+      </dependency>
       <dependency groupId="org.apache.maven" artifactId="maven-core-it-support-old-location" version="1.1"/>
       <localRepository refid="local.repository"/>
       <remoteRepository url="http://repo1.maven.org/maven2" id="central" />
@@ -99,33 +98,52 @@
       </remoteRepository>
     </artifact:dependencies>
 
-    <copy todir="target/files">
+    <copy todir="target/files/binaries">
       <fileset refid="dependency.fileset"/>
     </copy>
     <copy todir="target/files/sources">
       <fileset refid="sources.fileset"/>
     </copy>
+    <available file="target/files/binaries/junit/junit" type="dir" property="exclusion.dependency"/>
+    <fail if="exclusion.dependency">excluded dependency junit:junit shouldn't be in target/files/binaries</fail>
+    <available file="target/files/binaries/org/apache/maven/archive/archiva-configuration" type="dir" property="snapshot.dependency"/>
+    <!-- MANTTASKS-18 -->
+    <fail unless="snapshot.dependency">SNAPSHOT dependency org.apache.maven.archiva:archiva-configuration:1.0-SNAPSHOT should be in target/files/binaries</fail>
+  </target>
 
-
-    <artifact:dependencies filesetId="my.dependency.fileset" verbose="true">
+  <target name="test-pom-deps" depends="initTaskDefs">
+    <artifact:dependencies filesetId="maven-ant-tasks.dependency.fileset">
       <pom refid="maven.project"/>
     </artifact:dependencies>
 
-    <copy todir="target/my-dependencies">
-      <fileset refid="my.dependency.fileset"/>
+    <copy todir="target/maven-ant-tasks-dependencies">
+      <fileset refid="maven-ant-tasks.dependency.fileset"/>
     </copy>
 
-    <artifact:dependencies filesetId="my.compile.dependency.fileset" useScope="compile">
+    <artifact:dependencies filesetId="maven-ant-tasks.compile.dependency.fileset" versionsId="maven-ant-tasks.compile.dependency.versions" useScope="compile">
       <pom refid="maven.project"/>
     </artifact:dependencies>
+    <echo>dependencies versions: ${maven-ant-tasks.compile.dependency.versions}</echo>
 
-    <copy todir="target/my-compile-dependencies">
-      <fileset refid="my.compile.dependency.fileset"/>
+    <copy todir="target/maven-ant-tasks-compile-dependencies/fileset">
+      <fileset refid="maven-ant-tasks.compile.dependency.fileset"/>
     </copy>
 
-    <copy todir="target/my-compile-dependencies/WEB-INF/lib">
-      <fileset refid="my.compile.dependency.fileset"/>
-      <mapper type="flatten" />
+    <copy todir="target/maven-ant-tasks-compile-dependencies/versionMapper">
+      <fileset refid="maven-ant-tasks.compile.dependency.fileset"/>
+      <mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper"
+              from="${maven-ant-tasks.compile.dependency.versions}" />
+    </copy>
+
+    <copy todir="target/maven-ant-tasks-compile-dependencies/versionMapperFlatten">
+      <fileset refid="maven-ant-tasks.compile.dependency.fileset"/>
+      <mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper"
+              from="${maven-ant-tasks.compile.dependency.versions}" to="flatten" />
+    </copy>
+
+    <copy todir="target/maven-ant-tasks-compile-dependencies/WEB-INF/lib">
+      <fileset refid="maven-ant-tasks.compile.dependency.fileset"/>
+      <mapper type="flatten"/>
     </copy>
   </target>
 
