@@ -21,18 +21,10 @@ package org.apache.maven.artifact.ant;
 
 import java.io.File;
 import java.util.List;
-import java.util.Iterator;
 import java.util.ArrayList;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.installer.ArtifactInstaller;
-import org.apache.maven.artifact.installer.ArtifactInstallationException;
-import org.apache.maven.artifact.metadata.ArtifactMetadata;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.artifact.ProjectArtifactMetadata;
-import org.apache.tools.ant.BuildException;
 
 /**
  * Support for install/deploy tasks.

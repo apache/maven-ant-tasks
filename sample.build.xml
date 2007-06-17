@@ -86,13 +86,12 @@
       <dependency groupId="org.apache.maven.wagon" artifactId="wagon-provider-test" version="1.0-alpha-4">
         <exclusion groupId="junit" artifactId="junit"/>
       </dependency>
-      <dependency groupId="org.apache.maven.archiva" artifactId="archiva-configuration" version="1.0-SNAPSHOT">
-        <exclusion groupId="junit" artifactId="junit"/>
-      </dependency>
       <dependency groupId="org.apache.maven" artifactId="maven-core-it-support-old-location" version="1.1"/>
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueTrue" version="2.0.7-SNAPSHOT"/>
       <localRepository refid="local.repository"/>
       <remoteRepository url="http://repo1.maven.org/maven2" id="central" />
-      <remoteRepository url="http://people.apache.org/repo/m2-snapshot-repository">
+      <remoteRepository url="file://${user.dir}/src/test/repo">
         <snapshots enabled="true"/>
         <releases enabled="false"/>
       </remoteRepository>
@@ -106,9 +105,11 @@
     </copy>
     <available file="target/files/binaries/junit/junit" type="dir" property="exclusion.dependency"/>
     <fail if="exclusion.dependency">excluded dependency junit:junit shouldn't be in target/files/binaries</fail>
-    <available file="target/files/binaries/org/apache/maven/archive/archiva-configuration" type="dir" property="snapshot.dependency"/>
+    <available file="target/files/binaries/it/ant-tasks/snapshotUniqueFalse" type="dir" property="snapshot.dependency.uniqueFalse"/>
+    <fail unless="snapshot.dependency.uniqueFalse">SNAPSHOT dependency it.ant-tasks:snapshotUniqueFalse:2.0.7-SNAPSHOT should be in target/files/binaries</fail>
+    <available file="target/files/binaries/it/ant-tasks/snapshotUniqueTrue" type="dir" property="snapshot.dependency.uniqueTrue"/>
     <!-- MANTTASKS-18 -->
-    <fail unless="snapshot.dependency">SNAPSHOT dependency org.apache.maven.archiva:archiva-configuration:1.0-SNAPSHOT should be in target/files/binaries</fail>
+    <fail unless="snapshot.dependency.uniqueTrue">SNAPSHOT dependency it.ant-tasks:snapshotUniqueTrue:2.0.7-SNAPSHOT should be in target/files/binaries</fail>
   </target>
 
   <target name="test-pom-deps" depends="initTaskDefs">
