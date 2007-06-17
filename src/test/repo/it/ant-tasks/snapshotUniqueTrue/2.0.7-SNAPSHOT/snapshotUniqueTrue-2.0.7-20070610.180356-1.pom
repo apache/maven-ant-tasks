@@ -1,0 +1,17 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>it.ant-tasks</groupId>
+  <artifactId>snapshotUniqueTrue</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Maven Ant Tasks IT SNAPSHOT uniqueVersion="true"</name>
+  <version>2.0.7-SNAPSHOT</version>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>repo</id>
+      <url>file://${user.dir}/snapshotUniqueTrue</url>
+      <uniqueVersion>true</uniqueVersion>
+    </snapshotRepository>
+  </distributionManagement>
+</project>

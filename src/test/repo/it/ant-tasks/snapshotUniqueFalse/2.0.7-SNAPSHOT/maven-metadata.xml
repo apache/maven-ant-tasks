@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>it.ant-tasks</groupId>
+  <artifactId>snapshotUniqueFalse</artifactId>
+  <version>2.0.7-SNAPSHOT</version>
+  <versioning>
+    <snapshot>
+      <buildNumber>1</buildNumber>
+    </snapshot>
+    <lastUpdated>20070610180522</lastUpdated>
+  </versioning>
+</metadata>

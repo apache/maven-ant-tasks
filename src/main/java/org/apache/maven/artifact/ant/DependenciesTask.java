@@ -232,6 +232,7 @@ public class DependenciesTask
             for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
             {
                 Artifact artifact = (Artifact) i.next();
+                artifact.isSnapshot(); // MNG-2961: DefaultArtifact getBaseVersion is changed to "xxxx-SNAPSHOT" only if you first call isSnapshot()
                 String filename = localRepo.pathOf( artifact );
 
                 FileList.FileName file = new FileList.FileName();

@@ -19,7 +19,6 @@ package org.apache.maven.artifact.ant;
  * under the License.
  */
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ProjectComponent;
 
 /**
