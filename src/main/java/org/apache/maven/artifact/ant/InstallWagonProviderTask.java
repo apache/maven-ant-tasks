@@ -47,11 +47,21 @@ import java.util.List;
 public class InstallWagonProviderTask
     extends AbstractArtifactTask
 {
+	private String groupId =  "org.apache.maven.wagon";
+	
     private String artifactId;
 
     private String version;
 
-    private static final String WAGON_GROUP_ID = "org.apache.maven.wagon";
+    public String getGroupId()
+    {
+    	return groupId;
+    }
+    
+    public void setGroupId( String groupId )
+    {
+    	this.groupId = groupId;
+    }
 
     public String getArtifactId()
     {
@@ -90,12 +100,12 @@ public class InstallWagonProviderTask
         catch ( InvalidVersionSpecificationException e )
         {
             throw new BuildException( "Unable to get extension '" +
-                ArtifactUtils.versionlessKey( WAGON_GROUP_ID, artifactId ) + "' because version '" + version +
+                ArtifactUtils.versionlessKey( groupId, artifactId ) + "' because version '" + version +
                 " is invalid: " + e.getMessage(), e );
         }
 
         ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
-        Artifact providerArtifact = factory.createExtensionArtifact( WAGON_GROUP_ID, artifactId, versionRange );
+        Artifact providerArtifact = factory.createExtensionArtifact( groupId, artifactId, versionRange );
 
         ArtifactResolutionResult result;
         try
