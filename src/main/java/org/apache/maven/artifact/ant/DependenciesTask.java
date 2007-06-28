@@ -63,11 +63,9 @@ import java.util.Set;
  * @version $Id$
  */
 public class DependenciesTask
-    extends AbstractArtifactTask
+    extends AbstractArtifactWithRepositoryTask
 {
     private List dependencies = new ArrayList();
-
-    private List remoteRepositories = new ArrayList();
 
     private String pathId;
 
@@ -134,12 +132,7 @@ public class DependenciesTask
         ArtifactResolutionResult result;
         Set artifacts;
 
-        if ( getRemoteRepositories().isEmpty() )
-        {
-            addRemoteRepository( getDefaultRemoteRepository() );
-        }
-
-        List remoteArtifactRepositories = createRemoteArtifactRepositories( getRemoteRepositories() );
+        List remoteArtifactRepositories = createRemoteArtifactRepositories();
 
         try
         {
@@ -196,7 +189,6 @@ public class DependenciesTask
         {
             throw new BuildException( "Reference ID " + pathId + " already exists" );
         }
-        */
 
         if ( filesetId != null && getProject().getReference( filesetId ) != null )
         {
@@ -207,6 +199,7 @@ public class DependenciesTask
         {
             throw new BuildException( "Reference ID " + sourcesFilesetId + " already exists" );
         }
+        */
 
         FileList fileList = new FileList();
         fileList.setDir( getLocalRepository().getPath() );
@@ -300,49 +293,6 @@ public class DependenciesTask
             String versionsValue = StringUtils.join( versions.iterator(), File.pathSeparator );
             getProject().setNewProperty( versionsId, versionsValue );
         }
-    }
-
-    private static String statusAsString( RepositoryPolicy policy )
-    {
-        return (policy == null) || policy.isEnabled() ? "enabled" : "disabled";
-    }
-
-    private List createRemoteArtifactRepositories( List remoteRepositories )
-    {
-        log( "Using remote repositories:", Project.MSG_VERBOSE );
-        List list = new ArrayList();
-        for ( Iterator i = remoteRepositories.iterator(); i.hasNext(); )
-        {
-            RemoteRepository remoteRepository = (RemoteRepository) i.next();
-
-            StringBuffer msg = new StringBuffer();
-            msg.append( "  - id=" + remoteRepository.getId() );
-            msg.append( ", url=" + remoteRepository.getUrl() );
-            msg.append( ", releases=" + statusAsString( remoteRepository.getReleases() ) );
-            msg.append( ", snapshots=" + statusAsString( remoteRepository.getSnapshots() ) );
-            if ( remoteRepository.getAuthentication() != null )
-            {
-                msg.append( ", authentication=" + remoteRepository.getAuthentication().getUserName() );
-            }
-            if ( remoteRepository.getProxy() != null )
-            {
-                msg.append( ", proxy=" + remoteRepository.getProxy().getHost() );
-            }
-            getProject().log( msg.toString(), Project.MSG_VERBOSE );
-
-            list.add( createRemoteArtifactRepository( remoteRepository ) );
-        }
-        return list;
-    }
-
-    public List getRemoteRepositories()
-    {
-        return remoteRepositories;
-    }
-
-    public void addRemoteRepository( RemoteRepository remoteRepository )
-    {
-        remoteRepositories.add( remoteRepository );
     }
 
     public List getDependencies()

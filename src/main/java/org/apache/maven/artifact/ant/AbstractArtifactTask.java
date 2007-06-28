@@ -91,6 +91,11 @@ public abstract class AbstractArtifactTask
         return new DefaultArtifactRepository( "local", "file://" + localRepository.getPath(), repositoryLayout );
     }
 
+    /**
+     * Create a core-Maven ArtifactRepository from a Maven Ant Tasks's RemoteRepository definition.
+     * @param repository the remote repository as defined in Ant
+     * @return the corresponding ArtifactRepository
+     */
     protected ArtifactRepository createRemoteArtifactRepository( RemoteRepository repository )
     {
         ArtifactRepositoryLayout repositoryLayout =
@@ -177,8 +182,6 @@ public abstract class AbstractArtifactTask
     {
         if ( settings == null )
         {
-            settings = new Settings();
-
             File settingsFile = new File( System.getProperty( "user.home" ), ".ant/settings.xml" );
             if ( !settingsFile.exists() )
             {
@@ -205,19 +208,19 @@ public abstract class AbstractArtifactTask
 
             if ( settingsFile.exists() )
             {
-                loadSettings(settingsFile);
+                loadSettings( settingsFile );
             }
-
-            if ( StringUtils.isEmpty( settings.getLocalRepository() ) )
+            else
             {
-                String location = new File( System.getProperty( "user.home" ), ".m2/repository" ).getAbsolutePath();
-                settings.setLocalRepository( location );
+                settings = new Settings();
+                checkSettingsLocalRepository();
             }
         }
         return settings;
     }
 
-    private void loadSettings(File settingsFile) {
+    private void loadSettings( File settingsFile )
+    {
         FileReader reader = null;
         try
         {
@@ -227,6 +230,8 @@ public abstract class AbstractArtifactTask
             SettingsXpp3Reader modelReader = new SettingsXpp3Reader();
 
             settings = modelReader.read( reader );
+
+            checkSettingsLocalRepository();
         }
         catch ( IOException e )
         {
@@ -244,10 +249,20 @@ public abstract class AbstractArtifactTask
         }
     }
     
-    public void setSettingsFile(File settingsFile) {
-        if (!settingsFile.exists()) throw new BuildException("settingsFile does not exist: " + settingsFile.getAbsolutePath());
-        settings = new Settings();
-        loadSettings(settingsFile);
+    private void checkSettingsLocalRepository()
+    {
+        if ( StringUtils.isEmpty( settings.getLocalRepository() ) )
+        {
+            String location = new File( System.getProperty( "user.home" ), ".m2/repository" ).getAbsolutePath();
+            settings.setLocalRepository( location );
+        }
+    }
+
+    public void setSettingsFile( File settingsFile )
+    {
+        if ( !settingsFile.exists() )
+            throw new BuildException( "settingsFile does not exist: " + settingsFile.getAbsolutePath() );
+        loadSettings( settingsFile );
     }
 
     protected RemoteRepository createAntRemoteRepository( org.apache.maven.model.Repository pomRepository )
@@ -320,18 +335,6 @@ public abstract class AbstractArtifactTask
         {
             throw new BuildException( "Unable to find component: " + role + "[" + roleHint + "]", e );
         }
-    }
-
-    protected static RemoteRepository getDefaultRemoteRepository()
-    {
-        // TODO: could we utilise the super POM for this?
-        RemoteRepository remoteRepository = new RemoteRepository();
-        remoteRepository.setId( "central" );
-        remoteRepository.setUrl( "http://repo1.maven.org/maven2" );
-        RepositoryPolicy snapshots = new RepositoryPolicy();
-        snapshots.setEnabled( false );
-        remoteRepository.addSnapshots( snapshots );
-        return remoteRepository;
     }
 
     protected synchronized PlexusContainer getContainer()

@@ -39,7 +39,7 @@
   </target>
   
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom,test-no-deps,test-pom-deps,test-deps,test-legacy-pom">
+    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps,test-legacy-pom">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -47,7 +47,7 @@
     depends="test-deploy-spaces,test-deploy,test-no-dist-mgmt,test-install-attached,test-deploy-attached"/>
 
   <target name="test-all" description="All tests"
-    depends="test-all-deps,test-all-pubs">
+    depends="test-all-deps,test-all-pubs,test-install-provider">
     <echo>test-scm not run, since it fails...</echo>
   </target>
 
@@ -57,6 +57,11 @@
     <copy todir="target/test-no-deps" verbose="true">
       <fileset refid="runtime.fileset"/>
     </copy>
+  </target>
+
+  <target name="test-empty-settings" depends="initTaskDefs">
+    <artifact:dependencies filesetId="runtime.fileset" settingsFile="${basedir}/src/test/settings-empty.xml">
+    </artifact:dependencies>
   </target>
 
   <target name="test-bad-dep" depends="initTaskDefs">
@@ -266,5 +271,22 @@
       <attach file="${basedir}/target/sample-build-test.pom.asc" type="pom.asc"/>
     </artifact:install>
   </target>
-</project>
 
+  <target name="test-install-provider" depends="initTaskDefs">
+    <artifact:install-provider groupId="it.ant-tasks" artifactId="wagon-foo" version="1.0-beta-2">
+      <localRepository refid="local.repository"/>
+      <remoteRepository url="file://${user.dir}/src/test/repo"/>
+    </artifact:install-provider>
+  </target>
+
+  <target name="test-pom-with-parent" depends="initTaskDefs">
+    <artifact:pom file="${user.dir}/src/test/pom-with-parent.xml" id="my.maven.project">
+      <localRepository refid="local.repository"/>
+      <remoteRepository url="file://${user.dir}/src/test/repo"/>
+    </artifact:pom>
+
+    <echo>Artifact ID = ${my.maven.project.artifactId}</echo>
+
+    <echo>Parent Artifact ID = ${my.maven.project.parent.artifactId}</echo>
+  </target>
+</project>
