@@ -1,0 +1,10 @@
+<project>
+  <parent>
+    <artifactId>pom</artifactId>
+    <groupId>it.ant-tasks</groupId>
+    <version>1.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>project-with-parent-pom</artifactId>
+  <version>2.0-beta-4-SNAPSHOT</version>
+</project>
