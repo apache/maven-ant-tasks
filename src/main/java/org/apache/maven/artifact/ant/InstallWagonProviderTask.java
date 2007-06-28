@@ -23,7 +23,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
@@ -34,6 +33,7 @@ import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.codehaus.plexus.PlexusContainerException;
+
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -45,13 +45,23 @@ import java.util.List;
  * @version $Id$
  */
 public class InstallWagonProviderTask
-    extends AbstractArtifactTask
+    extends AbstractArtifactWithRepositoryTask
 {
+	private String groupId = "org.apache.maven.wagon";
+	
     private String artifactId;
 
     private String version;
 
-    private static final String WAGON_GROUP_ID = "org.apache.maven.wagon";
+    public String getGroupId()
+    {
+    	return groupId;
+    }
+    
+    public void setGroupId( String groupId )
+    {
+    	this.groupId = groupId;
+    }
 
     public String getArtifactId()
     {
@@ -76,12 +86,6 @@ public class InstallWagonProviderTask
     public void doExecute()
         throws BuildException
     {
-        MavenMetadataSource metadataSource = (MavenMetadataSource) lookup( ArtifactMetadataSource.ROLE );
-
-        ArtifactResolver resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
-        ArtifactRepository artifactRepository = createRemoteArtifactRepository( getDefaultRemoteRepository() );
-        List remoteRepositories = Collections.singletonList( artifactRepository );
-
         VersionRange versionRange;
         try
         {
@@ -90,16 +94,20 @@ public class InstallWagonProviderTask
         catch ( InvalidVersionSpecificationException e )
         {
             throw new BuildException( "Unable to get extension '" +
-                ArtifactUtils.versionlessKey( WAGON_GROUP_ID, artifactId ) + "' because version '" + version +
+                ArtifactUtils.versionlessKey( groupId, artifactId ) + "' because version '" + version +
                 " is invalid: " + e.getMessage(), e );
         }
 
         ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
-        Artifact providerArtifact = factory.createExtensionArtifact( WAGON_GROUP_ID, artifactId, versionRange );
+        Artifact providerArtifact = factory.createExtensionArtifact( groupId, artifactId, versionRange );
 
         ArtifactResolutionResult result;
         try
         {
+            MavenMetadataSource metadataSource = (MavenMetadataSource) lookup( ArtifactMetadataSource.ROLE );
+            ArtifactResolver resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
+            List remoteRepositories = createRemoteArtifactRepositories();
+
             result = resolver.resolveTransitively( Collections.singleton( providerArtifact ),
                                                    createArtifact( createDummyPom() ), createLocalArtifactRepository(),
                                                    remoteRepositories, metadataSource, null );
