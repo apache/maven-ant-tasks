@@ -20,7 +20,7 @@
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
-    <version>4</version>
+    <version>5</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-ant-tasks</artifactId>
@@ -149,8 +149,8 @@
   </dependencies>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/ant-tasks/tags/maven-ant-tasks-2.0.7</connection>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/ant-tasks/tags/maven-ant-tasks-2.0.7</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/ant-tasks/tags/maven-ant-tasks-2.0.7</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/ant-tasks/tags/maven-ant-tasks-2.0.7</url>
+    <url>https://svn.apache.org/repos/asf/maven/ant-tasks/tags/maven-ant-tasks-2.0.7</url>
   </scm>
 </project>
