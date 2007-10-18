@@ -25,7 +25,6 @@ import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.tools.ant.BuildException;
 
@@ -47,17 +46,60 @@ public class DeployTask
     protected void doExecute()
     {
         ArtifactRepository localRepo = createLocalArtifactRepository();
-        MavenProjectBuilder builder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
 
-        Pom pom = buildPom( builder, localRepo );
+        Pom pom = buildPom( localRepo );
 
         if ( pom == null )
         {
             throw new BuildException( "A POM element is required to deploy to the repository" );
         }
+        
+        Artifact artifact = pom.getArtifact();
 
-        Artifact artifact = createArtifact( pom );
+        // Deploy the POM
+        boolean isPomArtifact = "pom".equals( pom.getPackaging() );
+        if ( !isPomArtifact )
+        {
+            ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pom.getFile() );
+            artifact.addMetadata( metadata );
+        }
 
+        ArtifactRepository deploymentRepository = getDeploymentRepository( pom, artifact );
+
+        log( "Deploying to " + deploymentRepository.getUrl() );
+        ArtifactDeployer deployer = (ArtifactDeployer) lookup( ArtifactDeployer.ROLE );
+        try
+        {
+            if ( !isPomArtifact )
+            {
+                deployer.deploy( file, artifact, deploymentRepository, localRepo );
+            }
+            else
+            {
+                deployer.deploy( pom.getFile(), artifact, deploymentRepository, localRepo );
+            }
+
+            // Deploy any attached artifacts
+            if ( attachedArtifacts != null )
+            {
+                Iterator iter = pom.getAttachedArtifacts().iterator();
+
+                while ( iter.hasNext() )
+                {
+                    Artifact attachedArtifact = (Artifact) iter.next();
+                    deployer.deploy( attachedArtifact.getFile(), attachedArtifact, deploymentRepository, localRepo );
+                }
+            }
+        }
+        catch ( ArtifactDeploymentException e )
+        {
+            throw new BuildException(
+                "Error deploying artifact '" + artifact.getDependencyConflictId() + "': " + e.getMessage(), e );
+        }
+    }
+    
+    private ArtifactRepository getDeploymentRepository( Pom pom, Artifact artifact )
+    {
         DistributionManagement distributionManagement = pom.getDistributionManagement();
 
         if ( remoteSnapshotRepository == null && remoteRepository == null )
@@ -96,50 +138,7 @@ public class DeployTask
                 "A distributionManagement element or remoteRepository element is required to deploy" );
         }
 
-        // Deploy the POM
-        boolean isPomArtifact = "pom".equals( pom.getPackaging() );
-        if ( !isPomArtifact )
-        {
-            ArtifactMetadata metadata = new ProjectArtifactMetadata( artifact, pom.getFile() );
-            artifact.addMetadata( metadata );
-        }
-
-        log( "Deploying to " + deploymentRepository.getUrl() );
-        ArtifactDeployer deployer = (ArtifactDeployer) lookup( ArtifactDeployer.ROLE );
-        try
-        {
-            if ( !isPomArtifact )
-            {
-                deployer.deploy( file, artifact, deploymentRepository, localRepo );
-            }
-            else
-            {
-                deployer.deploy( pom.getFile(), artifact, deploymentRepository, localRepo );
-            }
-        }
-        catch ( ArtifactDeploymentException e )
-        {
-            throw new BuildException(
-                "Error deploying artifact '" + artifact.getDependencyConflictId() + "': " + e.getMessage(), e );
-        }
-
-        // Deploy any attached artifacts
-        if (attachedArtifacts != null) {
-            Iterator iter = attachedArtifacts.iterator();
-
-            while (iter.hasNext()) {
-                AttachedArtifact attached = (AttachedArtifact)iter.next();
-                Artifact attachedArtifact = createArtifactFromAttached(attached, artifact);
-
-                try {
-                    deployer.deploy( attachedArtifact.getFile(), attachedArtifact, deploymentRepository, localRepo );
-                }
-                catch (ArtifactDeploymentException e) {
-                    throw new BuildException(
-                        "Error deploying attached artifact '" + attachedArtifact.getDependencyConflictId() + "': " + e.getMessage(), e );
-                }
-            }
-        }
+        return deploymentRepository;
     }
 
     public RemoteRepository getRemoteRepository()

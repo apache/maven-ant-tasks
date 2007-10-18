@@ -39,6 +39,7 @@ import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.apache.tools.ant.BuildException;
@@ -130,19 +131,41 @@ public class Pom
         this.file = file;
     }
 
+    public Artifact getArtifact()
+    {
+        return getMavenProject().getArtifact();
+    }
+
+    public void attach( AttachedArtifact attached )
+    {
+        MavenProjectHelper helper = (MavenProjectHelper) lookup( MavenProjectHelper.ROLE );
+        MavenProject project = getMavenProject();
+        if (attached.getClassifier() != null) {
+            helper.attachArtifact( project, attached.getType(), attached.getClassifier(), attached.getFile() );
+        }
+        else {
+            helper.attachArtifact( project, attached.getType(), attached.getFile() );
+        }
+    }
+
+    public List getAttachedArtifacts()
+    {
+        return getMavenProject().getAttachedArtifacts();
+    }
+
     void initialise( MavenProjectBuilder builder, ArtifactRepository localRepository )
     {
         if ( mavenProject != null )
         {
             log( "POM is already initialized for: " + mavenProject.getId(), Project.MSG_DEBUG );
-            
+
             return;
         }
         // TODO: should this be in execute() too? Would that work when it is used as a type?
         if ( file != null )
         {
             checkParentPom();
-            
+
             try
             {
                 // TODO: should the profiles be constructed and passed in here? From Ant, or perhaps settings?
@@ -158,7 +181,7 @@ public class Pom
             getInstance().initialise( builder, localRepository );
         }
     }
-    
+
     private void checkParentPom()
     {
         Model model = null;
@@ -195,7 +218,7 @@ public class Pom
                 List remoteRepositories = createRemoteArtifactRepositories();
 
                 resolver.resolveTransitively( Collections.singleton( parentArtifact ),
-                                              createArtifact( createDummyPom() ), createLocalArtifactRepository(),
+                                              createDummyArtifact(), createLocalArtifactRepository(),
                                               remoteRepositories, metadataSource, null );
             }
             catch ( ArtifactResolutionException e )
@@ -389,7 +412,6 @@ public class Pom
                 // else handle the property resolution
                 String expression = name.substring( prefix.length() );
                 return getPOMValue( "project." + expression );
-
             }
             catch ( Exception ex )
             {

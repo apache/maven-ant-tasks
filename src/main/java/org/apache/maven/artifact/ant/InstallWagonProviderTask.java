@@ -109,7 +109,7 @@ public class InstallWagonProviderTask
             List remoteRepositories = createRemoteArtifactRepositories();
 
             result = resolver.resolveTransitively( Collections.singleton( providerArtifact ),
-                                                   createArtifact( createDummyPom() ), createLocalArtifactRepository(),
+                                                   createDummyArtifact(), createLocalArtifactRepository(),
                                                    remoteRepositories, metadataSource, null );
         }
         catch ( ArtifactResolutionException e )
