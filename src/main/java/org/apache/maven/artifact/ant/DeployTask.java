@@ -24,6 +24,8 @@ import org.apache.maven.artifact.deployer.ArtifactDeployer;
 import org.apache.maven.artifact.deployer.ArtifactDeploymentException;
 import org.apache.maven.artifact.metadata.ArtifactMetadata;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
+import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.tools.ant.BuildException;
@@ -42,6 +44,38 @@ public class DeployTask
     private RemoteRepository remoteRepository;
 
     private RemoteRepository remoteSnapshotRepository;
+
+    private boolean uniqueVersion = true;
+
+    /**
+     * Create a core-Maven deployment ArtifactRepository from a Maven Ant Tasks's RemoteRepository definition.
+     * @param repository the remote repository as defined in Ant
+     * @return the corresponding ArtifactRepository
+     */
+    protected ArtifactRepository createDeploymentArtifactRepository( RemoteRepository repository )
+    {
+        ArtifactRepositoryLayout repositoryLayout =
+            (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, repository.getLayout() );
+
+        ArtifactRepositoryFactory repositoryFactory = null;
+
+        ArtifactRepository artifactRepository;
+
+        try
+        {
+            repositoryFactory = getArtifactRepositoryFactory( repository );
+
+            artifactRepository = repositoryFactory.createDeploymentArtifactRepository( repository.getId(), repository.getUrl(),
+                                                                             repositoryLayout, uniqueVersion );
+        }
+        finally
+        {
+            releaseArtifactRepositoryFactory( repositoryFactory );
+        }
+
+        return artifactRepository;
+    }
+
 
     protected void doExecute()
     {
@@ -110,6 +144,7 @@ public class DeployTask
                 {
                     remoteSnapshotRepository = createAntRemoteRepositoryBase( distributionManagement
                         .getSnapshotRepository() );
+                    uniqueVersion = distributionManagement.getSnapshotRepository().isUniqueVersion();
                 }
                 if ( distributionManagement.getRepository() != null )
                 {
@@ -126,11 +161,11 @@ public class DeployTask
         ArtifactRepository deploymentRepository;
         if ( artifact.isSnapshot() && remoteSnapshotRepository != null )
         {
-            deploymentRepository = createRemoteArtifactRepository( remoteSnapshotRepository );
+            deploymentRepository = createDeploymentArtifactRepository( remoteSnapshotRepository );
         }
         else if ( remoteRepository != null )
         {
-            deploymentRepository = createRemoteArtifactRepository( remoteRepository );
+            deploymentRepository = createDeploymentArtifactRepository( remoteRepository );
         }
         else
         {
@@ -154,5 +189,15 @@ public class DeployTask
     public void addRemoteRepository( RemoteRepository remoteRepository )
     {
         this.remoteRepository = remoteRepository;
+    }
+
+    public void setUniqueVersion( boolean uniqueVersion )
+    {
+        this.uniqueVersion = uniqueVersion;
+    }
+
+    public boolean getUniqueVersion()
+    {
+        return uniqueVersion;
     }
 }
