@@ -54,6 +54,8 @@ public class DeployTask
      */
     protected ArtifactRepository createDeploymentArtifactRepository( RemoteRepository repository )
     {
+        updateRepositoryWithSettings( repository );
+
         ArtifactRepositoryLayout repositoryLayout =
             (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, repository.getLayout() );
 

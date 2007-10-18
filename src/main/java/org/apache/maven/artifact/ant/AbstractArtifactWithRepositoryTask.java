@@ -27,7 +27,7 @@ import org.apache.tools.ant.Project;
 
 /**
  * Base class for atifact tasks that are able to download artifact from repote repositories. 
- * @version $Id:$
+ * @version $Id$
  */
 public abstract class AbstractArtifactWithRepositoryTask
     extends AbstractArtifactTask
@@ -43,7 +43,7 @@ public abstract class AbstractArtifactWithRepositoryTask
      */
     private static RemoteRepository getDefaultRemoteRepository()
     {
-        // TODO: could we utilise the super POM for this?
+        // TODO: could we utilize the super POM for this?
         RemoteRepository remoteRepository = new RemoteRepository();
         remoteRepository.setId( "central" );
         remoteRepository.setUrl( "http://repo1.maven.org/maven2" );
@@ -76,6 +76,7 @@ public abstract class AbstractArtifactWithRepositoryTask
         for ( Iterator i = remoteRepositories.iterator(); i.hasNext(); )
         {
             RemoteRepository remoteRepository = (RemoteRepository) i.next();
+            updateRepositoryWithSettings( remoteRepository );
     
             StringBuffer msg = new StringBuffer();
             msg.append( "  - id=" + remoteRepository.getId() );
