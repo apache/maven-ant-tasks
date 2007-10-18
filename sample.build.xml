@@ -29,7 +29,8 @@
 
     <artifact:localRepository id="local.repository" path="${basedir}/target/local-repo" layout="default"/>
 
-    <artifact:remoteRepository id="deploy.repository" url="file://localhost/${basedir}/target/deployment-repo" layout="default"/>
+    <property name="deploy.repository.url" value="${basedir}/target/deployment-repo" />
+    <artifact:remoteRepository id="deploy.repository" url="file://localhost/${deploy.repository.url}" layout="default"/>
 
     <artifact:pom file="pom.xml" id="maven.project"/>
   </target>
@@ -163,6 +164,8 @@
 
   <target name="test-deploy" depends="initTaskDefs,installSshProvider">
     <property name="outJar" value="${maven.project.build.directory}/${maven.project.build.finalName}.jar"/>
+    <property name="targetDir" value="${deploy.repository.url}/org/apache/maven/maven-ant-tasks/${pom.xml.project.version}"/>
+    <delete dir="${deploy.repository.url}"/>
 
     <artifact:install file="${outJar}">
       <pom refid="maven.project"/>
@@ -173,6 +176,17 @@
       <remoteSnapshotRepository refid="deploy.repository"/>
       <pom refid="maven.project"/>
     </artifact:deploy>
+    <available file="${targetDir}" property="deploymentArtifactDir"/>
+    <fail unless="deploymentArtifactDir">deployment in ${deploy.repository.url} should have created a directory</fail>
+    <available file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar" property="outJarWithoutUniqueVersion"/>
+    <fail if="outJarWithoutUniqueVersion">uniqueVersion="true" by default: file -SNAPSHOT.jar should not exist</fail>
+
+    <artifact:deploy file="${outJar}" uniqueVersion="false">
+      <remoteSnapshotRepository refid="deploy.repository"/>
+      <pom refid="maven.project"/>
+    </artifact:deploy>
+    <available file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar" property="outJarWithoutUniqueVersion"/>
+    <fail unless="outJarWithoutUniqueVersion">when uniqueVersion="false", file -SNAPSHOT.jar should be created</fail>
 
     <artifact:deploy file="${outJar}">
       <remoteRepository url="scp://localhost/tmp/deployment-repo">

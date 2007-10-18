@@ -92,15 +92,13 @@ public abstract class AbstractArtifactTask
     }
 
     /**
-     * Create a core-Maven ArtifactRepository from a Maven Ant Tasks's RemoteRepository definition.
+     * Create a core-Maven ArtifactRepositoryFactory from a Maven Ant Tasks's RemoteRepository definition,
+     * eventually configured with authentication and proxy information.
      * @param repository the remote repository as defined in Ant
-     * @return the corresponding ArtifactRepository
+     * @return the corresponding ArtifactRepositoryFactory
      */
-    protected ArtifactRepository createRemoteArtifactRepository( RemoteRepository repository )
+    protected ArtifactRepositoryFactory getArtifactRepositoryFactory( RemoteRepository repository )
     {
-        ArtifactRepositoryLayout repositoryLayout =
-            (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, repository.getLayout() );
-
         WagonManager manager = (WagonManager) lookup( WagonManager.ROLE );
 
         Authentication authentication = repository.getAuthentication();
@@ -118,13 +116,38 @@ public abstract class AbstractArtifactTask
                               proxy.getPassword(), proxy.getNonProxyHosts() );
         }
 
+        return (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
+    }
+
+    protected void releaseArtifactRepositoryFactory( ArtifactRepositoryFactory repositoryFactory )
+    {
+        try
+        {
+            getContainer().release( repositoryFactory );
+        }
+        catch ( ComponentLifecycleException e )
+        {
+            // TODO: Warn the user, or not?
+        }
+    }
+
+    /**
+     * Create a core-Maven ArtifactRepository from a Maven Ant Tasks's RemoteRepository definition.
+     * @param repository the remote repository as defined in Ant
+     * @return the corresponding ArtifactRepository
+     */
+    protected ArtifactRepository createRemoteArtifactRepository( RemoteRepository repository )
+    {
+        ArtifactRepositoryLayout repositoryLayout =
+            (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, repository.getLayout() );
+
         ArtifactRepositoryFactory repositoryFactory = null;
 
         ArtifactRepository artifactRepository;
 
         try
         {
-            repositoryFactory = (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
+            repositoryFactory = getArtifactRepositoryFactory( repository );
 
             ArtifactRepositoryPolicy snapshots = buildArtifactRepositoryPolicy( repository.getSnapshots() );
             ArtifactRepositoryPolicy releases = buildArtifactRepositoryPolicy( repository.getReleases() );
@@ -134,14 +157,7 @@ public abstract class AbstractArtifactTask
         }
         finally
         {
-            try
-            {
-                getContainer().release( repositoryFactory );
-            }
-            catch ( ComponentLifecycleException e )
-            {
-                // TODO: Warn the user, or not?
-            }
+            releaseArtifactRepositoryFactory( repositoryFactory );
         }
 
         return artifactRepository;
