@@ -373,8 +373,7 @@ public abstract class AbstractArtifactTask
         return container;
     }
 
-    public Pom buildPom( MavenProjectBuilder projectBuilder,
-                         ArtifactRepository localArtifactRepository )
+    public Pom buildPom( ArtifactRepository localArtifactRepository )
     {
         if ( pomRefId != null && pom != null )
         {
@@ -393,6 +392,7 @@ public abstract class AbstractArtifactTask
 
         if ( pom != null )
         {
+            MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
             pom.initialise( projectBuilder, localArtifactRepository );
         }
         return pom;
@@ -416,6 +416,15 @@ public abstract class AbstractArtifactTask
         return pom;
     }
     
+    protected Artifact createDummyArtifact()
+    {
+        Pom pom = createDummyPom();
+        ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
+        // TODO: maybe not strictly correct, while we should enfore that packaging has a type handler of the same id, we don't
+        return factory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(), pom.getVersion(),
+                                            pom.getPackaging() );
+    }
+
     public String[] getSupportedProtocols()
     {
         try
@@ -496,14 +505,6 @@ public abstract class AbstractArtifactTask
             log( "Profiles not yet supported, ignoring profiles '" + profiles + "'", Project.MSG_WARN );
 //            System.setProperty( ProfileActivationUtils.ACTIVE_PROFILE_IDS, profiles );
         }
-    }
-
-    protected Artifact createArtifact( Pom pom )
-    {
-        ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
-        // TODO: maybe not strictly correct, while we should enfore that packaging has a type handler of the same id, we don't
-        return factory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(), pom.getVersion(),
-                                            pom.getPackaging() );
     }
 
     private static RepositoryPolicy convertRepositoryPolicy( org.apache.maven.model.RepositoryPolicy pomRepoPolicy )

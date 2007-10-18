@@ -34,7 +34,6 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.TypeArtifactFilter;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Repository;
-import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.apache.tools.ant.BuildException;
@@ -89,13 +88,12 @@ public class DependenciesTask
         log( "Using local repository: " + localRepo.getBasedir(), Project.MSG_VERBOSE );
 
         ArtifactResolver resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
-        MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
         ArtifactFactory artifactFactory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         MavenMetadataSource metadataSource = (MavenMetadataSource) lookup( ArtifactMetadataSource.ROLE );
 
         List dependencies = this.dependencies;
 
-        Pom pom = buildPom( projectBuilder, localRepo );
+        Pom pom = buildPom( localRepo );
         if ( pom != null )
         {
             if ( !dependencies.isEmpty() )

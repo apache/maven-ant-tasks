@@ -20,11 +20,11 @@ package org.apache.maven.artifact.ant;
  */
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 
 /**
  * Support for install/deploy tasks.
@@ -48,34 +48,22 @@ public abstract class InstallDeployTaskSupport
     {
         this.file = file;
     }
-
-    protected Artifact createArtifactFromAttached(final AttachedArtifact attached, final Artifact parent)
+    
+    public Pom buildPom( ArtifactRepository localArtifactRepository )
     {
-        ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
+        Pom pom = super.buildPom( localArtifactRepository );
 
-        Artifact artifact;
-        if (attached.getClassifier() != null) {
-            artifact = factory.createArtifactWithClassifier(
-                parent.getGroupId(),
-                parent.getArtifactId(),
-                parent.getVersion(),
-                attached.getType(),
-                attached.getClassifier()
-            );
+        // attach artifacts
+        if (attachedArtifacts != null) {
+            Iterator iter = attachedArtifacts.iterator();
+
+            while (iter.hasNext()) {
+                AttachedArtifact attached = (AttachedArtifact)iter.next();
+                pom.attach( attached );
+            }
         }
-        else {
-            artifact = factory.createArtifact(
-                parent.getGroupId(),
-                parent.getArtifactId(),
-                parent.getVersion(),
-                null, // scope
-                attached.getType()
-            );
-        }
-
-        artifact.setFile( attached.getFile() );
-
-        return artifact;
+        
+        return pom;
     }
 
     public AttachedArtifact createAttach()
