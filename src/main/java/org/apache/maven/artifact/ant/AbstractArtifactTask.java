@@ -299,35 +299,46 @@ public abstract class AbstractArtifactTask
 
     protected RemoteRepository createAntRemoteRepositoryBase( org.apache.maven.model.RepositoryBase pomRepository )
     {
-        // TODO: actually, we need to not funnel this through the ant repository - we should pump settings into wagon
-        // manager at the start like m2 does, and then match up by repository id
-        // As is, this could potentially cause a problem with 2 remote repositories with different authentication info
-
         RemoteRepository r = new RemoteRepository();
         r.setId( pomRepository.getId() );
         r.setUrl( pomRepository.getUrl() );
         r.setLayout( pomRepository.getLayout() );
 
-        Server server = getSettings().getServer( pomRepository.getId() );
-        if ( server != null )
-        {
-            r.addAuthentication( new Authentication( server ) );
-        }
-
-        org.apache.maven.settings.Proxy proxy = getSettings().getActiveProxy();
-        if ( proxy != null )
-        {
-            r.addProxy( new Proxy( proxy ) );
-        }
-
-        Mirror mirror = getSettings().getMirrorOf( pomRepository.getId() );
-        if ( mirror != null )
-        {
-            r.setUrl( mirror.getUrl() );
-        }
+        updateRepositoryWithSettings( r );
         return r;
     }
 
+    protected void updateRepositoryWithSettings( RemoteRepository repository )
+    {
+        // TODO: actually, we need to not funnel this through the ant repository - we should pump settings into wagon
+        // manager at the start like m2 does, and then match up by repository id
+        // As is, this could potentially cause a problem with 2 remote repositories with different authentication info
+
+        if ( repository.getAuthentication() == null )
+                 {
+            Server server = getSettings().getServer( repository.getId() );
+            if ( server != null )
+            {
+                repository.addAuthentication( new Authentication( server ) );
+            }
+        }
+         
+        if ( repository.getProxy() == null )
+        {
+            org.apache.maven.settings.Proxy proxy = getSettings().getActiveProxy();
+            if ( proxy != null )
+            {
+                repository.addProxy( new Proxy( proxy ) );
+            }
+        }
+         
+        Mirror mirror = getSettings().getMirrorOf( repository.getId() );
+        if ( mirror != null )
+        {
+            repository.setUrl( mirror.getUrl() );
+        }
+    }
+         
     protected Object lookup( String role )
     {
         try
@@ -436,7 +447,7 @@ public abstract class AbstractArtifactTask
     {
         Pom pom = createDummyPom();
         ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
-        // TODO: maybe not strictly correct, while we should enfore that packaging has a type handler of the same id, we don't
+        // TODO: maybe not strictly correct, while we should enforce that packaging has a type handler of the same id, we don't
         return factory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(), pom.getVersion(),
                                             pom.getPackaging() );
     }

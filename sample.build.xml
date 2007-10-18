@@ -40,7 +40,7 @@
   </target>
   
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps,test-legacy-pom">
+    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps,test-legacy-pom,test-deps-mirror">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -152,6 +152,16 @@
       <fileset refid="maven-ant-tasks.compile.dependency.fileset"/>
       <mapper type="flatten"/>
     </copy>
+  </target>
+
+  <target name="test-deps-mirror" depends="initTaskDefs">
+    <delete dir="${basedir}/target/tmp"/>
+    <!-- the remoteRepository specified doesn't really exist, but settings declares an existing mirror-->
+    <artifact:dependencies filesetId="mirror.fileset" settingsFile="${basedir}/src/test/settings-mirror.xml" verbose="true">
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
+      <localRepository path="${basedir}/target/tmp"/>
+      <remoteRepository url="file://${basedir}/target/fake/repository" id="fake-repository" />
+    </artifact:dependencies>
   </target>
 
   <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">
