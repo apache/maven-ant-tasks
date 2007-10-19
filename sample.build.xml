@@ -38,9 +38,9 @@
   <target name="installSshProvider" depends="initTaskDefs">
     <artifact:install-provider artifactId="wagon-ssh" version="1.0-beta-2"/>
   </target>
-  
+
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps,test-legacy-pom,test-deps-mirror">
+    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-dep-two-repos,test-deps,test-legacy-pom,test-deps-mirror">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -170,6 +170,17 @@
       <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
       <localRepository path="${basedir}/target/tmp"/>
       <remoteRepository url="file://${basedir}/target/fake/repository" id="fake-repository" />
+    </artifact:dependencies>
+  </target>
+
+  <target name="test-dep-two-repos" depends="initTaskDefs">
+    <delete dir="target/tmp"/>
+    <!-- MANTTASKS-78 -->
+    <artifact:dependencies verbose="true">
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
+      <localRepository path="target/tmp"/>
+      <remoteRepository url="file://${user.dir}/src/test/repo"/>
+      <remoteRepository url="file://${user.dir}/target/tmp/fake"/>
     </artifact:dependencies>
   </target>
 
