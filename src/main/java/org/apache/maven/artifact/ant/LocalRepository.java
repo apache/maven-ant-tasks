@@ -41,4 +41,9 @@ public class LocalRepository
     {
         this.path = path;
     }
+
+    protected String getDefaultId()
+    {
+        return "local";
+    }
 }

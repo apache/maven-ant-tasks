@@ -35,12 +35,14 @@ public abstract class Repository
     private String refid;
 
     private String layout = "default";
+    
+    protected abstract String getDefaultId();
 
     public String getId()
     {
         if ( getInstance().id == null )
         {
-            getInstance().setId( "remote" );
+            getInstance().setId( getDefaultId() );
         }
         return getInstance().id;
     }
