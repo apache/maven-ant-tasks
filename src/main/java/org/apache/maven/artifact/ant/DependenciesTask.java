@@ -233,7 +233,7 @@ public class DependenciesTask
 
                 fileSet.createInclude().setName( filename );
                 
-                versions.add( artifact.getBaseVersion() );
+                versions.add( artifact.getVersion() );
 
                 if ( sourcesFilesetId != null )
                 {
