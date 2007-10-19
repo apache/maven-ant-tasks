@@ -88,7 +88,7 @@
   </target>
 
   <target name="test-deps" depends="initTaskDefs">
-    <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset" sourcesFilesetId="sources.fileset" verbose="true">
+    <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset" sourcesFilesetId="sources.fileset" verbose="true" versionsId="dependency.versions">
       <dependency groupId="org.apache.maven.wagon" artifactId="wagon-provider-test" version="1.0-alpha-4">
         <exclusion groupId="junit" artifactId="junit"/>
       </dependency>
@@ -116,6 +116,15 @@
     <available file="target/files/binaries/it/ant-tasks/snapshotUniqueTrue" type="dir" property="snapshot.dependency.uniqueTrue"/>
     <!-- MANTTASKS-18 -->
     <fail unless="snapshot.dependency.uniqueTrue">SNAPSHOT dependency it.ant-tasks:snapshotUniqueTrue:2.0.7-SNAPSHOT should be in target/files/binaries</fail>
+
+    <!-- MANTTASKS-84 -->
+    <copy todir="target/files/versionMapperFlatten">
+      <fileset refid="dependency.fileset"/>
+      <mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper"
+              from="${dependency.versions}" to="flatten" />
+    </copy>
+    <available file="target/files/versionMapperFlatten/it" type="dir" property="snapshot.dependency.flatten.failed"/>
+    <fail if="snapshot.dependency.flatten.failed">VersionMapper to="flatten" failed on SNAPSHOT</fail>
   </target>
 
   <target name="test-pom-deps" depends="initTaskDefs">
