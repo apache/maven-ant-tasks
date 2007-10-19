@@ -48,12 +48,13 @@ import org.codehaus.plexus.component.repository.exception.ComponentLifecycleExce
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.embed.Embedder;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -237,11 +238,11 @@ public abstract class AbstractArtifactTask
 
     private void loadSettings( File settingsFile )
     {
-        FileReader reader = null;
+        Reader reader = null;
         try
         {
             log( "Loading Maven settings file: " + settingsFile.getPath(), Project.MSG_VERBOSE );
-            reader = new FileReader( settingsFile );
+            reader = ReaderFactory.newXmlReader( settingsFile );
 
             SettingsXpp3Reader modelReader = new SettingsXpp3Reader();
 

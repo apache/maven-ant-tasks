@@ -45,14 +45,13 @@ import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
@@ -187,8 +186,7 @@ public class Pom
         Model model = null;
         try
         {
-            InputStream in = new FileInputStream( file );
-            Reader reader = new InputStreamReader( in, "UTF-8" );
+            Reader reader = ReaderFactory.newXmlReader( file );
             model = new MavenXpp3Reader().read( reader );
         }
         catch ( IOException e )
