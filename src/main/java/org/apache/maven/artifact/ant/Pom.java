@@ -51,7 +51,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.util.Collections;
 import java.util.List;
@@ -221,11 +220,12 @@ public class Pom
             }
             catch ( ArtifactResolutionException e )
             {
-                throw new BuildException( "Error downloading parent pom: " + e.getMessage(), e );
+                // MANTTASKS-87: don't fail if parent pom is not resolved immediately
+                log( "Error downloading parent pom " + parent.getId() + ": " + e.getMessage(), Project.MSG_WARN );
             }
             catch ( ArtifactNotFoundException e )
             {
-                throw new BuildException( "Unable to download parent pom in remote repository: " + e.getMessage(), e );
+                throw new BuildException( "Unable to download parent pom " + parent.getId() + " in remote repository: " + e.getMessage(), e );
             }
         }
     }
