@@ -40,7 +40,7 @@
   </target>
 
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-dep-two-repos,test-deps,test-legacy-pom,test-deps-mirror">
+    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -173,7 +173,7 @@
     </artifact:dependencies>
   </target>
 
-  <target name="test-dep-two-repos" depends="initTaskDefs">
+  <target name="test-deps-two-repos" depends="initTaskDefs">
     <delete dir="target/tmp"/>
     <!-- MANTTASKS-78 -->
     <artifact:dependencies verbose="true">
@@ -182,6 +182,46 @@
       <remoteRepository url="file://${user.dir}/src/test/repo"/>
       <remoteRepository url="file://${user.dir}/target/tmp/fake"/>
     </artifact:dependencies>
+  </target>
+
+  <target name="test-deps-order" depends="initTaskDefs">
+    <artifact:dependencies pathId="order.path">
+      <dependency groupId="junit" artifactId="junit" version="3.8.1"/>
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
+      <localRepository refid="local.repository"/>
+      <remoteRepository url="http://repo1.maven.org/maven2" id="central" />
+      <remoteRepository url="file://${user.dir}/src/test/repo">
+        <snapshots enabled="true"/>
+        <releases enabled="false"/>
+      </remoteRepository>
+    </artifact:dependencies>
+
+    <pathconvert property="order.property" targetos="unix" refid="order.path">
+      <mapper type="flatten"/>
+    </pathconvert>
+    <condition property="order.ok">
+      <equals arg1="${order.property}" arg2="junit-3.8.1.jar:snapshotUniqueFalse-2.0.7-SNAPSHOT.jar"/>
+    </condition>
+    <fail unless="order.ok">dependencies junit then it.ant-tasks should be preserved in path: ${order.property}</fail>
+
+    <artifact:dependencies pathId="reverse.order.path">
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
+      <dependency groupId="junit" artifactId="junit" version="3.8.1"/>
+      <localRepository refid="local.repository"/>
+      <remoteRepository url="http://repo1.maven.org/maven2" id="central" />
+      <remoteRepository url="file://${user.dir}/src/test/repo">
+        <snapshots enabled="true"/>
+        <releases enabled="false"/>
+      </remoteRepository>
+    </artifact:dependencies>
+
+    <pathconvert property="reverse.order.property" targetos="unix" refid="reverse.order.path">
+      <mapper type="flatten"/>
+    </pathconvert>
+    <condition property="reverse.order.ok">
+      <equals arg1="${reverse.order.property}" arg2="snapshotUniqueFalse-2.0.7-SNAPSHOT.jar:junit-3.8.1.jar"/>
+    </condition>
+    <fail unless="reverse.order.ok">dependencies junit then it.ant-tasks should be preserved in path: ${reverse.order.property}</fail>
   </target>
 
   <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">
