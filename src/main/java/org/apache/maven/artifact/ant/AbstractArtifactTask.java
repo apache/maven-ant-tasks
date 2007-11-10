@@ -31,6 +31,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.settings.Mirror;
+import org.apache.maven.settings.RuntimeInfo;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
@@ -50,11 +51,15 @@ import org.codehaus.plexus.embed.Embedder;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.interpolation.EnvarBasedValueSource;
+import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -238,15 +243,10 @@ public abstract class AbstractArtifactTask
 
     private void loadSettings( File settingsFile )
     {
-        Reader reader = null;
         try
         {
             log( "Loading Maven settings file: " + settingsFile.getPath(), Project.MSG_VERBOSE );
-            reader = ReaderFactory.newXmlReader( settingsFile );
-
-            SettingsXpp3Reader modelReader = new SettingsXpp3Reader();
-
-            settings = modelReader.read( reader );
+            settings = readSettings( settingsFile );
 
             checkSettingsLocalRepository();
         }
@@ -260,12 +260,8 @@ public abstract class AbstractArtifactTask
             log( "Error parsing settings file '" + settingsFile + "' - ignoring. Error was: " + e.getMessage(),
                  Project.MSG_WARN );
         }
-        finally
-        {
-            IOUtil.close( reader );
-        }
     }
-    
+
     private void checkSettingsLocalRepository()
     {
         if ( StringUtils.isEmpty( settings.getLocalRepository() ) )
@@ -280,6 +276,54 @@ public abstract class AbstractArtifactTask
         if ( !settingsFile.exists() )
             throw new BuildException( "settingsFile does not exist: " + settingsFile.getAbsolutePath() );
         loadSettings( settingsFile );
+    }
+
+    /**
+     * @see org.apache.maven.settings.DefaultMavenSettingsBuilder#readSettings
+     */
+    private Settings readSettings( File settingsFile )
+        throws IOException, XmlPullParserException
+    {
+        Settings settings = null;
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( settingsFile );
+            StringWriter sWriter = new StringWriter();
+
+            IOUtil.copy( reader, sWriter );
+
+            String rawInput = sWriter.toString();
+
+            try
+            {
+                RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
+                interpolator.addValueSource( new EnvarBasedValueSource() );
+
+                rawInput = interpolator.interpolate( rawInput, "settings" );
+            }
+            catch ( Exception e )
+            {
+                log( "Failed to initialize environment variable resolver. Skipping environment substitution in settings." );
+            }
+
+            StringReader sReader = new StringReader( rawInput );
+
+            SettingsXpp3Reader modelReader = new SettingsXpp3Reader();
+
+            settings = modelReader.read( sReader );
+
+            RuntimeInfo rtInfo = new RuntimeInfo( settings );
+
+            rtInfo.setFile( settingsFile );
+
+            settings.setRuntimeInfo( rtInfo );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+        return settings;
     }
 
     protected RemoteRepository createAntRemoteRepository( org.apache.maven.model.Repository pomRepository )
