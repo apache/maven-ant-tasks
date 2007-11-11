@@ -21,7 +21,6 @@ package org.apache.maven.artifact.ant;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
@@ -123,9 +122,6 @@ public class DependenciesTask
         }
 
         log( "Resolving dependencies...", Project.MSG_VERBOSE );
-
-        WagonManager wagonManager = (WagonManager) lookup( WagonManager.ROLE );
-        wagonManager.setDownloadMonitor( new AntDownloadMonitor() );
 
         ArtifactResolutionResult result;
         Set artifacts;
