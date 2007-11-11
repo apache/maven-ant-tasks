@@ -53,11 +53,12 @@
   </target>
 
   <target name="test-no-deps" depends="initTaskDefs">
-    <artifact:dependencies filesetId="runtime.fileset">
+    <artifact:dependencies filesetId="runtime.fileset" pathId="empty.dependency.classpath">
     </artifact:dependencies>
     <copy todir="target/test-no-deps" verbose="true">
       <fileset refid="runtime.fileset"/>
     </copy>
+    <property name="empty.property" refid="empty.dependency.classpath"/>
   </target>
 
   <target name="test-empty-settings" depends="initTaskDefs">

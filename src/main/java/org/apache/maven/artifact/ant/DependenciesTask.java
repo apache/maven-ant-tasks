@@ -268,7 +268,10 @@ public class DependenciesTask
         if ( pathId != null )
         {
             Path path = new Path( getProject() );
-            path.addFilelist( fileList );
+            if ( versions.size() > 0 )
+            {
+                path.addFilelist( fileList );
+            }
             getProject().addReference( pathId, path );
         }
 
