@@ -34,6 +34,8 @@ import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.RuntimeInfo;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.SettingsUtils;
+import org.apache.maven.settings.TrackableBase;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
 import org.apache.maven.usability.diagnostics.ErrorDiagnostics;
 import org.apache.maven.wagon.Wagon;
@@ -74,6 +76,10 @@ import java.util.Map;
 public abstract class AbstractArtifactTask
     extends Task
 {
+    private File userSettingsFile;
+
+    private File globalSettingsFile;
+
     private Settings settings;
 
     private PlexusContainer container;
@@ -204,17 +210,40 @@ public abstract class AbstractArtifactTask
     {
         if ( settings == null )
         {
-            File settingsFile = new File( System.getProperty( "user.home" ), ".ant/settings.xml" );
-            if ( !settingsFile.exists() )
+            initSettings();
+        }
+        return settings;
+    }
+
+    private File newFile( String parent, String subdir, String filename )
+    {
+        return new File( new File( parent, subdir ), filename );
+    }
+
+    private void initSettings()
+    {
+        if ( userSettingsFile == null )
+        {
+            File settingsFile = newFile( System.getProperty( "user.home" ), ".ant", "settings.xml" );
+            if ( settingsFile.exists() )
             {
-                settingsFile = new File( System.getProperty( "user.home" ), ".m2/settings.xml" );
+                userSettingsFile = settingsFile;
+            } else {
+                settingsFile = newFile( System.getProperty( "user.home" ), ".m2", "settings.xml" );
+                if ( settingsFile.exists() )
+                {
+                    userSettingsFile = settingsFile;
+                }
             }
-            if ( !settingsFile.exists() )
+        }
+        if ( globalSettingsFile == null )
+        {
+            File settingsFile = newFile( System.getProperty( "ant.home" ), "etc", "settings.xml" );
+            if ( settingsFile.exists() )
             {
-                settingsFile = new File( System.getProperty( "ant.home" ), "etc/settings.xml" );
-            }
-            if ( !settingsFile.exists() )
-            { // look in ${M2_HOME}/conf
+                globalSettingsFile = settingsFile;
+            } else {
+                // look in ${M2_HOME}/conf
                 List env = Execute.getProcEnvironment();
                 for ( Iterator iter = env.iterator(); iter.hasNext(); )
                 {
@@ -222,33 +251,36 @@ public abstract class AbstractArtifactTask
                     if ( var.startsWith( "M2_HOME=" ) )
                     {
                         String m2_home = var.substring( "M2_HOME=".length() );
-                        settingsFile = new File( m2_home, "conf/settings.xml" );
+                        globalSettingsFile = newFile( m2_home, "conf", "settings.xml" );
                         break;
                     }
                 }
             }
-
-            if ( settingsFile.exists() )
-            {
-                loadSettings( settingsFile );
-            }
-            else
-            {
-                settings = new Settings();
-                checkSettingsLocalRepository();
-            }
         }
-        return settings;
+
+        Settings userSettings = loadSettings( userSettingsFile );
+        Settings globalSettings = loadSettings( globalSettingsFile );
+
+        SettingsUtils.merge( userSettings, globalSettings, TrackableBase.GLOBAL_LEVEL );
+        settings = userSettings;
+
+        if ( StringUtils.isEmpty( settings.getLocalRepository() ) )
+        {
+            String location = newFile( System.getProperty( "user.home" ), ".m2", "repository" ).getAbsolutePath();
+            settings.setLocalRepository( location );
+        }
     }
 
-    private void loadSettings( File settingsFile )
+    private Settings loadSettings( File settingsFile )
     {
+        Settings settings = null;
         try
         {
-            log( "Loading Maven settings file: " + settingsFile.getPath(), Project.MSG_VERBOSE );
-            settings = readSettings( settingsFile );
-
-            checkSettingsLocalRepository();
+            if ( settingsFile != null )
+            {
+                log( "Loading Maven settings file: " + settingsFile.getPath(), Project.MSG_VERBOSE );
+                settings = readSettings( settingsFile );
+            }
         }
         catch ( IOException e )
         {
@@ -260,22 +292,22 @@ public abstract class AbstractArtifactTask
             log( "Error parsing settings file '" + settingsFile + "' - ignoring. Error was: " + e.getMessage(),
                  Project.MSG_WARN );
         }
-    }
 
-    private void checkSettingsLocalRepository()
-    {
-        if ( StringUtils.isEmpty( settings.getLocalRepository() ) )
+        if ( settings == null )
         {
-            String location = new File( System.getProperty( "user.home" ), ".m2/repository" ).getAbsolutePath();
-            settings.setLocalRepository( location );
+            settings = new Settings();
         }
+
+        return settings;
     }
 
     public void setSettingsFile( File settingsFile )
     {
         if ( !settingsFile.exists() )
             throw new BuildException( "settingsFile does not exist: " + settingsFile.getAbsolutePath() );
-        loadSettings( settingsFile );
+
+        userSettingsFile = settingsFile;
+        settings = null;
     }
 
     /**
