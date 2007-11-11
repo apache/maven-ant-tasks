@@ -41,6 +41,11 @@ public class AntDownloadMonitor
 
     public void transferCompleted( TransferEvent event )
     {
+        long contentLength = event.getResource().getContentLength();
+        if ( ( contentLength > 0 ) && ( event.getRequestType() == TransferEvent.REQUEST_PUT ) )
+        {
+            log( "Uploaded " + ( ( contentLength + 512 ) / 1024 ) + "K" );
+        }
     }
 
     public void transferError( TransferEvent event )
@@ -64,7 +69,7 @@ public class AntDownloadMonitor
         long contentLength = event.getResource().getContentLength();
         if ( contentLength > 0 )
         {
-            log( "Transferring " + ( contentLength / 1024 ) + "K" );
+            log( "Transferring " + ( ( contentLength + 512 ) / 1024 ) + "K" );
         }
     }
 }

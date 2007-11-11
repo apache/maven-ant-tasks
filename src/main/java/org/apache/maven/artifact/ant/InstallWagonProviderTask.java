@@ -101,6 +101,8 @@ public class InstallWagonProviderTask
         ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         Artifact providerArtifact = factory.createExtensionArtifact( groupId, artifactId, versionRange );
 
+        log( "Installing provider: " + providerArtifact );
+
         ArtifactResolutionResult result;
         try
         {
@@ -121,8 +123,6 @@ public class InstallWagonProviderTask
         {
             throw new BuildException( "Unable to locate wagon provider in remote repository: " + e.getMessage(), e );
         }
-
-        log( "Installing provider: " + providerArtifact );
 
         try
         {

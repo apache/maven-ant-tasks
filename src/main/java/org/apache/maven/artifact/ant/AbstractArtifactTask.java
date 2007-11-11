@@ -269,6 +269,14 @@ public abstract class AbstractArtifactTask
             String location = newFile( System.getProperty( "user.home" ), ".m2", "repository" ).getAbsolutePath();
             settings.setLocalRepository( location );
         }
+
+        WagonManager wagonManager = (WagonManager) lookup( WagonManager.ROLE );
+        wagonManager.setDownloadMonitor( new AntDownloadMonitor() );
+        if ( settings.isOffline() )
+        {
+            log( "You are working in offline mode.", Project.MSG_INFO );
+            wagonManager.setOnline( false );
+        }
     }
 
     private Settings loadSettings( File settingsFile )
@@ -624,6 +632,7 @@ public abstract class AbstractArtifactTask
     {
         try
         {
+            initSettings();
             doExecute();
         }
         catch ( BuildException e )
