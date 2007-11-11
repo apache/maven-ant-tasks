@@ -277,6 +277,10 @@ public abstract class AbstractArtifactTask
             log( "You are working in offline mode.", Project.MSG_INFO );
             wagonManager.setOnline( false );
         }
+        else
+        {
+            wagonManager.setOnline( true );
+        }
     }
 
     private Settings loadSettings( File settingsFile )
