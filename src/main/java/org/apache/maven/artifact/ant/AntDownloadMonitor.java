@@ -56,8 +56,9 @@ public class AntDownloadMonitor
     public void transferInitiated( TransferEvent event )
     {
         String message = event.getRequestType() == TransferEvent.REQUEST_PUT ? "Uploading" : "Downloading";
+        String dest = event.getRequestType() == TransferEvent.REQUEST_PUT ? " to " : " from ";
 
-        log( message + ": " + event.getResource().getName() );
+        log( message + ": " + event.getResource().getName() + dest + event.getWagon().getRepository().getId() );
     }
 
     public void transferProgress( TransferEvent event, byte[] bytes, int i )
@@ -69,7 +70,8 @@ public class AntDownloadMonitor
         long contentLength = event.getResource().getContentLength();
         if ( contentLength > 0 )
         {
-            log( "Transferring " + ( ( contentLength + 512 ) / 1024 ) + "K" );
+            log( "Transferring " + ( ( contentLength + 512 ) / 1024 ) + "K from "
+                            + event.getWagon().getRepository().getId() );
         }
     }
 }

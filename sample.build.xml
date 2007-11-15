@@ -98,7 +98,7 @@
       <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueTrue" version="2.0.7-SNAPSHOT"/>
       <localRepository refid="local.repository"/>
       <remoteRepository url="http://repo1.maven.org/maven2" id="central" />
-      <remoteRepository url="file://${user.dir}/src/test/repo">
+      <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo">
         <snapshots enabled="true"/>
         <releases enabled="false"/>
       </remoteRepository>
@@ -180,8 +180,8 @@
     <artifact:dependencies verbose="true">
       <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
       <localRepository path="target/tmp"/>
-      <remoteRepository url="file://${user.dir}/src/test/repo"/>
-      <remoteRepository url="file://${user.dir}/target/tmp/fake"/>
+      <remoteRepository url="file://${user.dir}/src/test/repo"/>  <!-- intentionnally left without id -->
+      <remoteRepository url="file://${user.dir}/target/tmp/fake"/><!-- intentionnally left without id -->
     </artifact:dependencies>
   </target>
 
@@ -191,7 +191,7 @@
       <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
       <localRepository refid="local.repository"/>
       <remoteRepository url="http://repo1.maven.org/maven2" id="central" />
-      <remoteRepository url="file://${user.dir}/src/test/repo">
+      <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo">
         <snapshots enabled="true"/>
         <releases enabled="false"/>
       </remoteRepository>
@@ -210,7 +210,7 @@
       <dependency groupId="junit" artifactId="junit" version="3.8.1"/>
       <localRepository refid="local.repository"/>
       <remoteRepository url="http://repo1.maven.org/maven2" id="central" />
-      <remoteRepository url="file://${user.dir}/src/test/repo">
+      <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo">
         <snapshots enabled="true"/>
         <releases enabled="false"/>
       </remoteRepository>
@@ -228,7 +228,7 @@
   <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">
     <echo file="target/test file.txt">dummy</echo>
     <artifact:deploy file="target/test file.txt">
-      <remoteRepository url="scp://localhost/tmp/deployment-repo" />
+      <remoteRepository url="scp://localhost/tmp/deployment-repo" id="scp.localhost.repo" />
       <pom refid="maven.project"/>
     </artifact:deploy>
   </target>
@@ -260,7 +260,7 @@
     <fail unless="outJarWithoutUniqueVersion">when uniqueVersion="false", file -SNAPSHOT.jar should be created</fail>
 
     <artifact:deploy file="${outJar}">
-      <remoteRepository url="scp://localhost/tmp/deployment-repo">
+      <remoteRepository url="scp://localhost/tmp/deployment-repo" id="scp.localhost.repo">
         <authentication username="${user.name}" privateKey="${user.home}/.ssh/id_dsa"/>
       </remoteRepository>
       <pom refid="maven.project"/>
@@ -360,14 +360,14 @@
   <target name="test-install-provider" depends="initTaskDefs">
     <artifact:install-provider groupId="it.ant-tasks" artifactId="wagon-foo" version="1.0-beta-2">
       <localRepository refid="local.repository"/>
-      <remoteRepository url="file://${user.dir}/src/test/repo"/>
+      <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo"/>
     </artifact:install-provider>
   </target>
 
   <target name="test-pom-with-parent" depends="initTaskDefs">
     <artifact:pom file="${user.dir}/src/test/pom-with-parent.xml" id="my.maven.project">
       <localRepository refid="local.repository"/>
-      <remoteRepository url="file://${user.dir}/src/test/repo"/>
+      <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo"/>
     </artifact:pom>
 
     <echo>Artifact ID = ${my.maven.project.artifactId}</echo>
