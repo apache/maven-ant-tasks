@@ -166,11 +166,19 @@
 
   <target name="test-deps-mirror" depends="initTaskDefs">
     <delete dir="${basedir}/target/tmp"/>
-    <!-- the remoteRepository specified doesn't really exist, but settings declares an existing mirror-->
-    <artifact:dependencies filesetId="mirror.fileset" settingsFile="${basedir}/src/test/settings-mirror.xml" verbose="true">
+    <!-- the remoteRepository specified doesn't really exist, but settings declares an existing mirror -->
+    <artifact:dependencies settingsFile="${basedir}/src/test/settings-mirror.xml">
       <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
       <localRepository path="${basedir}/target/tmp"/>
       <remoteRepository url="file://${basedir}/target/fake/repository" id="fake-repository" />
+    </artifact:dependencies>
+
+    <delete dir="${basedir}/target/tmp"/>
+    <!-- the remoteRepository specified doesn't really exist, but settings declares an existing mirror for * -->
+    <artifact:dependencies settingsFile="${basedir}/src/test/settings-mirror-wildcard.xml">
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
+      <localRepository path="${basedir}/target/tmp"/>
+      <remoteRepository url="file://${basedir}/target/fake/repository" id="any" />
     </artifact:dependencies>
   </target>
 

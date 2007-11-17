@@ -404,7 +404,7 @@ public abstract class AbstractArtifactTask
         // As is, this could potentially cause a problem with 2 remote repositories with different authentication info
 
         if ( repository.getAuthentication() == null )
-                 {
+        {
             Server server = getSettings().getServer( repository.getId() );
             if ( server != null )
             {
@@ -422,6 +422,10 @@ public abstract class AbstractArtifactTask
         }
          
         Mirror mirror = getSettings().getMirrorOf( repository.getId() );
+        if ( mirror == null )
+        {
+            mirror = getSettings().getMirrorOf( "*" );
+        }
         if ( mirror != null )
         {
             repository.setUrl( mirror.getUrl() );
