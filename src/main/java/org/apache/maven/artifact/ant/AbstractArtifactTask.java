@@ -308,6 +308,8 @@ public abstract class AbstractArtifactTask
         if ( settings == null )
         {
             settings = new Settings();
+            RuntimeInfo rtInfo = new RuntimeInfo(settings);
+            settings.setRuntimeInfo(rtInfo);
         }
 
         return settings;
