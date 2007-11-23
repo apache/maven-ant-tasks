@@ -424,7 +424,7 @@ public class Pom
 
             try
             {
-                if ( expression.indexOf( "project.properties." ) >= 0 )
+                if ( expression.startsWith( "project.properties." ) )
                 {
                     expression = expression.substring( 19 );
                     value = getMavenProject().getProperties().get( expression );
