@@ -250,15 +250,15 @@ public class Pom
         return getMavenProject().getCiManagement();
     } //-- CiManagement getCiManagement()
 
-    public java.util.List getContributors()
+    public List getContributors()
     {
         return getMavenProject().getContributors();
-    } //-- java.util.List getContributors()
+    } //-- List getContributors()
 
-    public java.util.List getDependencies()
+    public List getDependencies()
     {
         return getMavenProject().getDependencies();
-    } //-- java.util.List getDependencies()
+    } //-- List getDependencies()
 
     public DependencyManagement getDependencyManagement()
     {
@@ -270,10 +270,10 @@ public class Pom
         return getMavenProject().getDescription();
     } //-- String getDescription()
 
-    public java.util.List getDevelopers()
+    public List getDevelopers()
     {
         return getMavenProject().getDevelopers();
-    } //-- java.util.List getDevelopers()
+    } //-- List getDevelopers()
 
     public DistributionManagement getDistributionManagement()
     {
@@ -295,25 +295,25 @@ public class Pom
         return getMavenProject().getIssueManagement();
     } //-- IssueManagement getIssueManagement()
 
-    public java.util.List getLicenses()
+    public List getLicenses()
     {
         return getMavenProject().getLicenses();
-    } //-- java.util.List getLicenses()
+    } //-- List getLicenses()
 
-    public java.util.List getMailingLists()
+    public List getMailingLists()
     {
         return getMavenProject().getMailingLists();
-    } //-- java.util.List getMailingLists()
+    } //-- List getMailingLists()
 
     public String getModelVersion()
     {
         return getMavenProject().getModelVersion();
     } //-- String getModelVersion()
 
-    public java.util.List getModules()
+    public List getModules()
     {
         return getMavenProject().getModules();
-    } //-- java.util.List getModules()
+    } //-- List getModules()
 
     public String getName()
     {
@@ -330,20 +330,20 @@ public class Pom
         return getMavenProject().getPackaging();
     } //-- String getPackaging()
 
-    public java.util.List getPluginRepositories()
+    public List getPluginRepositories()
     {
         return getMavenProject().getPluginRepositories();
-    } //-- java.util.List getPluginRepositories()
+    } //-- List getPluginRepositories()
 
     public Reporting getReporting()
     {
         return getMavenProject().getReporting();
     } //-- Reports getReports()
 
-    public java.util.List getRepositories()
+    public List getRepositories()
     {
         return getMavenProject().getRepositories();
-    } //-- java.util.List getRepositories()
+    } //-- List getRepositories()
 
     public Scm getScm()
     {
@@ -397,7 +397,6 @@ public class Pom
          */
         public Object getPropertyHook( String ns, String name, boolean user )
         {
-
             String prefix = antId + ".";
 
             if ( !name.startsWith( prefix ) )
@@ -424,7 +423,7 @@ public class Pom
 
             try
             {
-                if ( expression.indexOf( "project.properties." ) >= 0 )
+                if ( expression.startsWith( "project.properties." ) )
                 {
                     expression = expression.substring( 19 );
                     value = getMavenProject().getProperties().get( expression );
