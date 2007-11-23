@@ -78,6 +78,20 @@
     <echo>Artifact ID = ${my.maven.project.artifactId}</echo>
 
     <echo>Parent Artifact ID = ${my.maven.project.parent.artifactId}</echo>
+
+    <fail message="failed to get pom info ${my.maven.project.artifactId}">
+      <condition>
+        <not><equals arg1="${my.maven.project.artifactId}" arg2="${pom.xml.project.artifactId}"/></not>
+      </condition>
+    </fail>
+
+    <echo>Maven Core Version = ${my.maven.project.properties.mavenVersion}</echo>
+
+    <fail message="failed to get pom properties ${my.maven.project.properties.mavenVersion}">
+      <condition>
+        <not><equals arg1="${my.maven.project.properties.mavenVersion}" arg2="${pom.xml.project.properties.mavenVersion}"/></not>
+      </condition>
+    </fail>
   </target>
 
   <target name="test-legacy-pom" depends="initTaskDefs">

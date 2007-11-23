@@ -424,7 +424,15 @@ public class Pom
 
             try
             {
-                value = ReflectionValueExtractor.evaluate( expression, getMavenProject() );
+                if ( expression.indexOf( "project.properties." ) >= 0 )
+                {
+                    expression = expression.substring( 19 );
+                    value = getMavenProject().getProperties().get( expression );
+                }
+                else
+                {
+                    value = ReflectionValueExtractor.evaluate( expression, getMavenProject() );
+                }
             }
             catch ( Exception e )
             {
