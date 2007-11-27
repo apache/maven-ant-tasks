@@ -140,6 +140,13 @@
     </copy>
     <available file="target/files/versionMapperFlatten/it" type="dir" property="snapshot.dependency.flatten.failed"/>
     <fail if="snapshot.dependency.flatten.failed">VersionMapper to="flatten" failed on SNAPSHOT</fail>
+
+    <!-- MANTTASKS-33 -->
+    <available file="${it.ant-tasks:snapshotUniqueTrue:jar}" property="propertySnapshotUniqueTrue"/>
+    <fail unless="propertySnapshotUniqueTrue">property it.ant-tasks:snapshotUniqueFalse:jar should point to an existing file</fail>
+
+    <available file="${org.apache.maven:maven-core-it-support:java-source:sources}" property="propertySources"/>
+    <fail unless="propertySources">property org.apache.maven:maven-core-it-support:java-source:sources should point to an existing file</fail>
   </target>
 
   <target name="test-pom-deps" depends="initTaskDefs">
