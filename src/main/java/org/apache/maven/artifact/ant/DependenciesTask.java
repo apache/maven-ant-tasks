@@ -228,7 +228,9 @@ public class DependenciesTask
                 fileList.addConfiguredFile( file );
 
                 fileSet.createInclude().setName( filename );
-                
+
+                getProject().setProperty( artifact.getDependencyConflictId(), artifact.getFile().getAbsolutePath() );
+
                 versions.add( artifact.getVersion() );
 
                 if ( sourcesFilesetId != null )
@@ -251,6 +253,8 @@ public class DependenciesTask
                             sourcesFileList.addConfiguredFile( sourcesFile );
 
                             sourcesFileSet.createInclude().setName( sourcesFilename );
+
+                            getProject().setProperty( sourcesArtifact.getDependencyConflictId(), sourcesArtifact.getFile().getAbsolutePath() );
                         }
                         catch ( ArtifactResolutionException e )
                         {
@@ -379,7 +383,7 @@ public class DependenciesTask
         }
         catch ( IOException e )
         {
-            log( "Unable determine version from Maven Ant Tasks JAR file: " + e.getMessage(), Project.MSG_WARN );
+            log( "Unable to determine version from Maven Ant Tasks JAR file: " + e.getMessage(), Project.MSG_WARN );
         }
     }
 }
