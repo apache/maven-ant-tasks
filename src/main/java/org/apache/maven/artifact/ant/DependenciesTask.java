@@ -101,19 +101,19 @@ public class DependenciesTask
             }
 
             dependencies = pom.getDependencies();
-
-            for ( Iterator i = pom.getRepositories().iterator(); i.hasNext(); )
-            {
-                Repository pomRepository = (Repository) i.next();
-
-                addRemoteRepository( createAntRemoteRepository( pomRepository ) );
-            }
         }
         else
         {
             // we have to have some sort of Pom object in order to satisfy the requirements for building the
             // originating Artifact below...
-            pom = createDummyPom();
+            pom = createDummyPom( localRepo );
+        }
+
+        for ( Iterator i = pom.getRepositories().iterator(); i.hasNext(); )
+        {
+            Repository pomRepository = (Repository) i.next();
+
+            addRemoteRepository( createAntRemoteRepository( pomRepository ) );
         }
 
         if ( dependencies.isEmpty() )

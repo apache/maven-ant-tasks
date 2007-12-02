@@ -166,8 +166,7 @@ public class Pom
 
             try
             {
-                // TODO: should the profiles be constructed and passed in here? From Ant, or perhaps settings?
-                mavenProject = builder.build( file, localRepository, null );
+                mavenProject = builder.build( file, localRepository, getProfileManager() );
             }
             catch ( ProjectBuildingException e )
             {
