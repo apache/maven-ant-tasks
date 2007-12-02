@@ -27,9 +27,12 @@ import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
-import org.apache.maven.model.Model;
+import org.apache.maven.profiles.DefaultProfileManager;
+import org.apache.maven.profiles.ProfileManager;
+import org.apache.maven.profiles.activation.ProfileActivationException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.RuntimeInfo;
 import org.apache.maven.settings.Server;
@@ -81,6 +84,8 @@ public abstract class AbstractArtifactTask
     private File globalSettingsFile;
 
     private Settings settings;
+
+    private ProfileManager profileManager;
 
     private PlexusContainer container;
 
@@ -269,6 +274,8 @@ public abstract class AbstractArtifactTask
             String location = newFile( System.getProperty( "user.home" ), ".m2", "repository" ).getAbsolutePath();
             settings.setLocalRepository( location );
         }
+
+        profileManager = new DefaultProfileManager( getContainer(), getSettings(), System.getProperties() );
 
         WagonManager wagonManager = (WagonManager) lookup( WagonManager.ROLE );
         wagonManager.setDownloadMonitor( new AntDownloadMonitor() );
@@ -520,16 +527,19 @@ public abstract class AbstractArtifactTask
         return pom;
     }
 
-    protected Pom createDummyPom()
+    protected Pom createDummyPom( ArtifactRepository localArtifactRepository )
     {
-        Model mavenModel = new Model();
+        MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
 
-        mavenModel.setGroupId( "unspecified" );
-        mavenModel.setArtifactId( "unspecified" );
-        mavenModel.setVersion( "0.0" );
-        mavenModel.setPackaging( "jar" );
-
-        MavenProject mavenProject = new MavenProject( mavenModel );
+        MavenProject mavenProject;
+		try
+		{
+			mavenProject = projectBuilder.buildStandaloneSuperProject( localArtifactRepository, getProfileManager() );
+		}
+		catch (ProjectBuildingException e)
+		{
+            throw new BuildException( "Unable to create dummy Pom", e );
+		}
 
         Pom pom = new Pom();
 
@@ -540,11 +550,9 @@ public abstract class AbstractArtifactTask
     
     protected Artifact createDummyArtifact()
     {
-        Pom pom = createDummyPom();
         ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         // TODO: maybe not strictly correct, while we should enforce that packaging has a type handler of the same id, we don't
-        return factory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(), pom.getVersion(),
-                                            pom.getPackaging() );
+        return factory.createBuildArtifact( "unspecified", "unspecified", "0.0", "jar" );
     }
 
     public String[] getSupportedProtocols()
@@ -612,6 +620,11 @@ public abstract class AbstractArtifactTask
     public LocalRepository getLocalRepository()
     {
         return localRepository;
+    }
+
+    protected ProfileManager getProfileManager()
+    {
+    	return profileManager;
     }
 
     public void addLocalRepository( LocalRepository localRepository )

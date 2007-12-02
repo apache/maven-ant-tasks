@@ -40,7 +40,7 @@
   </target>
 
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order">
+    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-MANTTASKS-91">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
