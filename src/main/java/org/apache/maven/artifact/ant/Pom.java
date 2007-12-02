@@ -20,25 +20,39 @@ package org.apache.maven.artifact.ant;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.CiManagement;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.IssueManagement;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.Organization;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -148,6 +162,8 @@ public class Pom
         // TODO: should this be in execute() too? Would that work when it is used as a type?
         if ( file != null )
         {
+            checkParentPom();
+
             try
             {
                 mavenProject = builder.build( file, localRepository, getProfileManager() );
@@ -160,6 +176,56 @@ public class Pom
         else if ( refid != null )
         {
             getInstance().initialise( builder, localRepository );
+        }
+    }
+
+    private void checkParentPom()
+    {
+        Model model = null;
+        try
+        {
+            Reader reader = ReaderFactory.newXmlReader( file );
+            model = new MavenXpp3Reader().read( reader );
+        }
+        catch ( IOException e )
+        {
+            throw new BuildException( "IO error while reading pom: " + e.getMessage(), e );
+        }
+        catch ( XmlPullParserException e )
+        {
+            throw new BuildException( "Error parsing pom: " + e.getMessage(), e );
+        }
+
+        if ( model.getParent() != null && model.getParent().getRelativePath() != null )
+        {
+            // resolve parent pom
+            Parent parent = model.getParent();
+            String groupId = parent.getGroupId();
+            String artifactId = parent.getArtifactId();
+            String version = parent.getVersion();
+
+            ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
+            Artifact parentArtifact = factory.createParentArtifact( groupId, artifactId, version );
+
+            try
+            {
+                MavenMetadataSource metadataSource = (MavenMetadataSource) lookup( ArtifactMetadataSource.ROLE );
+                ArtifactResolver resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
+                List remoteRepositories = createRemoteArtifactRepositories();
+
+                resolver.resolveTransitively( Collections.singleton( parentArtifact ),
+                                              createDummyArtifact(), createLocalArtifactRepository(),
+                                              remoteRepositories, metadataSource, null );
+            }
+            catch ( ArtifactResolutionException e )
+            {
+                // MANTTASKS-87: don't fail if parent pom is not resolved immediately
+                log( "Error downloading parent pom " + parent.getId() + ": " + e.getMessage(), Project.MSG_WARN );
+            }
+            catch ( ArtifactNotFoundException e )
+            {
+                throw new BuildException( "Unable to download parent pom " + parent.getId() + " in remote repository: " + e.getMessage(), e );
+            }
         }
     }
 
