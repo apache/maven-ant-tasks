@@ -369,16 +369,20 @@ public class DependenciesTask
             Properties properties = new Properties();
             resourceAsStream = DependenciesTask.class.getClassLoader().getResourceAsStream(
                 "META-INF/maven/org.apache.maven/maven-ant-tasks/pom.properties" );
-            properties.load( resourceAsStream );
-
-            if ( properties.getProperty( "builtOn" ) != null )
+            if ( resourceAsStream != null )
             {
-                log( "Maven Ant Tasks version: " + properties.getProperty( "version", "unknown" ) + " built on "
-                                + properties.getProperty( "builtOn" ), Project.MSG_VERBOSE );
+                properties.load( resourceAsStream );
+            }
+
+            String version = properties.getProperty( "version", "unknown" );
+            String builtOn = properties.getProperty( "builtOn" );
+            if ( builtOn != null )
+            {
+                log( "Maven Ant Tasks version: " + version + " built on " + builtOn, Project.MSG_VERBOSE );
             }
             else
             {
-                log( "Maven Ant Tasks version: " + properties.getProperty( "version", "unknown" ), Project.MSG_VERBOSE );
+                log( "Maven Ant Tasks version: " + version, Project.MSG_VERBOSE );
             }
         }
         catch ( IOException e )
