@@ -54,6 +54,12 @@ public class DeployTask
      */
     protected ArtifactRepository createDeploymentArtifactRepository( RemoteRepository repository )
     {
+        if ( repository.getId().equals( repository.getUrl() ))
+        {
+            // MANTTASKS-103: avoid default id set to the url, since it is used for maven-metadata-<id>.xml  
+            repository.setId( "remote" );
+        }
+
         updateRepositoryWithSettings( repository );
 
         ArtifactRepositoryLayout repositoryLayout =
