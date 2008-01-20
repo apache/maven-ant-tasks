@@ -269,9 +269,15 @@
   <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">
     <echo file="target/test file.txt">dummy</echo>
     <artifact:deploy file="target/test file.txt">
-      <remoteRepository url="scp://localhost/tmp/deployment-repo" id="scp.localhost.repo" />
+      <!-- intentionnally left without id to check default id: see MANTTASKS-103 -->
+      <remoteRepository url="scp://localhost/tmp/deployment-repo"/>
+      <localrepository refid="local.repository"/>
       <pom refid="maven.project"/>
     </artifact:deploy>
+
+    <!-- MANTTASKS-103 -->
+    <available file="${basedir}/target/local-repo/org/apache/maven/maven-ant-tasks/maven-metadata-scp://localhost" property="metadata-scp"/>
+    <fail if="metadata-scp">maven-metadata-scp: should not exist since scp: is an illegal remoteRepository id</fail>
   </target>
 
   <target name="test-deploy" depends="initTaskDefs,installSshProvider">
@@ -306,6 +312,7 @@
       </remoteRepository>
       <pom refid="maven.project"/>
     </artifact:deploy>
+
   </target>
 
   <target name="test-scm" depends="initTaskDefs">
