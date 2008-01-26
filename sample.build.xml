@@ -40,7 +40,7 @@
   </target>
 
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order">
+    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources-empty">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -264,6 +264,26 @@
       <equals arg1="${pom.order.property}" arg2="commons-io-1.3.2.jar:commons-lang-2.3.jar:commons-logging-1.1.1.jar:commons-collections-3.2.jar"/>
     </condition>
     <fail unless="pom.order.ok">order of dependencies defined in pom should be preserved in path: ${pom.order.property}</fail>
+  </target>
+
+  <target name="test-deps-sources-empty" depends="initTaskDefs">
+    <artifact:dependencies sourcesFilesetId="sources.fileset" verbose="true" versionsId="dependency.versions">
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
+      <localRepository refid="local.repository"/>
+      <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo">
+        <snapshots enabled="true"/>
+        <releases enabled="false"/>
+      </remoteRepository>
+    </artifact:dependencies>
+
+    <delete dir="${basedir}/target/files/empty"/>
+    <copy todir="${basedir}/target/files/empty">
+      <fileset refid="sources.fileset"/>
+      <mapper type="merge" to="sources.bin"/>
+    </copy>
+
+    <available file="${basedir}/target/files/empty/sources.bin" property="sources.bin"/>
+    <fail if="sources.bin">no dependencies sources should have been found</fail>
   </target>
 
   <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">

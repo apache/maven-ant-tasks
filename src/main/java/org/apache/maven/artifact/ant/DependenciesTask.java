@@ -202,17 +202,15 @@ public class DependenciesTask
         fileSet.setProject( getProject() );
         fileSet.setDir( fileList.getDir( getProject() ) );
 
-        FileList sourcesFileList = new FileList();
-        sourcesFileList.setDir( getLocalRepository().getPath() );
-
         FileSet sourcesFileSet = new FileSet();
-        sourcesFileSet.setDir( sourcesFileList.getDir( getProject() ) );
+        sourcesFileSet.setDir( getLocalRepository().getPath() );
 
         Set versions = new HashSet();
         
         if ( result.getArtifacts().isEmpty() )
         {
             fileSet.createExclude().setName( "**/**" );
+            sourcesFileSet.createExclude().setName( "**/**" );
         }
         else
         {
@@ -220,7 +218,7 @@ public class DependenciesTask
             {
                 Artifact artifact = (Artifact) i.next();
 
-                addArtifactToResult( localRepo, artifact, fileList, fileSet );
+                addArtifactToResult( localRepo, artifact, fileSet, fileList );
 
                 versions.add( artifact.getVersion() );
 
@@ -236,7 +234,7 @@ public class DependenciesTask
                         {
                             resolver.resolve( sourcesArtifact, remoteArtifactRepositories, localRepo );
 
-                            addArtifactToResult( localRepo, sourcesArtifact, sourcesFileList, sourcesFileSet );
+                            addArtifactToResult( localRepo, sourcesArtifact, sourcesFileSet );
                         }
                         catch ( ArtifactResolutionException e )
                         {
@@ -268,6 +266,10 @@ public class DependenciesTask
 
         if ( sourcesFilesetId != null )
         {
+            if ( !sourcesFileSet.hasPatterns() )
+            {
+                sourcesFileSet.createExclude().setName( "**/**" );
+            }
             getProject().addReference( sourcesFilesetId, sourcesFileSet );
         }
         
@@ -278,15 +280,23 @@ public class DependenciesTask
         }
     }
 
-    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact, FileList toFileList,
-                                      FileSet toFileSet )
+    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact, FileSet toFileSet )
+    {
+        addArtifactToResult( localRepo, artifact, toFileSet, null );
+    }
+
+    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact, FileSet toFileSet,
+                                      FileList toFileList )
     {
         String filename = localRepo.pathOf( artifact );
 
-        FileList.FileName file = new FileList.FileName();
-        file.setName( filename );
+        if ( toFileList != null)
+        {
+            FileList.FileName file = new FileList.FileName();
+            file.setName( filename );
 
-        toFileList.addConfiguredFile( file );
+            toFileList.addConfiguredFile( file );
+        }
 
         toFileSet.createInclude().setName( filename );
 
