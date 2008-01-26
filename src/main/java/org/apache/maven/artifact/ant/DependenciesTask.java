@@ -219,23 +219,13 @@ public class DependenciesTask
             for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
             {
                 Artifact artifact = (Artifact) i.next();
-                artifact.isSnapshot(); // MNG-2961: DefaultArtifact getBaseVersion is changed to "xxxx-SNAPSHOT" only if you first call isSnapshot()
-                String filename = localRepo.pathOf( artifact );
 
-                FileList.FileName file = new FileList.FileName();
-                file.setName( filename );
-
-                fileList.addConfiguredFile( file );
-
-                fileSet.createInclude().setName( filename );
-
-                getProject().setProperty( artifact.getDependencyConflictId(), artifact.getFile().getAbsolutePath() );
+                addArtifactToResult( localRepo, artifact, fileList, fileSet );
 
                 versions.add( artifact.getVersion() );
 
                 if ( sourcesFilesetId != null )
                 {
-                    log( "Resolving dependencies sources...", Project.MSG_VERBOSE );
                     // get sources
                     Artifact sourcesArtifact =
                         artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
@@ -245,16 +235,8 @@ public class DependenciesTask
                         try
                         {
                             resolver.resolve( sourcesArtifact, remoteArtifactRepositories, localRepo );
-                            String sourcesFilename = localRepo.pathOf( sourcesArtifact );
 
-                            FileList.FileName sourcesFile = new FileList.FileName();
-                            sourcesFile.setName( sourcesFilename );
-
-                            sourcesFileList.addConfiguredFile( sourcesFile );
-
-                            sourcesFileSet.createInclude().setName( sourcesFilename );
-
-                            getProject().setProperty( sourcesArtifact.getDependencyConflictId(), sourcesArtifact.getFile().getAbsolutePath() );
+                            addArtifactToResult( localRepo, sourcesArtifact, sourcesFileList, sourcesFileSet );
                         }
                         catch ( ArtifactResolutionException e )
                         {
@@ -294,6 +276,21 @@ public class DependenciesTask
             String versionsValue = StringUtils.join( versions.iterator(), File.pathSeparator );
             getProject().setNewProperty( versionsId, versionsValue );
         }
+    }
+
+    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact, FileList toFileList,
+                                      FileSet toFileSet )
+    {
+        String filename = localRepo.pathOf( artifact );
+
+        FileList.FileName file = new FileList.FileName();
+        file.setName( filename );
+
+        toFileList.addConfiguredFile( file );
+
+        toFileSet.createInclude().setName( filename );
+
+        getProject().setProperty( artifact.getDependencyConflictId(), artifact.getFile().getAbsolutePath() );
     }
 
     public List getDependencies()
