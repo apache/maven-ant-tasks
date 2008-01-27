@@ -40,7 +40,7 @@
   </target>
 
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources-empty">
+    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -103,7 +103,8 @@
   </target>
 
   <target name="test-deps" depends="initTaskDefs">
-    <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset" sourcesFilesetId="sources.fileset" verbose="true" versionsId="dependency.versions">
+    <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset"
+                           verbose="true" versionsId="dependency.versions">
       <dependency groupId="org.apache.maven.wagon" artifactId="wagon-provider-test" version="1.0-alpha-4">
         <exclusion groupId="junit" artifactId="junit"/>
       </dependency>
@@ -120,9 +121,6 @@
 
     <copy todir="target/files/binaries">
       <fileset refid="dependency.fileset"/>
-    </copy>
-    <copy todir="target/files/sources">
-      <fileset refid="sources.fileset"/>
     </copy>
     <available file="target/files/binaries/junit/junit" type="dir" property="exclusion.dependency"/>
     <fail if="exclusion.dependency">excluded dependency junit:junit shouldn't be in target/files/binaries</fail>
@@ -144,9 +142,6 @@
     <!-- MANTTASKS-33 -->
     <available file="${it.ant-tasks:snapshotUniqueTrue:jar}" property="propertySnapshotUniqueTrue"/>
     <fail unless="propertySnapshotUniqueTrue">property it.ant-tasks:snapshotUniqueFalse:jar should point to an existing file</fail>
-
-    <available file="${org.apache.maven:maven-core-it-support:java-source:sources}" property="propertySources"/>
-    <fail unless="propertySources">property org.apache.maven:maven-core-it-support:java-source:sources should point to an existing file</fail>
   </target>
 
   <target name="test-pom-deps" depends="initTaskDefs">
@@ -266,8 +261,40 @@
     <fail unless="pom.order.ok">order of dependencies defined in pom should be preserved in path: ${pom.order.property}</fail>
   </target>
 
+  <target name="test-deps-sources" depends="initTaskDefs">
+    <artifact:dependencies filesetId="jar.fileset" sourcesFilesetId="sources.fileset" javadocsFilesetId="javadocs.fileset">
+      <dependency groupId="it.ant-tasks" artifactId="release" version="2.0.7"/>
+      <localRepository refid="local.repository"/>
+      <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo">
+        <snapshots enabled="false"/>
+        <releases enabled="true"/>
+      </remoteRepository>
+    </artifact:dependencies>
+
+    <delete dir="${basedir}/target/files/sources"/>
+    <copy todir="${basedir}/target/files/sources">
+      <fileset refid="sources.fileset"/>
+      <mapper type="flatten"/>
+    </copy>
+    <available file="${basedir}/target/files/sources/release-2.0.7-sources.jar" property="release-sources.jar"/>
+    <fail unless="release-sources.jar">release sources should have been found</fail>
+    <available file="${it.ant-tasks:release:java-source:sources}" property="propertySources"/>
+    <fail unless="propertySources">property it.ant-tasks:release:java-source:sources should point to an existing file in local repo</fail>
+
+    <delete dir="${basedir}/target/files/javadocs"/>
+    <copy todir="${basedir}/target/files/javadocs">
+      <fileset refid="javadocs.fileset"/>
+      <mapper type="flatten"/>
+    </copy>
+
+    <available file="${basedir}/target/files/javadocs/release-2.0.7-javadoc.jar" property="release-javadoc.jar"/>
+    <fail unless="release-javadoc.jar">release javadoc should have been found</fail>
+    <available file="${it.ant-tasks:release:java-source:javadoc}" property="propertyJavadoc"/>
+    <fail unless="propertyJavadoc">property it.ant-tasks:release:java-source:javadoc should point to an existing file in local repo</fail>
+  </target>
+
   <target name="test-deps-sources-empty" depends="initTaskDefs">
-    <artifact:dependencies sourcesFilesetId="sources.fileset" verbose="true" versionsId="dependency.versions">
+    <artifact:dependencies sourcesFilesetId="sources.fileset" javadocsFilesetId="javadocs.fileset">
       <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
       <localRepository refid="local.repository"/>
       <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo">
@@ -281,9 +308,16 @@
       <fileset refid="sources.fileset"/>
       <mapper type="merge" to="sources.bin"/>
     </copy>
+    <copy todir="${basedir}/target/files/empty">
+      <fileset refid="javadocs.fileset"/>
+      <mapper type="merge" to="javadocs.bin"/>
+    </copy>
 
     <available file="${basedir}/target/files/empty/sources.bin" property="sources.bin"/>
     <fail if="sources.bin">no dependencies sources should have been found</fail>
+
+    <available file="${basedir}/target/files/empty/javadocs.bin" property="javadocs.bin"/>
+    <fail if="javadocs.bin">no dependencies javadocs should have been found</fail>
   </target>
 
   <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">
