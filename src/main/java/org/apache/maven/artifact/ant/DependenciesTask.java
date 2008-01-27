@@ -71,6 +71,8 @@ public class DependenciesTask
 
     private String sourcesFilesetId;
     
+    private String javadocsFilesetId;
+    
     private String versionsId;
 
     private String useScope;
@@ -205,47 +207,29 @@ public class DependenciesTask
         FileSet sourcesFileSet = new FileSet();
         sourcesFileSet.setDir( getLocalRepository().getPath() );
 
+        FileSet javadocsFileSet = new FileSet();
+        javadocsFileSet.setDir( getLocalRepository().getPath() );
+
         Set versions = new HashSet();
         
-        if ( result.getArtifacts().isEmpty() )
+        for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
         {
-            fileSet.createExclude().setName( "**/**" );
-            sourcesFileSet.createExclude().setName( "**/**" );
-        }
-        else
-        {
-            for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
+            Artifact artifact = (Artifact) i.next();
+
+            addArtifactToResult( localRepo, artifact, fileSet, fileList );
+
+            versions.add( artifact.getVersion() );
+
+            if ( sourcesFilesetId != null )
             {
-                Artifact artifact = (Artifact) i.next();
+                resolveSource( artifactFactory, resolver, remoteArtifactRepositories, localRepo,
+                               artifact, "sources", sourcesFileSet );
+            }
 
-                addArtifactToResult( localRepo, artifact, fileSet, fileList );
-
-                versions.add( artifact.getVersion() );
-
-                if ( sourcesFilesetId != null )
-                {
-                    // get sources
-                    Artifact sourcesArtifact =
-                        artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
-                                                                      artifact.getVersion(), "java-source", "sources" );
-                    if ( sourcesArtifact != null )
-                    {
-                        try
-                        {
-                            resolver.resolve( sourcesArtifact, remoteArtifactRepositories, localRepo );
-
-                            addArtifactToResult( localRepo, sourcesArtifact, sourcesFileSet );
-                        }
-                        catch ( ArtifactResolutionException e )
-                        {
-                            throw new BuildException( "Unable to resolve artifact: " + e.getMessage(), e );
-                        }
-                        catch ( ArtifactNotFoundException e )
-                        {
-                            // no sources available: no problem
-                        }
-                    }
-                }
+            if ( javadocsFilesetId != null )
+            {
+                resolveSource( artifactFactory, resolver, remoteArtifactRepositories, localRepo,
+                               artifact, "javadoc", javadocsFileSet );
             }
         }
 
@@ -259,24 +243,28 @@ public class DependenciesTask
             getProject().addReference( pathId, path );
         }
 
-        if ( filesetId != null )
-        {
-            getProject().addReference( filesetId, fileSet );
-        }
+        defineFilesetReference( filesetId, fileSet );
 
-        if ( sourcesFilesetId != null )
-        {
-            if ( !sourcesFileSet.hasPatterns() )
-            {
-                sourcesFileSet.createExclude().setName( "**/**" );
-            }
-            getProject().addReference( sourcesFilesetId, sourcesFileSet );
-        }
+        defineFilesetReference( sourcesFilesetId, sourcesFileSet );
+        
+        defineFilesetReference( javadocsFilesetId, javadocsFileSet );
         
         if ( versionsId != null )
         {
             String versionsValue = StringUtils.join( versions.iterator(), File.pathSeparator );
             getProject().setNewProperty( versionsId, versionsValue );
+        }
+    }
+
+    private void defineFilesetReference( String id, FileSet fileSet )
+    {
+        if ( id != null )
+        {
+            if ( !fileSet.hasPatterns() )
+            {
+                fileSet.createExclude().setName( "**/**" );
+            }
+            getProject().addReference( id, fileSet );
         }
     }
 
@@ -290,6 +278,8 @@ public class DependenciesTask
     {
         String filename = localRepo.pathOf( artifact );
 
+        toFileSet.createInclude().setName( filename );
+
         if ( toFileList != null)
         {
             FileList.FileName file = new FileList.FileName();
@@ -298,9 +288,30 @@ public class DependenciesTask
             toFileList.addConfiguredFile( file );
         }
 
-        toFileSet.createInclude().setName( filename );
-
         getProject().setProperty( artifact.getDependencyConflictId(), artifact.getFile().getAbsolutePath() );
+    }
+
+    private void resolveSource( ArtifactFactory artifactFactory, ArtifactResolver resolver,
+                                List remoteArtifactRepositories, ArtifactRepository localRepo,
+                                Artifact artifact, String classifier, FileSet sourcesFileSet )
+    {
+        Artifact sourceArtifact =
+            artifactFactory.createArtifactWithClassifier( artifact.getGroupId(), artifact.getArtifactId(),
+                                                          artifact.getVersion(), "java-source", classifier );
+        try
+        {
+            resolver.resolve( sourceArtifact, remoteArtifactRepositories, localRepo );
+
+            addArtifactToResult( localRepo, sourceArtifact, sourcesFileSet );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new BuildException( "Unable to resolve artifact: " + e.getMessage(), e );
+        }
+        catch ( ArtifactNotFoundException e )
+        {
+            // no source available: no problem, it's optional
+        }
     }
 
     public List getDependencies()
@@ -336,6 +347,16 @@ public class DependenciesTask
     public String getSourcesFilesetId()
     {
         return sourcesFilesetId;
+    }
+
+    public void setJavadocsFilesetId( String filesetId )
+    {
+        this.javadocsFilesetId = filesetId;
+    }
+
+    public String getJavadocsFilesetId()
+    {
+        return javadocsFilesetId;
     }
 
     public void setFilesetId( String filesetId )
