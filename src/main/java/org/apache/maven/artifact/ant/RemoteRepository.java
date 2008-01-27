@@ -50,7 +50,7 @@ public class RemoteRepository
 
     public Authentication getAuthentication()
     {
-        return authentication;
+        return ( (RemoteRepository) getInstance() ).authentication;
     }
 
     public void addAuthentication( Authentication authentication )
