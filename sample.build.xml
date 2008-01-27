@@ -262,7 +262,7 @@
   </target>
 
   <target name="test-deps-sources" depends="initTaskDefs">
-    <artifact:dependencies filesetId="jar.fileset" sourcesFilesetId="sources.fileset" javadocsFilesetId="javadocs.fileset">
+    <artifact:dependencies filesetId="jar.fileset" sourcesFilesetId="sources.fileset" javadocFilesetId="javadoc.fileset">
       <dependency groupId="it.ant-tasks" artifactId="release" version="2.0.7"/>
       <localRepository refid="local.repository"/>
       <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo">
@@ -281,20 +281,20 @@
     <available file="${it.ant-tasks:release:java-source:sources}" property="propertySources"/>
     <fail unless="propertySources">property it.ant-tasks:release:java-source:sources should point to an existing file in local repo</fail>
 
-    <delete dir="${basedir}/target/files/javadocs"/>
-    <copy todir="${basedir}/target/files/javadocs">
-      <fileset refid="javadocs.fileset"/>
+    <delete dir="${basedir}/target/files/javadoc"/>
+    <copy todir="${basedir}/target/files/javadoc">
+      <fileset refid="javadoc.fileset"/>
       <mapper type="flatten"/>
     </copy>
 
-    <available file="${basedir}/target/files/javadocs/release-2.0.7-javadoc.jar" property="release-javadoc.jar"/>
+    <available file="${basedir}/target/files/javadoc/release-2.0.7-javadoc.jar" property="release-javadoc.jar"/>
     <fail unless="release-javadoc.jar">release javadoc should have been found</fail>
     <available file="${it.ant-tasks:release:java-source:javadoc}" property="propertyJavadoc"/>
     <fail unless="propertyJavadoc">property it.ant-tasks:release:java-source:javadoc should point to an existing file in local repo</fail>
   </target>
 
   <target name="test-deps-sources-empty" depends="initTaskDefs">
-    <artifact:dependencies sourcesFilesetId="sources.fileset" javadocsFilesetId="javadocs.fileset">
+    <artifact:dependencies sourcesFilesetId="sources.fileset" javadocFilesetId="javadoc.fileset">
       <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
       <localRepository refid="local.repository"/>
       <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo">
@@ -309,15 +309,15 @@
       <mapper type="merge" to="sources.bin"/>
     </copy>
     <copy todir="${basedir}/target/files/empty">
-      <fileset refid="javadocs.fileset"/>
-      <mapper type="merge" to="javadocs.bin"/>
+      <fileset refid="javadoc.fileset"/>
+      <mapper type="merge" to="javadoc.bin"/>
     </copy>
 
     <available file="${basedir}/target/files/empty/sources.bin" property="sources.bin"/>
     <fail if="sources.bin">no dependencies sources should have been found</fail>
 
-    <available file="${basedir}/target/files/empty/javadocs.bin" property="javadocs.bin"/>
-    <fail if="javadocs.bin">no dependencies javadocs should have been found</fail>
+    <available file="${basedir}/target/files/empty/javadoc.bin" property="javadoc.bin"/>
+    <fail if="javadoc.bin">no dependencies javadoc should have been found</fail>
   </target>
 
   <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">

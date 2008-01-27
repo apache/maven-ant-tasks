@@ -58,6 +58,7 @@ import java.util.Set;
  * Dependencies task, using maven-artifact.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @author <a href="mailto:hboutemy@apache.org">Herve Boutemy</a>
  * @version $Id$
  */
 public class DependenciesTask
@@ -71,7 +72,7 @@ public class DependenciesTask
 
     private String sourcesFilesetId;
     
-    private String javadocsFilesetId;
+    private String javadocFilesetId;
     
     private String versionsId;
 
@@ -226,7 +227,7 @@ public class DependenciesTask
                                artifact, "sources", sourcesFileSet );
             }
 
-            if ( javadocsFilesetId != null )
+            if ( javadocFilesetId != null )
             {
                 resolveSource( artifactFactory, resolver, remoteArtifactRepositories, localRepo,
                                artifact, "javadoc", javadocsFileSet );
@@ -247,7 +248,7 @@ public class DependenciesTask
 
         defineFilesetReference( sourcesFilesetId, sourcesFileSet );
         
-        defineFilesetReference( javadocsFilesetId, javadocsFileSet );
+        defineFilesetReference( javadocFilesetId, javadocsFileSet );
         
         if ( versionsId != null )
         {
@@ -349,14 +350,14 @@ public class DependenciesTask
         return sourcesFilesetId;
     }
 
-    public void setJavadocsFilesetId( String filesetId )
+    public void setJavadocFilesetId( String filesetId )
     {
-        this.javadocsFilesetId = filesetId;
+        this.javadocFilesetId = filesetId;
     }
 
-    public String getJavadocsFilesetId()
+    public String getJavadocFilesetId()
     {
-        return javadocsFilesetId;
+        return javadocFilesetId;
     }
 
     public void setFilesetId( String filesetId )
