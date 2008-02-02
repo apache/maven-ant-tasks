@@ -476,25 +476,4 @@
 
     <echo>Parent Artifact ID = ${my.maven.project.parent.artifactId}</echo>
   </target>
-
-  <target name="test-deps-MANTTASKS-91" depends="initTaskDefs">
-	<artifact:pom id="MANTTASKS-91.pom" file="src/test/pom-MANTTASKS-91.xml" />
-
-	<artifact:dependencies filesetId="MANTTASKS-91.dependency.fileset" useScope="compile" verbose="true">
-      <pom refid="MANTTASKS-91.pom" />
-      <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo" />
-      <localRepository refid="local.repository"/>
-    </artifact:dependencies>
-
-    <delete includeEmptyDirs="true" quiet="true">
-      <fileset dir="target/MANTTASKS-91" />
-    </delete>
-    <mkdir dir="target/MANTTASKS-91" />
-    <copy todir="target/MANTTASKS-91">
-      <fileset refid="MANTTASKS-91.dependency.fileset" />
-      <flattenmapper />
-    </copy>
-    <available property="fileIsPresent" file="target/MANTTASKS-91/d-1.2.jar" />
-    <fail unless="fileIsPresent">MANTTASKS-91 failed: d-1.2.jar should be in the resolved dependencies</fail>
-  </target>
 </project>
