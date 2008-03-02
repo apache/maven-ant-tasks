@@ -27,6 +27,7 @@ import org.apache.maven.artifact.repository.ArtifactRepositoryFactory;
 import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
+import org.apache.maven.profiles.DefaultProfileManager;
 import org.apache.maven.profiles.ProfileManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -273,8 +274,7 @@ public abstract class AbstractArtifactTask
             settings.setLocalRepository( location );
         }
 
-        // removed since it breaks dependencies order when injecting profile dependencies
-        //profileManager = new DefaultProfileManager( getContainer(), getSettings(), System.getProperties() );
+        profileManager = new DefaultProfileManager( getContainer(), getSettings(), System.getProperties() );
 
         WagonManager wagonManager = (WagonManager) lookup( WagonManager.ROLE );
         wagonManager.setDownloadMonitor( new AntDownloadMonitor() );
