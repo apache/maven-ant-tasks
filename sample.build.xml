@@ -40,7 +40,7 @@
   </target>
 
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty">
+    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty,test-deps-profile">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -318,6 +318,20 @@
 
     <available file="${basedir}/target/files/empty/javadoc.bin" property="javadoc.bin"/>
     <fail if="javadoc.bin">no dependencies javadoc should have been found</fail>
+  </target>
+
+  <target name="test-deps-profile" depends="initTaskDefs">
+    <delete dir="${basedir}/target/tmp"/>
+    <artifact:dependencies settingsFile="./src/test/settings-profile-default.xml">
+      <dependency groupId="it.ant-tasks" artifactId="release" version="2.0.7"/>
+      <localRepository path="${basedir}/target/tmp"/>
+    </artifact:dependencies>
+
+    <delete dir="${basedir}/target/tmp"/>
+    <artifact:dependencies settingsFile="./src/test/settings-profile-file.xml">
+      <dependency groupId="it.ant-tasks" artifactId="release" version="2.0.7"/>
+      <localRepository path="${basedir}/target/tmp"/>
+    </artifact:dependencies>
   </target>
 
   <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">
