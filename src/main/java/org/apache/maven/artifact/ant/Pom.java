@@ -211,7 +211,7 @@ public class Pom
             {
                 MavenMetadataSource metadataSource = (MavenMetadataSource) lookup( ArtifactMetadataSource.ROLE );
                 ArtifactResolver resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
-                List remoteRepositories = createRemoteArtifactRepositories();
+                List remoteRepositories = createRemoteArtifactRepositories( model.getRepositories() );
 
                 resolver.resolveTransitively( Collections.singleton( parentArtifact ),
                                               createDummyArtifact(), createLocalArtifactRepository(),

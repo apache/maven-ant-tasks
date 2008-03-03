@@ -489,5 +489,11 @@
     <echo>Artifact ID = ${my.maven.project.artifactId}</echo>
 
     <echo>Parent Artifact ID = ${my.maven.project.parent.artifactId}</echo>
+
+  	<!-- MANTTASKS-107 repository defined in pom must be used to download parent pom -->
+    <delete dir="${basedir}/target/tmp"/>
+    <artifact:pom file="${user.dir}/src/test/pom-with-parent2.xml" id="my.maven.project2">
+      <localRepository path="${basedir}/target/tmp"/>
+    </artifact:pom>
   </target>
 </project>
