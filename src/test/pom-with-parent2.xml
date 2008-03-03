@@ -8,4 +8,16 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>project-with-parent-pom</artifactId>
   <version>2.0-beta-4-SNAPSHOT</version>
+  <repositories>
+    <repository>
+      <id>test.repo</id>
+      <url>file:./src/test/repo</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
 </project>

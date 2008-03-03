@@ -32,7 +32,6 @@ import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.TypeArtifactFilter;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Repository;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.apache.tools.ant.BuildException;
@@ -112,13 +111,6 @@ public class DependenciesTask
             pom = createDummyPom( localRepo );
         }
 
-        for ( Iterator i = pom.getRepositories().iterator(); i.hasNext(); )
-        {
-            Repository pomRepository = (Repository) i.next();
-
-            addRemoteRepository( createAntRemoteRepository( pomRepository ) );
-        }
-
         if ( dependencies.isEmpty() )
         {
             log( "There were no dependencies specified", Project.MSG_WARN );
@@ -129,7 +121,7 @@ public class DependenciesTask
         ArtifactResolutionResult result;
         Set artifacts;
 
-        List remoteArtifactRepositories = createRemoteArtifactRepositories();
+        List remoteArtifactRepositories = createRemoteArtifactRepositories( pom.getRepositories() );
 
         try
         {

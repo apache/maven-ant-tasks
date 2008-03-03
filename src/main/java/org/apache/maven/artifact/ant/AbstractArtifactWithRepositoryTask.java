@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.maven.model.Repository;
 import org.apache.tools.ant.Project;
 
 /**
@@ -58,17 +59,36 @@ public abstract class AbstractArtifactWithRepositoryTask
         return (policy == null) || policy.isEnabled() ? "enabled" : "disabled";
     }
 
+    protected List createRemoteArtifactRepositories()
+    {
+    	return createRemoteArtifactRepositories( null );
+    }
+
     /**
      * Create the list of ArtifactRepository-ies where artifacts can be downloaded. If
      * no remote repository has been configured, adds central repository.
+     * @param pomRepositories additionnal repositories defined in pom (or null if none)
      * @return the list of ArtifactRepository-ies
      * @see #createRemoteArtifactRepository(RemoteRepository)
      */
-    protected List createRemoteArtifactRepositories()
+    protected List createRemoteArtifactRepositories(List pomRepositories)
     {
+        List remoteRepositories = new ArrayList();
+        remoteRepositories.addAll( getRemoteRepositories() );
+
         if ( getRemoteRepositories().isEmpty() )
         {
-            addRemoteRepository( getDefaultRemoteRepository() );
+        	remoteRepositories.add( getDefaultRemoteRepository() );
+        }
+
+        if ( pomRepositories != null )
+        {
+	        for ( Iterator i = pomRepositories.iterator(); i.hasNext(); )
+	        {
+	            Repository pomRepository = (Repository) i.next();
+	
+	            remoteRepositories.add( createAntRemoteRepository( pomRepository ) );
+	        }
         }
 
         log( "Using remote repositories:", Project.MSG_VERBOSE );
