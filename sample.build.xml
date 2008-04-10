@@ -1,4 +1,4 @@
-<project name="maven-ant-tasks" default="test-all" xmlns:artifact="urn:maven-artifact-ant">
+<project name="maven-ant-tasks" default="test-all" xmlns:artifact="urn:maven-artifact-ant" xmlns:test="urn:test-tasks">
 <!--
 <project name="foo" default="foo" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 -->
@@ -20,7 +20,18 @@
 
   -->
 
-  <target name="initTaskDefs">
+  <target name="initClassloader">
+    <path id="testclasspath" path="target/test-classes" />
+    <typedef resource="test-tasks.xml" uri="urn:test-tasks" classpathref="testclasspath"/>
+
+    <test:classloader set="classloader"/>
+  </target>
+
+  <target name="checkClassloader">
+    <test:classloader check="classloader"/>
+  </target>
+
+  <target name="initTaskDefs" depends="initClassloader">
   	<xmlproperty file="pom.xml" prefix="pom.xml" />
 
     <path id="maven-ant-tasks.classpath" path="target/maven-ant-tasks-${pom.xml.project.version}.jar" />
@@ -33,6 +44,8 @@
     <artifact:remoteRepository id="deploy.repository" url="file://localhost/${deploy.repository.url}" layout="default"/>
 
     <artifact:pom file="pom.xml" id="maven.project"/>
+
+    <test:classloader check="classloader"/>
   </target>
 
   <target name="installSshProvider" depends="initTaskDefs">
@@ -48,7 +61,7 @@
     depends="test-deploy-spaces,test-deploy,test-no-dist-mgmt,test-install-attached,test-deploy-attached"/>
 
   <target name="test-all" description="All tests"
-    depends="test-all-deps,test-all-pubs,test-install-provider">
+    depends="test-all-deps,test-all-pubs,test-install-provider,checkClassloader">
     <echo>test-scm not run, since it fails...</echo>
   </target>
 
