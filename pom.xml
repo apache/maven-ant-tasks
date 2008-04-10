@@ -24,7 +24,7 @@
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
-    <version>6</version>
+    <version>8</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-ant-tasks</artifactId>
@@ -55,6 +55,10 @@
           <version>2.2-beta-1</version>
         </plugin>
         <plugin>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>1.0</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>2.3</version>
         </plugin>
@@ -76,7 +80,7 @@
         </plugin>
         <plugin>
           <artifactId>maven-remote-resources-plugin</artifactId>
-          <version>1.0-alpha-15</version>
+          <version>1.0-beta-2</version>
         </plugin>
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
@@ -93,8 +97,7 @@
     </pluginManagement>
     <plugins>
       <plugin>
-        <artifactId>shade-maven-plugin</artifactId>
-        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
         <executions>
           <execution>
             <phase>package</phase>
@@ -102,6 +105,11 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+              </transformers>
               <artifactSet>
                 <excludes>
                   <exclude>junit:junit</exclude>
@@ -184,7 +192,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.4.5</version>
+      <version>1.5.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -204,7 +212,7 @@
   </dependencies>
 
   <properties>
-    <mavenVersion>2.0.9-SNAPSHOT</mavenVersion>
+    <mavenVersion>2.0.9</mavenVersion>
     <wagonVersion>1.0-beta-2</wagonVersion>
   </properties>
 </project>
