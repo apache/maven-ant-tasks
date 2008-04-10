@@ -78,6 +78,8 @@ import java.util.Map;
 public abstract class AbstractArtifactTask
     extends Task
 {
+    private static ClassLoader plexusClassLoader;
+
     private File userSettingsFile;
 
     private File globalSettingsFile;
@@ -652,8 +654,13 @@ public abstract class AbstractArtifactTask
     /** @noinspection RefusedBequest */
     public void execute()
     {
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
+            if ( plexusClassLoader != null )
+            {
+                Thread.currentThread().setContextClassLoader( plexusClassLoader );
+            }
             initSettings();
             doExecute();
         }
@@ -662,6 +669,11 @@ public abstract class AbstractArtifactTask
             diagnoseError( e );
 
             throw e;
+        }
+        finally
+        {
+            plexusClassLoader = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader( originalClassLoader );
         }
     }
 
