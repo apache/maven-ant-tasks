@@ -135,13 +135,12 @@
     <copy todir="target/files/binaries">
       <fileset refid="dependency.fileset"/>
     </copy>
-    <available file="target/files/binaries/junit/junit" type="dir" property="exclusion.dependency"/>
-    <fail if="exclusion.dependency">excluded dependency junit:junit shouldn't be in target/files/binaries</fail>
-    <available file="target/files/binaries/it/ant-tasks/snapshotUniqueFalse" type="dir" property="snapshot.dependency.uniqueFalse"/>
-    <fail unless="snapshot.dependency.uniqueFalse">SNAPSHOT dependency it.ant-tasks:snapshotUniqueFalse:2.0.7-SNAPSHOT should be in target/files/binaries</fail>
-    <available file="target/files/binaries/it/ant-tasks/snapshotUniqueTrue" type="dir" property="snapshot.dependency.uniqueTrue"/>
-    <!-- MANTTASKS-18 -->
-    <fail unless="snapshot.dependency.uniqueTrue">SNAPSHOT dependency it.ant-tasks:snapshotUniqueTrue:2.0.7-SNAPSHOT should be in target/files/binaries</fail>
+    <!-- excluded dependency junit:junit -->
+    <check.file.not.exists file="target/files/binaries/junit/junit" type="dir"/>
+    <!-- SNAPSHOT dependency it.ant-tasks:snapshotUniqueFalse:2.0.7-SNAPSHOT -->
+    <check.file.exists file="target/files/binaries/it/ant-tasks/snapshotUniqueFalse" type="dir" property="snapshot.dependency.uniqueFalse"/>
+    <!-- MANTTASKS-18: SNAPSHOT dependency it.ant-tasks:snapshotUniqueTrue:2.0.7-SNAPSHOT -->
+    <check.file.exists file="target/files/binaries/it/ant-tasks/snapshotUniqueTrue" type="dir" property="snapshot.dependency.uniqueTrue"/>
 
     <!-- MANTTASKS-84 -->
     <copy todir="target/files/versionMapperFlatten">
@@ -149,12 +148,11 @@
       <mapper classpathref="maven-ant-tasks.classpath" classname="org.apache.maven.artifact.ant.VersionMapper"
               from="${dependency.versions}" to="flatten" />
     </copy>
-    <available file="target/files/versionMapperFlatten/it" type="dir" property="snapshot.dependency.flatten.failed"/>
-    <fail if="snapshot.dependency.flatten.failed">VersionMapper to="flatten" failed on SNAPSHOT</fail>
+    <!-- VersionMapper to="flatten" on SNAPSHOT -->
+    <check.file.not.exists file="target/files/versionMapperFlatten/it" type="dir"/>
 
-    <!-- MANTTASKS-33 -->
-    <available file="${it.ant-tasks:snapshotUniqueTrue:jar}" property="propertySnapshotUniqueTrue"/>
-    <fail unless="propertySnapshotUniqueTrue">property it.ant-tasks:snapshotUniqueFalse:jar should point to an existing file</fail>
+    <!-- MANTTASKS-33: property it.ant-tasks:snapshotUniqueFalse:jar should point to an existing file -->
+    <check.file.exists file="${it.ant-tasks:snapshotUniqueTrue:jar}" property="propertySnapshotUniqueTrue"/>
   </target>
 
   <target name="test-pom-deps" depends="initTaskDefs">
@@ -289,10 +287,10 @@
       <fileset refid="sources.fileset"/>
       <mapper type="flatten"/>
     </copy>
-    <available file="${basedir}/target/files/sources/release-2.0.7-sources.jar" property="release-sources.jar"/>
-    <fail unless="release-sources.jar">release sources should have been found</fail>
-    <available file="${it.ant-tasks:release:java-source:sources}" property="propertySources"/>
-    <fail unless="propertySources">property it.ant-tasks:release:java-source:sources should point to an existing file in local repo</fail>
+    <!-- release sources -->
+    <check.file.exists file="${basedir}/target/files/sources/release-2.0.7-sources.jar" property="release-sources.jar"/>
+    <!-- property it.ant-tasks:release:java-source:sources should point to an existing file in local repo -->
+    <check.file.exists file="${it.ant-tasks:release:java-source:sources}" property="propertySources"/>
 
     <delete dir="${basedir}/target/files/javadoc"/>
     <copy todir="${basedir}/target/files/javadoc">
@@ -300,10 +298,10 @@
       <mapper type="flatten"/>
     </copy>
 
-    <available file="${basedir}/target/files/javadoc/release-2.0.7-javadoc.jar" property="release-javadoc.jar"/>
-    <fail unless="release-javadoc.jar">release javadoc should have been found</fail>
-    <available file="${it.ant-tasks:release:java-source:javadoc}" property="propertyJavadoc"/>
-    <fail unless="propertyJavadoc">property it.ant-tasks:release:java-source:javadoc should point to an existing file in local repo</fail>
+    <!-- release javadoc -->
+    <check.file.exists file="${basedir}/target/files/javadoc/release-2.0.7-javadoc.jar" property="release-javadoc.jar"/>
+    <!-- property it.ant-tasks:release:java-source:javadoc should point to an existing file in local repo -->
+    <check.file.exists file="${it.ant-tasks:release:java-source:javadoc}" property="propertyJavadoc"/>
   </target>
 
   <target name="test-deps-sources-empty" depends="initTaskDefs">
@@ -326,11 +324,11 @@
       <mapper type="merge" to="javadoc.bin"/>
     </copy>
 
-    <available file="${basedir}/target/files/empty/sources.bin" property="sources.bin"/>
-    <fail if="sources.bin">no dependencies sources should have been found</fail>
+    <!-- no dependencies sources -->
+    <check.file.not.exists file="${basedir}/target/files/empty/sources.bin"/>
 
-    <available file="${basedir}/target/files/empty/javadoc.bin" property="javadoc.bin"/>
-    <fail if="javadoc.bin">no dependencies javadoc should have been found</fail>
+    <!-- no dependencies javadoc -->
+    <check.file.not.exists file="${basedir}/target/files/empty/javadoc.bin"/>
   </target>
 
   <target name="test-deps-profile" depends="initTaskDefs">
@@ -356,9 +354,8 @@
       <pom refid="maven.project"/>
     </artifact:deploy>
 
-    <!-- MANTTASKS-103 -->
-    <available file="${basedir}/target/local-repo/org/apache/maven/maven-ant-tasks/maven-metadata-scp://localhost" property="metadata-scp"/>
-    <fail if="metadata-scp">maven-metadata-scp: should not exist since scp: is an illegal remoteRepository id</fail>
+    <!-- MANTTASKS-103: maven-metadata-scp: should not exist since scp: is an illegal remoteRepository id -->
+    <check.file.not.exists file="${basedir}/target/local-repo/org/apache/maven/maven-ant-tasks/maven-metadata-scp://localhost"/>
   </target>
 
   <target name="test-deploy" depends="initTaskDefs,installSshProvider">
@@ -375,17 +372,17 @@
       <remoteSnapshotRepository refid="deploy.repository"/>
       <pom refid="maven.project"/>
     </artifact:deploy>
-    <available file="${targetDir}" property="deploymentArtifactDir"/>
-    <fail unless="deploymentArtifactDir">deployment in ${deploy.repository.url} should have created a directory</fail>
-    <available file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar" property="outJarWithoutUniqueVersion"/>
-    <fail if="outJarWithoutUniqueVersion">uniqueVersion="true" by default: file -SNAPSHOT.jar should not exist</fail>
+    <!-- deployment in ${deploy.repository.url} should have created a directory -->
+    <check.file.exists file="${targetDir}" type="dir" property="deploymentArtifactDir"/>
+    <!-- uniqueVersion="true" by default: file -SNAPSHOT.jar should not exist -->
+    <check.file.not.exists file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar"/>
 
     <artifact:deploy file="${outJar}" uniqueVersion="false">
       <remoteSnapshotRepository refid="deploy.repository"/>
       <pom refid="maven.project"/>
     </artifact:deploy>
-    <available file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar" property="outJarWithoutUniqueVersion"/>
-    <fail unless="outJarWithoutUniqueVersion">when uniqueVersion="false", file -SNAPSHOT.jar should be created</fail>
+    <!-- when uniqueVersion="false", file -SNAPSHOT.jar should be created -->
+    <check.file.exists file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar" property="outJarWithoutUniqueVersion"/>
 
     <artifact:deploy file="${outJar}">
       <remoteRepository url="scp://localhost/tmp/deployment-repo" id="scp.localhost.repo">
@@ -393,7 +390,6 @@
       </remoteRepository>
       <pom refid="maven.project"/>
     </artifact:deploy>
-
   </target>
 
   <target name="test-scm" depends="initTaskDefs">
@@ -509,4 +505,25 @@
       <localRepository path="${basedir}/target/tmp"/>
     </artifact:pom>
   </target>
+
+  <macrodef name="check.file.exists">
+    <attribute name="file"/>
+    <attribute name="type" default="file"/>
+    <attribute name="property"/>
+    <sequential>
+      <echo>Checking for existence of @{type}: @{file}</echo>
+      <available property="@{property}" file="@{file}" type="@{type}"/>
+      <fail unless="@{property}" message="Unable to find a required @{type}: @{file}"/>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="check.file.not.exists">
+    <attribute name="file"/>
+    <attribute name="type" default="file"/>
+  	<sequential>
+      <echo>Checking for non-existence of @{type}: @{file}</echo>
+      <available property="file.exists" file="@{file}" type="@{type}"/>
+      <fail if="file.exists" message="Found a @{type} that was not supposed to exist: @{file}"/>
+    </sequential>
+  </macrodef>
 </project>
