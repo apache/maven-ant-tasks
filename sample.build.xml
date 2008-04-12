@@ -138,9 +138,9 @@
     <!-- excluded dependency junit:junit -->
     <check.file.not.exists file="target/files/binaries/junit/junit" type="dir"/>
     <!-- SNAPSHOT dependency it.ant-tasks:snapshotUniqueFalse:2.0.7-SNAPSHOT -->
-    <check.file.exists file="target/files/binaries/it/ant-tasks/snapshotUniqueFalse" type="dir" property="snapshot.dependency.uniqueFalse"/>
+    <check.file.exists file="target/files/binaries/it/ant-tasks/snapshotUniqueFalse" type="dir"/>
     <!-- MANTTASKS-18: SNAPSHOT dependency it.ant-tasks:snapshotUniqueTrue:2.0.7-SNAPSHOT -->
-    <check.file.exists file="target/files/binaries/it/ant-tasks/snapshotUniqueTrue" type="dir" property="snapshot.dependency.uniqueTrue"/>
+    <check.file.exists file="target/files/binaries/it/ant-tasks/snapshotUniqueTrue" type="dir"/>
 
     <!-- MANTTASKS-84 -->
     <copy todir="target/files/versionMapperFlatten">
@@ -152,7 +152,7 @@
     <check.file.not.exists file="target/files/versionMapperFlatten/it" type="dir"/>
 
     <!-- MANTTASKS-33: property it.ant-tasks:snapshotUniqueFalse:jar should point to an existing file -->
-    <check.file.exists file="${it.ant-tasks:snapshotUniqueTrue:jar}" property="propertySnapshotUniqueTrue"/>
+    <check.file.exists file="${it.ant-tasks:snapshotUniqueTrue:jar}"/>
   </target>
 
   <target name="test-pom-deps" depends="initTaskDefs">
@@ -288,9 +288,9 @@
       <mapper type="flatten"/>
     </copy>
     <!-- release sources -->
-    <check.file.exists file="${basedir}/target/files/sources/release-2.0.7-sources.jar" property="release-sources.jar"/>
+    <check.file.exists file="${basedir}/target/files/sources/release-2.0.7-sources.jar"/>
     <!-- property it.ant-tasks:release:java-source:sources should point to an existing file in local repo -->
-    <check.file.exists file="${it.ant-tasks:release:java-source:sources}" property="propertySources"/>
+    <check.file.exists file="${it.ant-tasks:release:java-source:sources}"/>
 
     <delete dir="${basedir}/target/files/javadoc"/>
     <copy todir="${basedir}/target/files/javadoc">
@@ -299,9 +299,9 @@
     </copy>
 
     <!-- release javadoc -->
-    <check.file.exists file="${basedir}/target/files/javadoc/release-2.0.7-javadoc.jar" property="release-javadoc.jar"/>
+    <check.file.exists file="${basedir}/target/files/javadoc/release-2.0.7-javadoc.jar"/>
     <!-- property it.ant-tasks:release:java-source:javadoc should point to an existing file in local repo -->
-    <check.file.exists file="${it.ant-tasks:release:java-source:javadoc}" property="propertyJavadoc"/>
+    <check.file.exists file="${it.ant-tasks:release:java-source:javadoc}"/>
   </target>
 
   <target name="test-deps-sources-empty" depends="initTaskDefs">
@@ -373,7 +373,7 @@
       <pom refid="maven.project"/>
     </artifact:deploy>
     <!-- deployment in ${deploy.repository.url} should have created a directory -->
-    <check.file.exists file="${targetDir}" type="dir" property="deploymentArtifactDir"/>
+    <check.file.exists file="${targetDir}" type="dir"/>
     <!-- uniqueVersion="true" by default: file -SNAPSHOT.jar should not exist -->
     <check.file.not.exists file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar"/>
 
@@ -382,7 +382,7 @@
       <pom refid="maven.project"/>
     </artifact:deploy>
     <!-- when uniqueVersion="false", file -SNAPSHOT.jar should be created -->
-    <check.file.exists file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar" property="outJarWithoutUniqueVersion"/>
+    <check.file.exists file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar"/>
 
     <artifact:deploy file="${outJar}">
       <remoteRepository url="scp://localhost/tmp/deployment-repo" id="scp.localhost.repo">
@@ -509,11 +509,15 @@
   <macrodef name="check.file.exists">
     <attribute name="file"/>
     <attribute name="type" default="file"/>
-    <attribute name="property"/>
     <sequential>
       <echo>Checking for existence of @{type}: @{file}</echo>
-      <available property="@{property}" file="@{file}" type="@{type}"/>
-      <fail unless="@{property}" message="Unable to find a required @{type}: @{file}"/>
+      <fail message="Unable to find a required @{type}: @{file}">
+        <condition>
+          <not>
+            <available file="@{file}" type="@{type}"/>
+          </not>
+        </condition>
+      </fail>
     </sequential>
   </macrodef>
 
@@ -522,8 +526,11 @@
     <attribute name="type" default="file"/>
   	<sequential>
       <echo>Checking for non-existence of @{type}: @{file}</echo>
-      <available property="file.exists" file="@{file}" type="@{type}"/>
-      <fail if="file.exists" message="Found a @{type} that was not supposed to exist: @{file}"/>
+      <fail message="Found a @{type} that was not supposed to exist: @{file}">
+        <condition>
+          <available file="@{file}" type="@{type}"/>
+        </condition>
+      </fail>
     </sequential>
   </macrodef>
 </project>
