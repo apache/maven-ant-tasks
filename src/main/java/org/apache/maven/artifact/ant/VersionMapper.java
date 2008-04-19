@@ -28,6 +28,12 @@ import java.util.List;
 import org.apache.tools.ant.util.FileNameMapper;
 import org.codehaus.plexus.util.StringUtils;
 
+/**
+ * Ant filename mapper to remove version info from filename when copying dependencies.
+ *
+ * @author <a href="mailto:hboutemy@apache.org">Herve Boutemy</a>
+ * @version $Id$
+ */
 public class VersionMapper implements FileNameMapper, Comparator
 {
     private List versions;
@@ -58,8 +64,8 @@ public class VersionMapper implements FileNameMapper, Comparator
     }
 
     /**
-     * Set the versions identifiers that this mapper can remove from filename. The value separator used is path
-     * separator.
+     * Set the versions identifiers that this mapper can remove from filenames. The separator value used is path
+     * separator, as used by dependencies task when setting <code>versionsId</code> property value.
      */
     public void setFrom( String from )
     {

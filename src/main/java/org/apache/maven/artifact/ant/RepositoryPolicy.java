@@ -22,7 +22,7 @@ package org.apache.maven.artifact.ant;
 import org.apache.tools.ant.ProjectComponent;
 
 /**
- * Base class for a repository.
+ * Base class for a repository policy.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
