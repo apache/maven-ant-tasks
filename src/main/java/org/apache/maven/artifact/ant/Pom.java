@@ -57,20 +57,17 @@ import java.util.List;
 
 /**
  * A POM typedef.
- *
- * Also an Ant Task that registers a handler called POMPropertyHelper
- * that intercepts all calls to property value resolution and replies instead
- * of Ant to properties that start with the id of the pom.
- *
- * Example:
- * ${maven.project.artifactId}
- *
+ * 
+ * Also an Ant Task that registers a handler called POMPropertyHelper that intercepts all calls to property value
+ * resolution and replies instead of Ant to properties that start with the id of the pom.
+ * 
+ * Example: ${maven.project.artifactId}
+ * 
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:nicolaken@apache.org">Nicola Ken Barozzi</a>
  * @version $Id$
  */
-public class Pom
-    extends AbstractArtifactWithRepositoryTask
+public class Pom extends AbstractArtifactWithRepositoryTask
 {
     private String refid;
 
@@ -138,10 +135,12 @@ public class Pom
     {
         MavenProjectHelper helper = (MavenProjectHelper) lookup( MavenProjectHelper.ROLE );
         MavenProject project = getMavenProject();
-        if (attached.getClassifier() != null) {
+        if ( attached.getClassifier() != null )
+        {
             helper.attachArtifact( project, attached.getType(), attached.getClassifier(), attached.getFile() );
         }
-        else {
+        else
+        {
             helper.attachArtifact( project, attached.getType(), attached.getFile() );
         }
     }
@@ -213,9 +212,9 @@ public class Pom
                 ArtifactResolver resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
                 List remoteRepositories = createRemoteArtifactRepositories( model.getRepositories() );
 
-                resolver.resolveTransitively( Collections.singleton( parentArtifact ),
-                                              createDummyArtifact(), createLocalArtifactRepository(),
-                                              remoteRepositories, metadataSource, null );
+                resolver.resolveTransitively( Collections.singleton( parentArtifact ), createDummyArtifact(),
+                                              createLocalArtifactRepository(), remoteRepositories, metadataSource,
+                                              null );
             }
             catch ( ArtifactResolutionException e )
             {
@@ -224,7 +223,8 @@ public class Pom
             }
             catch ( ArtifactNotFoundException e )
             {
-                throw new BuildException( "Unable to download parent pom " + parent.getId() + " in remote repository: " + e.getMessage(), e );
+                throw new BuildException( "Unable to download parent pom " + parent.getId() + " in remote repository: "
+                                + e.getMessage(), e );
             }
         }
     }
@@ -237,127 +237,127 @@ public class Pom
     public String getArtifactId()
     {
         return getMavenProject().getArtifactId();
-    } //-- String getArtifactId()
+    } // -- String getArtifactId()
 
     public Build getBuild()
     {
         return getMavenProject().getBuild();
-    } //-- Build getBuild()
+    } // -- Build getBuild()
 
     public CiManagement getCiManagement()
     {
         return getMavenProject().getCiManagement();
-    } //-- CiManagement getCiManagement()
+    } // -- CiManagement getCiManagement()
 
     public List getContributors()
     {
         return getMavenProject().getContributors();
-    } //-- List getContributors()
+    } // -- List getContributors()
 
     public List getDependencies()
     {
         return getMavenProject().getDependencies();
-    } //-- List getDependencies()
+    } // -- List getDependencies()
 
     public DependencyManagement getDependencyManagement()
     {
         return getMavenProject().getDependencyManagement();
-    } //-- DependencyManagement getDependencyManagement()
+    } // -- DependencyManagement getDependencyManagement()
 
     public String getDescription()
     {
         return getMavenProject().getDescription();
-    } //-- String getDescription()
+    } // -- String getDescription()
 
     public List getDevelopers()
     {
         return getMavenProject().getDevelopers();
-    } //-- List getDevelopers()
+    } // -- List getDevelopers()
 
     public DistributionManagement getDistributionManagement()
     {
         return getMavenProject().getDistributionManagement();
-    } //-- DistributionManagement getDistributionManagement()
+    } // -- DistributionManagement getDistributionManagement()
 
     public String getGroupId()
     {
         return getMavenProject().getGroupId();
-    } //-- String getGroupId()
+    } // -- String getGroupId()
 
     public String getInceptionYear()
     {
         return getMavenProject().getInceptionYear();
-    } //-- String getInceptionYear()
+    } // -- String getInceptionYear()
 
     public IssueManagement getIssueManagement()
     {
         return getMavenProject().getIssueManagement();
-    } //-- IssueManagement getIssueManagement()
+    } // -- IssueManagement getIssueManagement()
 
     public List getLicenses()
     {
         return getMavenProject().getLicenses();
-    } //-- List getLicenses()
+    } // -- List getLicenses()
 
     public List getMailingLists()
     {
         return getMavenProject().getMailingLists();
-    } //-- List getMailingLists()
+    } // -- List getMailingLists()
 
     public String getModelVersion()
     {
         return getMavenProject().getModelVersion();
-    } //-- String getModelVersion()
+    } // -- String getModelVersion()
 
     public List getModules()
     {
         return getMavenProject().getModules();
-    } //-- List getModules()
+    } // -- List getModules()
 
     public String getName()
     {
         return getMavenProject().getName();
-    } //-- String getName()
+    } // -- String getName()
 
     public Organization getOrganization()
     {
         return getMavenProject().getOrganization();
-    } //-- Organization getOrganization()
+    } // -- Organization getOrganization()
 
     public String getPackaging()
     {
         return getMavenProject().getPackaging();
-    } //-- String getPackaging()
+    } // -- String getPackaging()
 
     public List getPluginRepositories()
     {
         return getMavenProject().getPluginRepositories();
-    } //-- List getPluginRepositories()
+    } // -- List getPluginRepositories()
 
     public Reporting getReporting()
     {
         return getMavenProject().getReporting();
-    } //-- Reports getReports()
+    } // -- Reports getReports()
 
     public List getRepositories()
     {
         return getMavenProject().getRepositories();
-    } //-- List getRepositories()
+    } // -- List getRepositories()
 
     public Scm getScm()
     {
         return getMavenProject().getScm();
-    } //-- Scm getScm()
+    } // -- Scm getScm()
 
     public String getUrl()
     {
         return getMavenProject().getUrl();
-    } //-- String getUrl()
+    } // -- String getUrl()
 
     public String getVersion()
     {
         return getMavenProject().getVersion();
-    } //-- String getVersion()
+    } // -- String getVersion()
 
     public String getId()
     {
@@ -388,8 +388,7 @@ public class Pom
     /**
      * The property interceptor that handles the calls for "pom." properties
      */
-    private class POMPropertyHelper
-        extends PropertyHelper
+    private class POMPropertyHelper extends PropertyHelper
     {
         /**
          * The method that gets called by Ant with every request of property
@@ -416,15 +415,17 @@ public class Pom
             }
         }
 
+        private static final String PROPERTIES_PREFIX = "project.properties.";
+
         private Object getPOMValue( String expression )
         {
             Object value = null;
 
             try
             {
-                if ( expression.startsWith( "project.properties." ) )
+                if ( expression.startsWith( PROPERTIES_PREFIX ) )
                 {
-                    expression = expression.substring( 19 );
+                    expression = expression.substring( PROPERTIES_PREFIX.length() );
                     value = getMavenProject().getProperties().get( expression );
                 }
                 else

@@ -47,20 +47,20 @@ import java.util.List;
 public class InstallWagonProviderTask
     extends AbstractArtifactWithRepositoryTask
 {
-	private String groupId = "org.apache.maven.wagon";
-	
+    private String groupId = "org.apache.maven.wagon";
+
     private String artifactId;
 
     private String version;
 
     public String getGroupId()
     {
-    	return groupId;
+        return groupId;
     }
     
     public void setGroupId( String groupId )
     {
-    	this.groupId = groupId;
+        this.groupId = groupId;
     }
 
     public String getArtifactId()
@@ -84,7 +84,6 @@ public class InstallWagonProviderTask
     }
 
     public void doExecute()
-        throws BuildException
     {
         VersionRange versionRange;
         try
@@ -93,9 +92,9 @@ public class InstallWagonProviderTask
         }
         catch ( InvalidVersionSpecificationException e )
         {
-            throw new BuildException( "Unable to get extension '" +
-                ArtifactUtils.versionlessKey( groupId, artifactId ) + "' because version '" + version +
-                " is invalid: " + e.getMessage(), e );
+            throw new BuildException( "Unable to get extension '"
+                                      + ArtifactUtils.versionlessKey( groupId, artifactId ) + "' because version '"
+                                      + version + " is invalid: " + e.getMessage(), e );
         }
 
         ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );

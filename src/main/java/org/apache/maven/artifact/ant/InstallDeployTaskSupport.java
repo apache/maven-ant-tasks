@@ -54,11 +54,13 @@ public abstract class InstallDeployTaskSupport
         Pom pom = super.buildPom( localArtifactRepository );
 
         // attach artifacts
-        if (attachedArtifacts != null) {
+        if ( attachedArtifacts != null )
+        {
             Iterator iter = attachedArtifacts.iterator();
 
-            while (iter.hasNext()) {
-                AttachedArtifact attached = (AttachedArtifact)iter.next();
+            while ( iter.hasNext() )
+            {
+                AttachedArtifact attached = (AttachedArtifact) iter.next();
                 pom.attach( attached );
             }
         }
@@ -68,12 +70,13 @@ public abstract class InstallDeployTaskSupport
 
     public AttachedArtifact createAttach()
     {
-        if (attachedArtifacts == null) {
+        if ( attachedArtifacts == null )
+        {
             attachedArtifacts = new ArrayList();
         }
 
         AttachedArtifact attach = new AttachedArtifact();
-        attachedArtifacts.add(attach);
+        attachedArtifacts.add( attach );
 
         return attach;
     }

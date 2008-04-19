@@ -234,7 +234,9 @@ public abstract class AbstractArtifactTask
             if ( settingsFile.exists() )
             {
                 userSettingsFile = settingsFile;
-            } else {
+            }
+            else
+            {
                 settingsFile = newFile( System.getProperty( "user.home" ), ".m2", "settings.xml" );
                 if ( settingsFile.exists() )
                 {
@@ -248,7 +250,9 @@ public abstract class AbstractArtifactTask
             if ( settingsFile.exists() )
             {
                 globalSettingsFile = settingsFile;
-            } else {
+            }
+            else
+            {
                 // look in ${M2_HOME}/conf
                 List env = Execute.getProcEnvironment();
                 for ( Iterator iter = env.iterator(); iter.hasNext(); )
@@ -256,8 +260,8 @@ public abstract class AbstractArtifactTask
                     String var = (String) iter.next();
                     if ( var.startsWith( "M2_HOME=" ) )
                     {
-                        String m2_home = var.substring( "M2_HOME=".length() );
-                        globalSettingsFile = newFile( m2_home, "conf", "settings.xml" );
+                        String m2Home = var.substring( "M2_HOME=".length() );
+                        globalSettingsFile = newFile( m2Home, "conf", "settings.xml" );
                         break;
                     }
                 }
@@ -316,8 +320,8 @@ public abstract class AbstractArtifactTask
         if ( settings == null )
         {
             settings = new Settings();
-            RuntimeInfo rtInfo = new RuntimeInfo(settings);
-            settings.setRuntimeInfo(rtInfo);
+            RuntimeInfo rtInfo = new RuntimeInfo( settings );
+            settings.setRuntimeInfo( rtInfo );
         }
 
         return settings;
@@ -326,7 +330,9 @@ public abstract class AbstractArtifactTask
     public void setSettingsFile( File settingsFile )
     {
         if ( !settingsFile.exists() )
+        {
             throw new BuildException( "settingsFile does not exist: " + settingsFile.getAbsolutePath() );
+        }
 
         userSettingsFile = settingsFile;
         settings = null;
@@ -358,7 +364,8 @@ public abstract class AbstractArtifactTask
             }
             catch ( Exception e )
             {
-                log( "Failed to initialize environment variable resolver. Skipping environment substitution in settings." );
+                log( "Failed to initialize environment variable resolver. Skipping environment substitution in "
+                     + "settings." );
             }
 
             StringReader sReader = new StringReader( rawInput );
@@ -533,14 +540,14 @@ public abstract class AbstractArtifactTask
         MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
 
         MavenProject mavenProject;
-		try
-		{
-			mavenProject = projectBuilder.buildStandaloneSuperProject( localArtifactRepository, getProfileManager() );
-		}
-		catch (ProjectBuildingException e)
-		{
+        try
+        {
+            mavenProject = projectBuilder.buildStandaloneSuperProject( localArtifactRepository, getProfileManager() );
+        }
+        catch ( ProjectBuildingException e )
+        {
             throw new BuildException( "Unable to create dummy Pom", e );
-		}
+        }
 
         Pom pom = new Pom();
 
@@ -625,7 +632,7 @@ public abstract class AbstractArtifactTask
 
     protected ProfileManager getProfileManager()
     {
-    	return profileManager;
+        return profileManager;
     }
 
     public void addLocalRepository( LocalRepository localRepository )
