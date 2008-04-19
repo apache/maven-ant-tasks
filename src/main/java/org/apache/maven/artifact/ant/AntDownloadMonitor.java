@@ -34,6 +34,8 @@ public class AntDownloadMonitor
     extends ProjectComponent
     implements TransferListener
 {
+    private static final int KILO = 1024;
+
     public void debug( String s )
     {
         log( s, Project.MSG_DEBUG );
@@ -44,7 +46,7 @@ public class AntDownloadMonitor
         long contentLength = event.getResource().getContentLength();
         if ( ( contentLength > 0 ) && ( event.getRequestType() == TransferEvent.REQUEST_PUT ) )
         {
-            log( "Uploaded " + ( ( contentLength + 512 ) / 1024 ) + "K" );
+            log( "Uploaded " + ( ( contentLength + KILO / 2 ) / KILO ) + "K" );
         }
     }
 
@@ -70,7 +72,7 @@ public class AntDownloadMonitor
         long contentLength = event.getResource().getContentLength();
         if ( contentLength > 0 )
         {
-            log( "Transferring " + ( ( contentLength + 512 ) / 1024 ) + "K from "
+            log( "Transferring " + ( ( contentLength + KILO / 2 ) / KILO ) + "K from "
                             + event.getWagon().getRepository().getId() );
         }
     }

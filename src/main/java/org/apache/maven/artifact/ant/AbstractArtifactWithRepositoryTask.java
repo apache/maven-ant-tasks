@@ -56,12 +56,12 @@ public abstract class AbstractArtifactWithRepositoryTask
 
     private static String statusAsString( RepositoryPolicy policy )
     {
-        return (policy == null) || policy.isEnabled() ? "enabled" : "disabled";
+        return ( policy == null ) || policy.isEnabled() ? "enabled" : "disabled";
     }
 
     protected List createRemoteArtifactRepositories()
     {
-    	return createRemoteArtifactRepositories( null );
+        return createRemoteArtifactRepositories( null );
     }
 
     /**
@@ -71,24 +71,24 @@ public abstract class AbstractArtifactWithRepositoryTask
      * @return the list of ArtifactRepository-ies
      * @see #createRemoteArtifactRepository(RemoteRepository)
      */
-    protected List createRemoteArtifactRepositories(List pomRepositories)
+    protected List createRemoteArtifactRepositories( List pomRepositories )
     {
         List remoteRepositories = new ArrayList();
         remoteRepositories.addAll( getRemoteRepositories() );
 
         if ( getRemoteRepositories().isEmpty() )
         {
-        	remoteRepositories.add( getDefaultRemoteRepository() );
+            remoteRepositories.add( getDefaultRemoteRepository() );
         }
 
         if ( pomRepositories != null )
         {
-	        for ( Iterator i = pomRepositories.iterator(); i.hasNext(); )
-	        {
-	            Repository pomRepository = (Repository) i.next();
-	
-	            remoteRepositories.add( createAntRemoteRepository( pomRepository ) );
-	        }
+            for ( Iterator i = pomRepositories.iterator(); i.hasNext(); )
+            {
+                Repository pomRepository = (Repository) i.next();
+            
+                remoteRepositories.add( createAntRemoteRepository( pomRepository ) );
+            }
         }
 
         log( "Using remote repositories:", Project.MSG_VERBOSE );

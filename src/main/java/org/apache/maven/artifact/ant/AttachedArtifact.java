@@ -35,27 +35,33 @@ public class AttachedArtifact
 
     private String classifier;
 
-    public File getFile() {
+    public File getFile()
+    {
         return file;
     }
 
-    public void setFile(final File file) {
+    public void setFile( final File file )
+    {
         this.file = file;
     }
 
-    public String getType() {
+    public String getType()
+    {
         return type;
     }
 
-    public void setType(final String type) {
+    public void setType( final String type )
+    {
         this.type = type;
     }
 
-    public String getClassifier() {
+    public String getClassifier()
+    {
         return classifier;
     }
 
-    public void setClassifier(final String classifier) {
+    public void setClassifier( final String classifier )
+    {
         this.classifier = classifier;
     }
 }
