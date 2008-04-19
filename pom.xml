@@ -36,6 +36,11 @@
     <url>http://svn.apache.org/viewcvs.cgi/maven/ant-tasks/branches/maven-ant-tasks-2.0.x</url>
   </scm>
 
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MANTTASKS</url>
+  </issueManagement>
+
   <build>
     <pluginManagement>
       <plugins>
