@@ -213,6 +213,23 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>reporting</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>clirr-maven-plugin</artifactId>
+            <configuration>
+              <comparisonVersion>2.0.9</comparisonVersion>
+            </configuration>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
+  </profiles>
+
   <properties>
     <mavenVersion>2.0.9</mavenVersion>
     <wagonVersion>1.0-beta-2</wagonVersion>
