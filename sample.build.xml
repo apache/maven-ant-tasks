@@ -333,13 +333,13 @@
 
   <target name="test-deps-profile" depends="initTaskDefs">
     <delete dir="${basedir}/target/tmp"/>
-    <artifact:dependencies settingsFile="./src/test/settings-profile-default.xml">
+    <artifact:dependencies settingsFile="${basedir}/src/test/settings-profile-default.xml">
       <dependency groupId="it.ant-tasks" artifactId="release" version="2.0.7"/>
       <localRepository path="${basedir}/target/tmp"/>
     </artifact:dependencies>
 
     <delete dir="${basedir}/target/tmp"/>
-    <artifact:dependencies settingsFile="./src/test/settings-profile-file.xml">
+    <artifact:dependencies settingsFile="${basedir}/src/test/settings-profile-file.xml">
       <dependency groupId="it.ant-tasks" artifactId="release" version="2.0.7"/>
       <localRepository path="${basedir}/target/tmp"/>
     </artifact:dependencies>
@@ -490,10 +490,12 @@
   </target>
 
   <target name="test-pom-with-parent" depends="initTaskDefs">
+    <delete dir="${basedir}/target/tmp"/>
     <artifact:pom file="${user.dir}/src/test/pom-with-parent.xml" id="my.maven.project">
-      <localRepository refid="local.repository"/>
+      <localRepository path="${basedir}/target/tmp"/>
       <remoteRepository url="file://${user.dir}/src/test/repo" id="test.repo"/>
     </artifact:pom>
+    <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.0/pom-1.0.pom" type="file"/>
 
     <echo>Artifact ID = ${my.maven.project.artifactId}</echo>
 
@@ -504,6 +506,7 @@
     <artifact:pom file="${user.dir}/src/test/pom-with-parent2.xml" id="my.maven.project2">
       <localRepository path="${basedir}/target/tmp"/>
     </artifact:pom>
+    <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.0/pom-1.0.pom" type="file"/>
   </target>
 
   <macrodef name="check.file.exists">
