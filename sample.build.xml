@@ -507,6 +507,13 @@
       <localRepository path="${basedir}/target/tmp"/>
     </artifact:pom>
     <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.0/pom-1.0.pom" type="file"/>
+
+    <!-- MANTTASKS-87 repository defined in default profile from settings must be used to download parent pom >
+    <delete dir="${basedir}/target/tmp"/>
+    <artifact:pom file="${user.dir}/src/test/pom-with-parent.xml" id="my.maven.project3" settingsFile="${basedir}/src/test/settings-profile-default.xml">
+      <localRepository path="${basedir}/target/tmp"/>
+    </artifact:pom>
+    <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.0/pom-1.0.pom" type="file"/-->
   </target>
 
   <macrodef name="check.file.exists">
