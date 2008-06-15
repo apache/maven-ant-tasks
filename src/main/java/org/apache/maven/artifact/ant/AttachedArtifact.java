@@ -25,7 +25,7 @@ import java.io.File;
  * Container for specification of an attached artifact.
  *
  * @author <a href="mailto:jdillon@apache.org">Jason Dillon</a>
- * @version $Rev$ $Date$
+ * @version $Id$
  */
 public class AttachedArtifact
 {
