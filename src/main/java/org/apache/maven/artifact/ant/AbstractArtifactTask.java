@@ -39,19 +39,20 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
 import org.apache.maven.settings.TrackableBase;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
-import org.apache.maven.usability.diagnostics.ErrorDiagnostics;
 import org.apache.maven.wagon.Wagon;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Execute;
-import org.codehaus.classworlds.ClassWorld;
-import org.codehaus.classworlds.DuplicateRealmException;
+import org.codehaus.plexus.ContainerConfiguration;
+import org.codehaus.plexus.DefaultContainerConfiguration;
+import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.classworlds.ClassWorld;
+import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.embed.Embedder;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
@@ -280,7 +281,7 @@ public abstract class AbstractArtifactTask
             settings.setLocalRepository( location );
         }
 
-        profileManager = new DefaultProfileManager( getContainer(), getSettings(), System.getProperties() );
+        profileManager = new DefaultProfileManager( getContainer(), null );
 
         WagonManager wagonManager = (WagonManager) lookup( WagonManager.ROLE );
         wagonManager.setDownloadMonitor( new AntDownloadMonitor() );
@@ -376,7 +377,7 @@ public abstract class AbstractArtifactTask
 
             RuntimeInfo rtInfo = new RuntimeInfo( settings );
 
-            rtInfo.setFile( settingsFile );
+            //rtInfo.setFile( settingsFile );
 
             settings.setRuntimeInfo( rtInfo );
         }
@@ -485,14 +486,10 @@ public abstract class AbstractArtifactTask
                 try
                 {
                     ClassWorld classWorld = new ClassWorld();
-
                     classWorld.newRealm( "plexus.core", getClass().getClassLoader() );
-
-                    Embedder embedder = new Embedder();
-
-                    embedder.start( classWorld );
-
-                    container = embedder.getContainer();
+                    ContainerConfiguration configuration = new DefaultContainerConfiguration();
+                    configuration.setClassWorld( classWorld );                    
+                    container = new DefaultPlexusContainer( configuration );
                 }
                 catch ( PlexusContainerException e )
                 {
@@ -542,7 +539,7 @@ public abstract class AbstractArtifactTask
         MavenProject mavenProject;
         try
         {
-            mavenProject = projectBuilder.buildStandaloneSuperProject( localArtifactRepository, getProfileManager() );
+            mavenProject = projectBuilder.buildStandaloneSuperProject();
         }
         catch ( ProjectBuildingException e )
         {
@@ -587,29 +584,6 @@ public abstract class AbstractArtifactTask
         return StringUtils.join( getSupportedProtocols(), ", " );
     }
     
-    public void diagnoseError( Throwable error )
-    {
-        try
-        {
-            ErrorDiagnostics diagnostics = (ErrorDiagnostics) container.lookup( ErrorDiagnostics.ROLE );
-
-            StringBuffer message = new StringBuffer();
-
-            message.append( "An error has occurred while processing the Maven artifact tasks.\n" );
-            message.append( " Diagnosis:\n\n" );
-
-            message.append( diagnostics.diagnose( error ) );
-
-            message.append( "\n\n" );
-
-            log( message.toString(), Project.MSG_INFO );
-        }
-        catch ( ComponentLookupException e )
-        {
-            log( "Failed to retrieve error diagnoser.", Project.MSG_DEBUG );
-        }
-    }
-
     public void addPom( Pom pom )
     {
         this.pom = pom;
@@ -673,8 +647,8 @@ public abstract class AbstractArtifactTask
         }
         catch ( BuildException e )
         {
-            diagnoseError( e );
-
+            e.printStackTrace();
+            
             throw e;
         }
         finally

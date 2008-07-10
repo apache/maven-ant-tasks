@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-  ~ Licensed to the Apache Software Foundation (ASF) under one
-  ~ or more contributor license agreements.  See the NOTICE file
-  ~ distributed with this work for additional information
-  ~ regarding copyright ownership.  The ASF licenses this file
-  ~ to you under the Apache License, Version 2.0 (the
-  ~ "License"); you may not use this file except in compliance
-  ~ with the License.  You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing,
-  ~ software distributed under the License is distributed on an
-  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  ~ KIND, either express or implied.  See the License for the
-  ~ specific language governing permissions and limitations
-  ~ under the License.
--->
-
+  <!--
+    ~ Licensed to the Apache Software Foundation (ASF) under one ~ or
+    more contributor license agreements. See the NOTICE file ~
+    distributed with this work for additional information ~ regarding
+    copyright ownership. The ASF licenses this file ~ to you under the
+    Apache License, Version 2.0 (the ~ "License"); you may not use this
+    file except in compliance ~ with the License. You may obtain a copy
+    of the License at ~ ~ http://www.apache.org/licenses/LICENSE-2.0 ~ ~
+    Unless required by applicable law or agreed to in writing, ~
+    software distributed under the License is distributed on an ~ "AS
+    IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY ~ KIND, either
+    express or implied. See the License for the ~ specific language
+    governing permissions and limitations ~ under the License.
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
@@ -30,18 +24,15 @@
   <artifactId>maven-ant-tasks</artifactId>
   <version>2.1-SNAPSHOT</version>
   <name>Maven Ant Task</name>
-
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/ant-tasks/trunk</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/ant-tasks/trunk</developerConnection>
     <url>http://svn.apache.org/viewcvs.cgi/maven/ant-tasks/trunk</url>
   </scm>
-
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MANTTASKS</url>
   </issueManagement>
-
   <build>
     <pluginManagement>
       <plugins>
@@ -113,7 +104,8 @@
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <keepDependenciesWithProvidedScope>true</keepDependenciesWithProvidedScope>
               <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
+                <transformer
+                  implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
               </transformers>
               <artifactSet>
                 <excludes>
@@ -123,15 +115,6 @@
                   <exclude>ant:ant</exclude>
                 </excludes>
               </artifactSet>
-              <relocations>
-                <relocation>
-                  <pattern>org.codehaus.plexus.util</pattern>
-                  <excludes>
-                    <exclude>org.codehaus.plexus.util.xml.Xpp3Dom</exclude>
-                    <exclude>org.codehaus.plexus.util.xml.pull.*</exclude>
-                  </excludes>
-                </relocation>
-              </relocations>
             </configuration>
           </execution>
         </executions>
@@ -148,17 +131,6 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-project</artifactId>
-      <version>${mavenVersion}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>junit</artifactId>
-          <groupId>junit</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-error-diagnostics</artifactId>
       <version>${mavenVersion}</version>
     </dependency>
     <dependency>
@@ -184,25 +156,14 @@
       <version>1.6.2</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact-manager</artifactId>
-      <version>${mavenVersion}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>junit</artifactId>
-          <groupId>junit</groupId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.apache.maven.artifact</groupId>
+      <artifactId>maven-artifact</artifactId>
+      <version>3.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>${mavenVersion}</version>
+      <version>1.5.6-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
@@ -212,10 +173,9 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9-stable-1</version>
+      <version>1.0-alpha-48</version>
     </dependency>
   </dependencies>
-
   <profiles>
     <profile>
       <id>reporting</id>
@@ -232,9 +192,8 @@
       </reporting>
     </profile>
   </profiles>
-
   <properties>
-    <mavenVersion>2.0.9</mavenVersion>
+    <mavenVersion>2.1-SNAPSHOT</mavenVersion>
     <wagonVersion>1.0-beta-2</wagonVersion>
   </properties>
 </project>
