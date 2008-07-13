@@ -27,7 +27,7 @@
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/ant-tasks/trunk</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/ant-tasks/trunk</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/ant-tasks/trunk</url>
+    <url>http://svn.apache.org/viewvc/maven/ant-tasks/trunk</url>
   </scm>
   <issueManagement>
     <system>jira</system>
@@ -121,11 +121,19 @@
       </plugin>
     </plugins>
   </build>
+  <properties>
+    <mavenVersion>2.1-SNAPSHOT</mavenVersion>
+    <artifactVersion>3.0-SNAPSHOT</artifactVersion>
+    <junitVersion>3.8.1</junitVersion>
+    <plexusVersion>1.0-alpha-48</plexusVersion>
+    <plexusUtilsVersion>1.5.4</plexusUtilsVersion>
+    <wagonVersion>1.0-beta-3</wagonVersion>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>${junitVersion}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -158,12 +166,12 @@
     <dependency>
       <groupId>org.apache.maven.artifact</groupId>
       <artifactId>maven-artifact</artifactId>
-      <version>3.0-SNAPSHOT</version>
+      <version>${artifactVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.6-SNAPSHOT</version>
+      <version>${plexusUtilsVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.wagon</groupId>
@@ -173,7 +181,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-48</version>
+      <version>${plexusVersion}</version>
     </dependency>
   </dependencies>
   <profiles>
@@ -192,8 +200,4 @@
       </reporting>
     </profile>
   </profiles>
-  <properties>
-    <mavenVersion>2.1-SNAPSHOT</mavenVersion>
-    <wagonVersion>1.0-beta-2</wagonVersion>
-  </properties>
 </project>
