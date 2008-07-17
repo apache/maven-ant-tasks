@@ -395,7 +395,6 @@ public class Pom extends AbstractArtifactWithRepositoryTask
          */
         public Object getPropertyHook( String ns, String name, boolean user )
         {
-
             String prefix = antId + ".";
 
             if ( !name.startsWith( prefix ) )
