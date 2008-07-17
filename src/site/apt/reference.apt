@@ -1,5 +1,5 @@
  ------
- Task Reference
+ Task and Type Reference
  ------
  Brett Porter
  Herve Boutemy
@@ -156,6 +156,7 @@ Task Reference
 | <<<version>>>    | The version of the provider to install. <Required>
 *------------------+--------------------------------------------------------------------------+
 
+
 Type Reference
 
 * <<<localRepository>>>
@@ -218,4 +219,16 @@ Type Reference
 | <<<id>>>         | The reference ID of this POM.
 *------------------+--------------------------------------------------------+
 
-  ~~ TODO: Add reference documentation for VersionMapper
+* <<<{VersionMapper}>>>
+
+  This is a {{{http://ant.apache.org/manual/CoreTypes/mapper.html}filename mapper}}
+  that removes version info from the filename when copying dependencies. It can
+  also, optionally, remove the directory info from the filename.
+
+*------------------+--------------------------------------------------------+--------------+
+| <<Attribute>>    | <<Description>>                                        | <<Required>>
+*------------------+--------------------------------------------------------+--------------+
+| <<<from>>>       | The original filename.                                 | Yes
+*------------------+--------------------------------------------------------+--------------+
+| <<<to>>>         | If this is set to <<<flatten>>> the directory info is also removed from the filename. | No
+*------------------+--------------------------------------------------------+--------------+
