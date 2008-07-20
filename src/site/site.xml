@@ -25,7 +25,7 @@ under the License.
     <breadcrumbs>
       <item name="Apache" href="http://www.apache.org/"/>
       <item name="Maven" href="http://maven.apache.org/"/>
-      <item name="Ant Tasks" href="http://maven.apache.org/maven-ant-tasks/"/>
+      <item name="Ant Tasks" href="http://maven.apache.org/ant-tasks/"/>
     </breadcrumbs>
 
     <menu name="Overview">
@@ -38,7 +38,7 @@ under the License.
 
     <!-- TODO: Inherit Maven Projects -->
     <menu name="Maven Projects" inherit="bottom">
-      <item name="Ant Tasks"         href="http://maven.apache.org/ant-tasks.html" />
+      <item name="Ant Tasks"         href="http://maven.apache.org/ant-tasks/index.html" />
       <!-- No site available for archetype yet
       <item name="Archetype"         href="http://maven.apache.org/archetype/index.html" />
       -->
