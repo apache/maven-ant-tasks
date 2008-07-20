@@ -50,6 +50,8 @@ Task Reference
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<pomRefId>>>          | The reference ID from a POM datatype defined earlier in the build file.   | Yes, either this or a <<<pom>>> nested element or one or more <<<dependency>>> nested elements | |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
+| <<<settingsFile>>>      | The settings file to use. Defaults to <<<$\{user.home\}/.ant/settings.xml>>> or if that doesn't exist <<<$\{user.home\}/.m2/settings.xml>>>. | No | 2.0.6 |
+*-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<sourcesFilesetId>>>  | The reference ID to store a fileset under, for the sources attachements of the resolved dependencies. | No | 2.0.6 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<type>>>              | The type of artifacts to be retrieved. The default is <<<jar>>>.          | No           |             |
@@ -120,15 +122,17 @@ Task Reference
   These tasks will install/deploy the given file into the local/remote repository. It is stored using the information in the supplied
   POM. Multiple artifacts can be attached during install/deploy using <<<attach>>> elements.
 
-*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+
-| <<Attribute>>       | <<Description>>                                                          | <<Required>>                                    |
-*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+
-| <<<file>>>          | The file to install in the repository.                                   | Yes, except if packaging is <<<pom>>>           |
-*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+
-| <<<pomRefId>>>      | The reference ID from a POM datatype defined earlier in the build file.  | No, if a <<<pom>>> nested element is provided instead |
-*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+
-| <<<uniqueVersion>>> | (<<<deploy>>> only) Whether to assign snapshots a unique version comprised of the timestamp and build number, or to use the same version each time | No, the default is <<<true>>>. |
-*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+
+*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
+| <<Attribute>>       | <<Description>>                                                          | <<Required>>                                    | << Since >> |
+*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
+| <<<file>>>          | The file to install in the repository.                                   | Yes, except if packaging is <<<pom>>>           |             |
+*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
+| <<<pomRefId>>>      | The reference ID from a POM datatype defined earlier in the build file.  | No, if a <<<pom>>> nested element is provided instead |       |
+*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
+| <<<settingsFile>>>  | The settings file to use. Defaults to <<<$\{user.home\}/.ant/settings.xml>>> or if that doesn't exist <<<$\{user.home\}/.m2/settings.xml>>>. | No | 2.0.6 |
+*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
+| <<<uniqueVersion>>> | (<<<deploy>>> only) Whether to assign snapshots a unique version comprised of the timestamp and build number, or to use the same version each time | No, the default is <<<true>>>. | |
+*---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
 
   The task must take either a nested <<<pom>>> element, or a <<<pomRefId>>> attribute.
   The task can have an optional <<<localRepository>>> nested element.
