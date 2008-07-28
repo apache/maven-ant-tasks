@@ -193,6 +193,9 @@
             <artifactId>clirr-maven-plugin</artifactId>
             <configuration>
               <comparisonVersion>2.0.9</comparisonVersion>
+              <includes>
+                <include>org/apache/maven/*</include>
+              </includes>
             </configuration>
           </plugin>
         </plugins>
