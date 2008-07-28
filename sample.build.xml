@@ -32,7 +32,7 @@
   </target>
 
   <target name="initTaskDefs" depends="initClassloader">
-  	<xmlproperty file="pom.xml" prefix="pom.xml" />
+    <xmlproperty file="pom.xml" prefix="pom.xml" />
 
     <path id="maven-ant-tasks.classpath" path="target/maven-ant-tasks-${pom.xml.project.version}.jar" />
     <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
@@ -461,20 +461,20 @@
       <remoteRepository refid="deploy.repository" />
     </artifact:deploy>
   </target>
-  
+
   <target name="test-deploy-attached" depends="initTaskDefs">
     <echo message="test" file="${basedir}/target/sample-build-test.pom.asc"/>
-    
+
     <artifact:deploy file="sample-build-test.pom">
       <pom file="sample-build-test.pom" />
       <remoteRepository refid="deploy.repository" />
       <attach file="${basedir}/target/sample-build-test.pom.asc" type="pom.asc"/>
     </artifact:deploy>
   </target>
-  
+
   <target name="test-install-attached" depends="initTaskDefs">
     <echo message="test" file="${basedir}/target/sample-build-test.pom.asc"/>
-    
+
     <artifact:install file="sample-build-test.pom">
       <pom file="sample-build-test.pom" />
       <localRepository refid="local.repository"/>
@@ -501,7 +501,7 @@
 
     <echo>Parent Artifact ID = ${my.maven.project.parent.artifactId}</echo>
 
-  	<!-- MANTTASKS-107 repository defined in pom must be used to download parent pom -->
+    <!-- MANTTASKS-107 repository defined in pom must be used to download parent pom -->
     <delete dir="${basedir}/target/tmp"/>
     <artifact:pom file="${user.dir}/src/test/pom-with-parent2.xml" id="my.maven.project2">
       <localRepository path="${basedir}/target/tmp"/>
@@ -534,7 +534,7 @@
   <macrodef name="check.file.not.exists">
     <attribute name="file"/>
     <attribute name="type" default="file"/>
-  	<sequential>
+    <sequential>
       <echo>Checking for non-existence of @{type}: @{file}</echo>
       <fail message="Found a @{type} that was not supposed to exist: @{file}">
         <condition>
