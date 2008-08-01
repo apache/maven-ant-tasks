@@ -22,7 +22,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-ant-tasks</artifactId>
   <version>2.1-SNAPSHOT</version>
-  <name>Maven Ant Task</name>
+  <name>Maven Ant Tasks</name>
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/ant-tasks/trunk</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/ant-tasks/trunk</developerConnection>
