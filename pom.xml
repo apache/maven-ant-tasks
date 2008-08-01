@@ -109,8 +109,9 @@
               <artifactSet>
                 <excludes>
                   <exclude>junit:junit</exclude>
-                  <exclude>jtidy:jtidy</exclude>
-                  <exclude>xml-apis:xml-apis</exclude>
+                  <exclude>nekohtml:nekohtml</exclude>
+                  <exclude>nekohtml:xercesMinimal</exclude>
+                  <exclude>stax:stax-api</exclude>
                   <exclude>ant:ant</exclude>
                 </excludes>
               </artifactSet>
