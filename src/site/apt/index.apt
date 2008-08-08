@@ -40,7 +40,7 @@ Ant Tasks for Maven
 
   The Ant tasks can be downloaded from {{{http://maven.apache.org/download.html} Maven 2.0 download page}}.
 
-  ~~ TODO: What is the minimum version of Ant required to use Maven Ant tasks?
+  Ant 1.6.x or 1.7.x is required to use Maven Ant tasks.
 
 * Getting Help
 
