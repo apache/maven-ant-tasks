@@ -31,19 +31,16 @@ Using Maven Ant Tasks
 
 * Declaring Dependencies
 
-  The main purpose of the Maven Ant Tasks is to utilise Maven's {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html} dependency management features}}.
+  The main purpose of the Maven Ant Tasks is to utilize Maven's {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html} dependency management features}}.
 
   This is achieved with the <<<dependencies>>> task. The simplest usage involves specifying your dependencies inline,
   such as in the following example:
 
 -----
 <artifact:dependencies pathId="dependency.classpath">
-  <dependency groupId="junit" artifactId="junit"
-              version="3.8.2" scope="test"/>
-  <dependency groupId="org.codehaus.modello" artifactId="modello-core"
-              version="1.0-alpha-2-SNAPSHOT"/>
-  <dependency groupId="javax.servlet" artifactId="servlet-api"
-              version="2.4" scope="provided"/>
+  <dependency groupId="junit" artifactId="junit" version="3.8.2" scope="test"/>
+  <dependency groupId="org.codehaus.modello" artifactId="modello-core" version="1.0-alpha-2-SNAPSHOT"/>
+  <dependency groupId="javax.servlet" artifactId="servlet-api" version="2.4" scope="provided"/>
 </artifact:dependencies>
 -----
 
@@ -94,7 +91,7 @@ Using Maven Ant Tasks
 
     * <<<javadocFilesetId>>>, which will give you a fileset reference containing javadoc artifacts, <(since 2.0.9)>
 
-    * <<<org.apache.maven.artifact.ant.VersionMapper>>>, which can be used to drop version numbers in filenames <(since 2.0.7)>
+    * <<<versionsId>>>, which can be used to drop version numbers in filenames <(since 2.0.7)>
 
   For example, to populate <<<lib>>> with your dependencies without the version in the filenames, <<<lib/src>>> with the corresponding sources
   and <<<lib/javadoc>>> with the corresponding javadocs:
@@ -142,8 +139,7 @@ Using Maven Ant Tasks
   For example, you can specify the remote repository you want to use:
 
 -----
-<artifact:remoteRepository id="remote.repository"
-        url="http://repository.mycompany.com/" />
+<artifact:remoteRepository id="remote.repository" url="http://repository.mycompany.com/" />
 ...
 <artifact:dependencies>
   <!-- Your dependency definitions go here -->
@@ -281,8 +277,7 @@ Using Maven Ant Tasks
 
   <artifact:deploy file="target/maven-artifact-ant-2.0-alpha-3.jar">
     <remoteRepository url="scp://localhost/www/repository">
-      <authentication username="${repository.username}"
-              privateKey="${user.home}/.ssh/id_dsa"/>
+      <authentication username="${repository.username}" privateKey="${user.home}/.ssh/id_dsa"/>
     </remoteRepository>
     <pom refid="maven.project"/>
   </artifact:deploy>
@@ -366,10 +361,8 @@ Using Maven Ant Tasks
 
     * {{{http://maven.apache.org/guides/mini/guide-mirror-settings.html} Using Mirrors for Repositories}}.
 
-    ~~ TODO: The link below is broken
-
     * There is a
-      {{{http://svn.apache.org/repos/asf/maven/components/trunk/maven-embedder/src/conf/settings.xml} sample settings file}}
+      {{{http://svn.apache.org/repos/asf/maven/components/trunk/maven-distribution/src/conf/settings.xml} sample settings file}}
       in the Maven installation.
 
 * Sample Ant Script

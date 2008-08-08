@@ -142,7 +142,7 @@ Task Reference
 
 ** <<<attach>>> <(since 2.0.6)>
 
-  Multiple artifacts can be attached to the main artifact, for exemple: sources, javadocs, ...
+  Multiple artifacts can be attached to the main artifact, for example: sources, javadocs, ...
 
 *------------------+--------------------------------------------------------+--------------+
 | <<Attribute>>    | <<Description>>                                        | <<Required>> |
@@ -214,7 +214,7 @@ Type Reference
 *----------------------+--------------------------------------------------------+--------------+
 | <<<enabled>>>        | Whether to download this type of artifact from the repository. Default is <<<true>>>. | No |
 *----------------------+--------------------------------------------------------+--------------+
-| <<<updatePolicy>>>   | How often to check for updates on dependencies that are snapshots or include a range of versions. Valid values are <<<never>>>, <<<interval:MINUTES>>>, <<<daily>>> (<default)>, <<<always>>>. | No |
+| <<<updatePolicy>>>   | How often to check for updates on dependencies that are snapshots or include a range of versions. Valid values are <<<never>>>, <<<interval:MINUTES>>>, <<<daily>>> (<default>), <<<always>>>. | No |
 *----------------------+--------------------------------------------------------+--------------+
 
 ** <<<authentication>>>
