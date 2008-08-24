@@ -115,6 +115,11 @@ public class DeployTask
         {
             if ( !isPomArtifact )
             {
+                if ( file == null )
+                {
+                    throw new BuildException( "You must specify a file to deploy to the repository." );
+                }
+
                 deployer.deploy( file, artifact, deploymentRepository, localRepo );
             }
             else
