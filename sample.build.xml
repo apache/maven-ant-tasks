@@ -359,36 +359,36 @@
   </target>
 
   <target name="test-deploy" depends="initTaskDefs,installSshProvider">
-    <property name="outJar" value="${maven.project.build.directory}/${maven.project.build.finalName}.jar"/>
-    <property name="targetDir" value="${deploy.repository.url}/org/apache/maven/maven-ant-tasks/${pom.xml.project.version}"/>
+    <property name="outJar" value="${basedir}/sample.build.xml"/>
+    <property name="targetDir" value="${deploy.repository.url}/org/apache/maven/test/sample-build-test/2.0-beta-4-SNAPSHOT"/>
     <delete dir="${deploy.repository.url}"/>
 
     <artifact:install file="${outJar}">
-      <pom refid="maven.project"/>
+      <pom file="sample-build-test.pom"/>
     </artifact:install>
 
-    <echo>Note: only works on snapshots!</echo>
     <artifact:deploy file="${outJar}">
       <remoteSnapshotRepository refid="deploy.repository"/>
-      <pom refid="maven.project"/>
+      <pom file="sample-build-test.pom"/>
     </artifact:deploy>
     <!-- deployment in ${deploy.repository.url} should have created a directory -->
     <check.file.exists file="${targetDir}" type="dir"/>
     <!-- uniqueVersion="true" by default: file -SNAPSHOT.jar should not exist -->
-    <check.file.not.exists file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar"/>
+    <check.file.not.exists file="${targetDir}/sample-build-test-2.0-beta-4-SNAPSHOT.jar"/>
 
     <artifact:deploy file="${outJar}" uniqueVersion="false">
       <remoteSnapshotRepository refid="deploy.repository"/>
-      <pom refid="maven.project"/>
+      <pom file="sample-build-test.pom"/>
     </artifact:deploy>
     <!-- when uniqueVersion="false", file -SNAPSHOT.jar should be created -->
-    <check.file.exists file="${targetDir}/maven-ant-tasks-${pom.xml.project.version}.jar"/>
+    <check.file.exists file="${targetDir}/sample-build-test-2.0-beta-4-SNAPSHOT.jar"/>
 
+    <!-- test deploy to scp repository -->
     <artifact:deploy file="${outJar}">
       <remoteRepository url="scp://localhost/tmp/deployment-repo" id="scp.localhost.repo">
         <authentication username="${user.name}" privateKey="${user.home}/.ssh/id_dsa"/>
       </remoteRepository>
-      <pom refid="maven.project"/>
+      <pom file="sample-build-test.pom"/>
     </artifact:deploy>
   </target>
 
