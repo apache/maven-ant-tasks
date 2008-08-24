@@ -45,6 +45,11 @@ public class InstallTask
 
         Pom pom = buildPom( localRepo );
 
+        if ( pom == null )
+        {
+            throw new BuildException( "A POM element is required to install to the local repository" );
+        }
+        
         Artifact artifact = pom.getArtifact();
 
         boolean isPomArtifact = "pom".equals( pom.getPackaging() );
@@ -59,6 +64,11 @@ public class InstallTask
         {
             if ( !isPomArtifact )
             {
+                if ( file == null )
+                {
+                    throw new BuildException( "You must specify a file to install to the local repository." );
+                }
+
                 installer.install( file, artifact, localRepo );
             }
             else
