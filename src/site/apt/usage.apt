@@ -60,6 +60,14 @@ Using Maven Ant Tasks
 </javac>
 -----
 
+  <(since 2.0.8)> For each dependency resolved using either inline declaration or a pom reference, the property 
+  <<<groupId:artifactId:type[:classifier]>>> is defined pointing to the corresponding file.  For example,
+  a resolved dependency on junit can be accessed in the following way.
+  
+-----
+<echo message="JUnit jar file downloaded to ${junit:junit:jar}"/>
+-----
+  
   Another option you can use is <<<filesetId>>>, which will give you a fileset reference that can be used to copy
   files into a particular location. For example, to populate <<<WEB-INF/lib>>> with your dependencies
   you could use the following:
