@@ -27,12 +27,12 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Task Reference
+{Task} Reference
 
   ~~ TODO: Can the task and type classes be generated using Modello?
   ~~ If so, the reference documentation can be generated from the model.
 
-* <<<dependencies>>>
+* <<<{dependencies}>>>
 
   This task will check if any of the specified dependencies, and their dependencies are missing or updated, and
   download them if necessary. The dependencies will be made available as a fileset or path reference.
@@ -108,7 +108,7 @@ Task Reference
 | <<<artifactId>>> | The artifact ID of the dependency to exclude.          | Yes          |
 *------------------+--------------------------------------------------------+--------------+
 
-* <<<install>>>, <<<deploy>>>
+* <<<{install}>>>, <<<{deploy}>>>
 
   These tasks will install/deploy the given file into the local/remote repository. It is stored using the information in the supplied
   POM. Multiple artifacts can be attached during install/deploy using <<<attach>>> elements.
@@ -145,7 +145,7 @@ Task Reference
 | <<<classifier>>> | The classifier of the file.                            | No           |
 *------------------+--------------------------------------------------------+--------------+
 
-* <<<install-provider>>>
+* <<<{install-provider}>>>
 
   This task will install a Wagon provider, to add support for more protocols.
 
@@ -160,9 +160,9 @@ Task Reference
 *------------------+--------------------------------------------------------------------------+--------------+-------------+
 
 
-Type Reference
+{Type} Reference
 
-* <<<localRepository>>>
+* <<<{localRepository}>>>
 
   Specifies the location of the local repository of artifacts.
 
@@ -176,7 +176,7 @@ Type Reference
 
   <<Note>>: until 2.0.6, attribute <<<path>>> was named <<<location>>>, but this changed in 2.0.7 to solve a conflict with Ant 1.7.
 
-* <<<remoteRepository>>>
+* <<<{remoteRepository}>>>
 
   Specifies the location of the remote repository.
 
