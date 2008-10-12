@@ -3,7 +3,7 @@
   ------
   Herve Boutemy
   ------
-  2008-04-17
+  2008-10-12
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -52,6 +52,7 @@ Maven Ant Tasks
 
     * [MANTTASKS-88] - Add the ability to download javadoc dependencies
 
+
 * 2.0.8 Release Notes
 
   The full list of changes can be found in our {{{http://jira.codehaus.org/secure/IssueNavigator.jspa?reset=true&pid=11533&fixfor=13618&sorter/field=issuekey&sorter/order=DESC}issue management system}}, and is reproduced below.
@@ -91,6 +92,7 @@ Maven Ant Tasks
     * [MANTTASKS-97] - add support for <mirrorOf>*</mirrorOf>
 
     * [MANTTASKS-101] - get pom properties values like any other element
+
 
 * 2.0.7 Release Notes
 
@@ -149,3 +151,32 @@ Maven Ant Tasks
     * [MANTTASKS-37] - The Dependencies task of Maven Antlib should override an existing path reference instead of failing
 
     * [MANTTASKS-73] - miss RemoteRepository sub-element for tasks pom and install-provider
+
+
+* 2.0.6 Release Notes
+
+  The full list of changes can be found in our {{{http://jira.codehaus.org/secure/IssueNavigator.jspa?reset=true&fixfor=13351&pid=11533&sorter/field=issuekey&sorter/order=DESC}issue management system}}, and is reproduced below.
+
+**Bug
+
+    * [MANTTASKS-7] - dependencies ant task does not handle scoped transitive dependencies correctly
+
+    * [MANTTASKS-62] - Maven 2.0.5 needs Maven 2.0.5 Tasks for Ant and Maven 2.0.5 Embedder for everything to remain sane
+
+**Improvement
+
+    * [MANTTASKS-31] - [PATCH] Ant tasks should allow you to specify a custom location for settings.xml
+
+**New Feature
+
+    * [MANTTASKS-28] - [PATCH] add sourcesFilesetId attribute to dependencies task to download sources
+
+    * [MANTTASKS-42] - Allow install and deploy tasks to include attached artifacts
+
+**Task
+
+    * [MANTTASKS-30] - rename maven-artifact-ant to maven-ant-tasks
+
+**Wish
+
+    * [MANTTASKS-45] - Document pomRefId attribute for M2 ant tasks on M2 website.
