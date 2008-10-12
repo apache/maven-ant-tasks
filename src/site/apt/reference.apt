@@ -60,7 +60,7 @@ Task Reference
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<verbose>>>           | If <<<true>>> this displays the results of each dependency resolution and their relationships. Default is <false>. | No | |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<versionsId>>>        | The property ID to store the versions of the resolved dependencies, for use by a <<<VersionMapper>>>. | No | 2.0.7 |
+| <<<versionsId>>>        | The property ID to store the versions of the resolved dependencies, for use by a {{{reference.html#VersionMapper} <<<VersionMapper>>>}}. | No | 2.0.7 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 
   The task can include the <<<dependency>>> nested type, in addition to the other shared types
@@ -71,16 +71,7 @@ Task Reference
        or a <<<pomRefId>>> attribute
        or one or more <<<dependency>>> elements.
 
-  If you have set a value for <<<versionsId>>>, you can later use <<<VersionMapper>>>, for example during a copy:
-
------
-<copy todir="...">
-  <fileset refid="..." />
-  <mapper classpathref="maven-ant-tasks.classpath"
-          classname="org.apache.maven.artifact.ant.VersionMapper"
-          from="${...versionId property...}" to="flatten" />
-</copy>
------
+  If you have set a value for <<<versionsId>>>, you can later use {{{reference.html#VersionMapper} <<<VersionMapper>>>}}.
 
   <(since 2.0.8)> For each dependency resolved, the property <<<groupId:artifactId:type[:classifier]>>> is defined pointing to
   the corresponding file.
@@ -239,16 +230,21 @@ Type Reference
 | <<<id>>>         | The reference ID of this POM.                          | No           |
 *------------------+--------------------------------------------------------+--------------+
 
-* <<<{VersionMapper}>>>
+* <<<{VersionMapper}>>> <(since 2.0.7)>
 
   This is a {{{http://ant.apache.org/manual/CoreTypes/mapper.html}filename mapper}}
   that removes version info from the filename when copying dependencies. It can
   also, optionally, remove the directory info from the filename.
+  
+  The full class name to use in <<<classname>>> attribute of <<<\<mapper\>>>> element is
+  <<<org.apache.maven.artifact.ant.VersionMapper>>>.
 
 *------------------+--------------------------------------------------------+--------------+
 | <<Attribute>>    | <<Description>>                                        | <<Required>> |
 *------------------+--------------------------------------------------------+--------------+
-| <<<from>>>       | The original filename.                                 | Yes          |
+| <<<from>>>       | The versions of the dependencies, as set by <<<versionsId>>> attribute of <<<dependencies>>> task. | Yes |
 *------------------+--------------------------------------------------------+--------------+
 | <<<to>>>         | If this is set to <<<flatten>>> the directory info is also removed from the filename. | No |
 *------------------+--------------------------------------------------------+--------------+
+
+  You can see a full working example in the {{{usage.html#versionsId} Usage}} page.

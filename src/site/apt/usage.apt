@@ -62,7 +62,7 @@ Using Maven Ant Tasks
 
   <(since 2.0.8)> For each dependency resolved using either inline declaration or a pom reference, the property 
   <<<groupId:artifactId:type[:classifier]>>> is defined pointing to the corresponding file.  For example,
-  a resolved dependency on junit can be accessed in the following way.
+  a resolved dependency on junit can be accessed in the following way:
   
 -----
 <echo message="JUnit jar file downloaded to ${junit:junit:jar}"/>
@@ -99,7 +99,7 @@ Using Maven Ant Tasks
 
     * <<<javadocFilesetId>>>, which will give you a fileset reference containing javadoc artifacts, <(since 2.0.9)>
 
-    * <<<versionsId>>>, which can be used to drop version numbers in filenames <(since 2.0.7)>
+    * {<<<versionsId>>>}, which can be used to drop version numbers in filenames <(since 2.0.7)>
 
   For example, to populate <<<lib>>> with your dependencies without the version in the filenames, <<<lib/src>>> with the corresponding sources
   and <<<lib/javadoc>>> with the corresponding javadocs:
@@ -134,7 +134,9 @@ Using Maven Ant Tasks
 
   <<Note:>> In the above example you only need to specify
   <<<classpathref="maven-ant-tasks.classpath">>> if are using Maven Ant Tasks
-  by declaring a <<<typedef>>>.
+  by {{{installation.html#typedef} declaring a <<<typedef>>>}}.
+  It can be omitted if Maven Ant Tasks was
+  {{{installation.html#lib} installed in Ant's <<<lib>>> directory}}.
 
 * Declaring Repositories
 

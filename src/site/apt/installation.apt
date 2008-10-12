@@ -33,7 +33,7 @@ Installing Maven Ant Tasks
 
   There are two ways to use the tasks from your scripts.
 
-* Installing in Ant's <<<lib>>> directory
+* Installing in Ant's {<<<lib>>>} directory
 
   This is the simplest installation method but requires changes on every machine using the build file.
   You can place the JAR in your Ant <<<lib>>> directory, include it in the <<<CLASSPATH>>> environment variable,
@@ -48,7 +48,7 @@ Installing Maven Ant Tasks
 </project>
 -----
 
-* Declaring a <<<typedef>>>
+* Declaring a {<<<typedef>>>}
 
   Using a <<<typedef>>> declaration allows you to store the Ant Tasks' library anywhere you like (such as source control)
   and put it's location in the build file. This can be used to bootstrap the tasks by using <<<get>>> to obtain
