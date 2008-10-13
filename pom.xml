@@ -23,7 +23,7 @@
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
-    <version>8</version>
+    <version>9</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>maven-ant-tasks</artifactId>
@@ -195,7 +195,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-      <version>1.5.1</version>
+      <version>1.5.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -243,6 +243,6 @@
 
   <properties>
     <mavenVersion>2.0.9</mavenVersion>
-    <wagonVersion>1.0-beta-2</wagonVersion>
+    <wagonVersion>1.0-beta-4</wagonVersion>
   </properties>
 </project>
