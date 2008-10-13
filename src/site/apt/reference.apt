@@ -125,7 +125,7 @@
 | <<<uniqueVersion>>> | (<<<deploy>>> only) Whether to assign snapshots a unique version comprised of the timestamp and build number, or to use the same version each time | No, the default is <<<true>>>. | |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
 
-  The task must take either a nested <<<pom>>> element, or a <<<pomRefId>>> attribute.
+  The task must take either a nested <<<pom>>> element, or a <<<pomRefId>>> attribute. Both release and <<<-SNAPSHOT>>> versions are supported.
   The task can have an optional <<<localRepository>>> nested element.
 
   <<<deploy>>> can have an optional <<<remoteRepository>>> nested element. If no
