@@ -33,8 +33,9 @@ under the License.
       <item name="Installation" href="installation.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="Release Notes" href="release-notes.html"/>
+      <item name="FAQ" href="faq.html"/>
     </menu>
-    <menu name="Reference">
+    <menu name="References">
       <item name="Task Reference" href="reference.html#Task">
         <item name="dependencies" href="reference.html#dependencies"/>
         <item name="install, deploy" href="reference.html#install"/>

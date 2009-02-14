@@ -60,14 +60,14 @@ Using Maven Ant Tasks
 </javac>
 -----
 
-  <(since 2.0.8)> For each dependency resolved using either inline declaration or a pom reference, the property 
+  <(since 2.0.8)> For each dependency resolved using either inline declaration or a pom reference, the property
   <<<groupId:artifactId:type[:classifier]>>> is defined pointing to the corresponding file.  For example,
   a resolved dependency on junit can be accessed in the following way:
-  
+
 -----
 <echo message="JUnit jar file downloaded to ${junit:junit:jar}"/>
 -----
-  
+
   Another option you can use is <<<filesetId>>>, which will give you a fileset reference that can be used to copy
   files into a particular location. For example, to populate <<<WEB-INF/lib>>> with your dependencies
   you could use the following:
@@ -375,8 +375,13 @@ Using Maven Ant Tasks
       {{{http://svn.apache.org/repos/asf/maven/components/trunk/maven-distribution/src/conf/settings.xml} sample settings file}}
       in the Maven installation.
 
-* Sample Ant Script
+* Examples
 
-  The file
-  {{{http://svn.apache.org/repos/asf/maven/ant-tasks/trunk/sample.build.xml} sample.build.xml}}
-  is a sample Ant script showing some of the functionality in action.
+  * Maven Ant Tasks's
+    {{{http://svn.apache.org/repos/asf/maven/ant-tasks/branches/maven-ant-tasks-2.0.x/sample.build.xml} sample.build.xml}}
+    is a sample Ant script showing most of the functionality in action (it's used as unit-tests).
+
+  * Maven itself can be bootstrapped using Maven Ant Tasks:
+    see {{{http://svn.apache.org/repos/asf/maven/components/branches/maven-2.0.x/build.xml} build.xml}} in
+    Maven Core sources. Note that most content is about building Maven project: there is only a little part that is
+    using Maven Ant Tasks, to get dependencies, ie the <<<pull>>> target (with its <<<depends>>> targets).
