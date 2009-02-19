@@ -242,7 +242,7 @@
   </distributionManagement>
 
   <properties>
-    <mavenVersion>2.0.9</mavenVersion>
-    <wagonVersion>1.0-beta-4</wagonVersion>
+    <mavenVersion>2.0.10</mavenVersion>
+    <wagonVersion>1.0-beta-2</wagonVersion>
   </properties>
 </project>
