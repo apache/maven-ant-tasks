@@ -132,8 +132,7 @@ public class DependenciesTask
 
             List listeners = Collections.singletonList( new AntResolutionListener( getProject(), verbose ) );
 
-            // TODO: managed dependencies
-            Map managedDependencies = Collections.EMPTY_MAP;
+            Map managedDependencies = pom.getMavenProject().getManagedVersionMap();
 
             ArtifactFilter filter = null;
             if ( useScope != null )
