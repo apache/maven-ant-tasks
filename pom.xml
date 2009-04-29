@@ -44,8 +44,8 @@ under the License.
   </issueManagement>
 
   <properties>
-    <mavenVersion>2.1-SNAPSHOT</mavenVersion>
-    <artifactVersion>3.0-SNAPSHOT</artifactVersion>
+    <mavenVersion>2.1.0</mavenVersion>
+    <artifactVersion>2.1.0</artifactVersion>
     <junitVersion>3.8.1</junitVersion>
     <plexusVersion>1.0-alpha-48</plexusVersion>
     <plexusUtilsVersion>1.5.4</plexusUtilsVersion>
@@ -87,7 +87,7 @@ under the License.
       <version>1.6.2</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.artifact</groupId>
+      <groupId>org.apache.maven</groupId>
       <artifactId>maven-artifact</artifactId>
       <version>${artifactVersion}</version>
     </dependency>

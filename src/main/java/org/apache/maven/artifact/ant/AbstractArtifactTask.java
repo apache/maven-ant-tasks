@@ -281,7 +281,7 @@ public abstract class AbstractArtifactTask
             settings.setLocalRepository( location );
         }
 
-        profileManager = new DefaultProfileManager( getContainer(), null );
+        profileManager = new DefaultProfileManager( getContainer(), getSettings(), System.getProperties() );
 
         WagonManager wagonManager = (WagonManager) lookup( WagonManager.ROLE );
         wagonManager.setDownloadMonitor( new AntDownloadMonitor() );
@@ -539,7 +539,7 @@ public abstract class AbstractArtifactTask
         MavenProject mavenProject;
         try
         {
-            mavenProject = projectBuilder.buildStandaloneSuperProject();
+            mavenProject = projectBuilder.buildStandaloneSuperProject( localArtifactRepository, getProfileManager() );
         }
         catch ( ProjectBuildingException e )
         {
