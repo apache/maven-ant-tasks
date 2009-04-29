@@ -37,6 +37,7 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.profiles.ProfileManager;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
@@ -52,7 +53,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -76,6 +79,8 @@ public class Pom extends AbstractArtifactWithRepositoryTask
     private MavenProject mavenProject;
 
     private File file;
+    
+    private List profiles = new ArrayList();
 
     /**
      * The property interceptor.
@@ -125,6 +130,16 @@ public class Pom extends AbstractArtifactWithRepositoryTask
     {
         this.file = file;
     }
+    
+    public List getProfiles()
+    {
+    	return profiles;
+    }
+    
+    public void addProfile(Profile activeProfile)
+    {
+    	this.profiles.add(activeProfile);
+    }
 
     public Artifact getArtifact()
     {
@@ -165,7 +180,8 @@ public class Pom extends AbstractArtifactWithRepositoryTask
 
             try
             {
-                mavenProject = builder.build( file, localRepository, getProfileManager() );
+                
+                mavenProject = builder.build( file, localRepository, getActivatedProfiles() );
             }
             catch ( ProjectBuildingException e )
             {
@@ -443,4 +459,24 @@ public class Pom extends AbstractArtifactWithRepositoryTask
 
     }
 
+    private ProfileManager getActivatedProfiles()
+    {
+        ProfileManager profileManager = getProfileManager();
+
+        Iterator it = getProfiles().iterator();
+        while ( it.hasNext() )
+        {
+            Profile profile = (Profile) it.next();
+            if ( profile.getActive() == null || Boolean.parseBoolean( profile.getActive() ) )
+            {
+                profileManager.explicitlyActivate( profile.getId() );
+            }
+            else
+            {
+                profileManager.explicitlyDeactivate( profile.getId() );
+            }
+
+        }
+        return profileManager;
+    }
 }
