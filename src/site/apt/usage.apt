@@ -251,6 +251,25 @@ Using Maven Ant Tasks
 
   For more information on the elements available in the POM, see the {{{http://maven.apache.org/maven-model/maven.html} descriptor reference}}.
 
+** Using profiles in the POM
+
+  POM profiles can be activated or deactivated using the nested profile element.  For example
+  to activate a profile called <<my-profile>>.
+  
+-----
+    <artifact:pom id="maven.project" file="pom.xml">
+      <profile id="my-profile"/>
+    </artifact:pom>
+-----
+    
+  This can also be used to deactivate a POM profile that is active by default.
+  
+-----
+    <artifact:pom id="maven.project" file="pom.xml">
+      <profile id="my-default-profile" active="false"/>
+    </artifact:pom>
+-----
+
 * Installing and Deploying Your Own Artifacts to a Repository
 
   If you want to share your built artifacts between projects, you can use two other tasks: <<<install>>> for

@@ -230,6 +230,20 @@
 | <<<id>>>         | The reference ID of this POM.                          | No           |
 *------------------+--------------------------------------------------------+--------------+
 
+** <<<profile>>>
+
+  Multiple profile elements can be nested within the pom element.  By default the profile
+  will be activated.  If <<active>> is set to false, then the profile will be explicitly
+  deactivated.
+  
+*------------------+--------------------------------------------------------+--------------+
+| <<Attribute>>    | <<Description>>                                        | <<Required>> |
+*------------------+--------------------------------------------------------+--------------+
+| <<<id>>>         | The id of the profile to be activated/deactivated.     | Yes          |
+*------------------+--------------------------------------------------------+--------------+
+| <<<active>>>     | Set to true or false to determine whether the profile should be active. | No    |
+*------------------+--------------------------------------------------------+--------------+
+
 * <<<{VersionMapper}>>> <(since 2.0.7)>
 
   This is a {{{http://ant.apache.org/manual/CoreTypes/mapper.html}filename mapper}}

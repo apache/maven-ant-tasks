@@ -58,11 +58,11 @@ Installing Maven Ant Tasks
   project.
 
 -----
-<project ... xmlns:artifact="urn:maven-artifact-ant">
+<project ... xmlns:artifact="antlib:org.apache.maven.artifact.ant">
   ...
-  <path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.0.9.jar" />
+  <path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.0.10.jar" />
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
-           uri="urn:maven-artifact-ant"
+           uri="antlib:org.apache.maven.artifact.ant"
            classpathref="maven-ant-tasks.classpath" />
   ...
 </project>
