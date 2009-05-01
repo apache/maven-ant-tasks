@@ -18,6 +18,16 @@
     classpath (either by setting the CLASSPATH environment variable
     before calling ant, or place the jars in the $ANT_HOME/lib directory).
 
+
+    REQUIRED SETUP FOR RUNNING DEPLOYMENT TESTS
+    
+    Some of the deploy tests require that you have the ssh daemon (sshd) running 
+    on your local system.  This allows the deploy taks to scp artifacts to a local
+    test repository.
+    
+    How you start sshd will depend on your system.  For example on Fedora, 
+    you can start the ssh deamon using "service sshd start"
+    
   -->
 
   <target name="initClassloader">
@@ -62,6 +72,7 @@
 
   <target name="test-all" description="All tests"
     depends="test-all-deps,test-all-pubs,test-install-provider,checkClassloader">
+    <echo>Tests completed successfully.</echo>
     <echo>test-scm not run, since it fails...</echo>
   </target>
 
@@ -402,7 +413,7 @@
     <echo file="target/test file.txt">dummy</echo>
     <artifact:deploy file="target/test file.txt">
       <!-- intentionnally left without id to check default id: see MANTTASKS-103 -->
-      <remoteRepository url="scp://localhost/tmp/deployment-repo"/>
+      <remoteRepository url="scp://localhost/tmp/deployment-repo" id="scp.localhost.repo"/>
       <localrepository refid="local.repository"/>
       <pom refid="maven.project"/>
     </artifact:deploy>
