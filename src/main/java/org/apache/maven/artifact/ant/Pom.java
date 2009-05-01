@@ -60,12 +60,12 @@ import java.util.List;
 
 /**
  * A POM typedef.
- * 
+ *
  * Also an Ant Task that registers a handler called POMPropertyHelper that intercepts all calls to property value
  * resolution and replies instead of Ant to properties that start with the id of the pom.
- * 
+ *
  * Example: ${maven.project.artifactId}
- * 
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:nicolaken@apache.org">Nicola Ken Barozzi</a>
  * @version $Id$
@@ -79,7 +79,7 @@ public class Pom extends AbstractArtifactWithRepositoryTask
     private MavenProject mavenProject;
 
     private File file;
-    
+
     private List profiles = new ArrayList();
 
     /**
@@ -130,12 +130,12 @@ public class Pom extends AbstractArtifactWithRepositoryTask
     {
         this.file = file;
     }
-    
+
     public List getProfiles()
     {
     	return profiles;
     }
-    
+
     public void addProfile(Profile activeProfile)
     {
     	this.profiles.add(activeProfile);
@@ -180,7 +180,7 @@ public class Pom extends AbstractArtifactWithRepositoryTask
 
             try
             {
-                
+
                 mavenProject = builder.build( file, localRepository, getActivatedProfiles() );
             }
             catch ( ProjectBuildingException e )
@@ -467,13 +467,13 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         while ( it.hasNext() )
         {
             Profile profile = (Profile) it.next();
-            
+
             if ( profile.getId() == null )
             {
                 throw new BuildException( "Attribute \"id\" is required for profile in pom type." );
             }
-            
-            if ( profile.getActive() == null || Boolean.parseBoolean( profile.getActive() ) )
+
+            if ( profile.getActive() == null || Boolean.valueOf( profile.getActive() ).booleanValue() )
             {
                 profileManager.explicitlyActivate( profile.getId() );
             }
