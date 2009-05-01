@@ -191,7 +191,9 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
+        <version>1.2.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -212,15 +214,6 @@
                   <exclude>ant:ant</exclude>
                 </excludes>
               </artifactSet>
-              <relocations>
-                <relocation>
-                  <pattern>org.codehaus.plexus.util</pattern>
-                  <excludes>
-                    <exclude>org.codehaus.plexus.util.xml.Xpp3Dom</exclude>
-                    <exclude>org.codehaus.plexus.util.xml.pull.*</exclude>
-                  </excludes>
-                </relocation>
-              </relocations>
             </configuration>
           </execution>
         </executions>
@@ -245,6 +238,45 @@
           </plugin>
         </plugins>
       </reporting>
+    </profile>
+
+    <profile>
+      <id>run-its</id>
+      <activation>
+        <property>
+          <name>maven.test.skip</name>
+          <value>!true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <version>1.3</version>
+            <configuration>
+              <projectsDirectory>src/it</projectsDirectory>
+              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+              <pomIncludes>
+                <pomInclude>*/pom.xml</pomInclude>
+              </pomIncludes>
+              <postBuildHookScript>verify.bsh</postBuildHookScript>
+              <settingsFile>src/it/settings.xml</settingsFile>
+              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+              <debug>true</debug>
+            </configuration>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <goals>
+                  <goal>install</goal>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
