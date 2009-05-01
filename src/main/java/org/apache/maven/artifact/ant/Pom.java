@@ -467,6 +467,12 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         while ( it.hasNext() )
         {
             Profile profile = (Profile) it.next();
+            
+            if ( profile.getId() == null )
+            {
+                throw new BuildException( "Attribute \"id\" is required for profile in pom type." );
+            }
+            
             if ( profile.getActive() == null || Boolean.parseBoolean( profile.getActive() ) )
             {
                 profileManager.explicitlyActivate( profile.getId() );
