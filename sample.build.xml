@@ -53,7 +53,7 @@
   </target>
 
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom,test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty,test-deps-profile">
+    depends="test-pom, test-pom-profiles, test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty,test-deps-profile">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -103,6 +103,59 @@
     <fail message="failed to get pom properties ${my.maven.project.properties.mavenVersion}">
       <condition>
         <not><equals arg1="${my.maven.project.properties.mavenVersion}" arg2="${pom.xml.project.properties.mavenVersion}"/></not>
+      </condition>
+    </fail>
+  </target>
+
+  <target name="test-pom-profiles" depends="initTaskDefs">
+    
+    <!-- Test default profile activation -->
+    <artifact:pom file="src/test/pom-with-profiles.xml" id="project.default"/>
+
+    <echo>Current profile = ${project.default.build.finalName}</echo>
+
+    <fail message="failed to activate profile default">
+      <condition>
+        <not><equals arg1="${project.default.build.finalName}" arg2="default"/></not>
+      </condition>
+    </fail>
+
+    <!-- Test explicit profile activation -->
+    <artifact:pom file="src/test/pom-with-profiles.xml" id="project.myprofile1" >
+      <profile id="myprofile1"/>
+    </artifact:pom>
+
+    <echo>Current profile = ${project.myprofile1.build.finalName}</echo>
+
+    <fail message="failed to activate profile myprofile1">
+      <condition>
+        <not><equals arg1="${project.myprofile1.build.finalName}" arg2="myprofile1"/></not>
+      </condition>
+    </fail>
+
+    <!-- Test explicit profile activation with "active" attr set -->
+    <artifact:pom file="src/test/pom-with-profiles.xml" id="project.myprofile2" >
+      <profile id="myprofile2" active="true"/>
+    </artifact:pom>
+
+    <echo>Current profile = ${project.myprofile2.build.finalName}</echo>
+
+    <fail message="failed to activate profile myprofile2">
+      <condition>
+        <not><equals arg1="${project.myprofile2.build.finalName}" arg2="myprofile2"/></not>
+      </condition>
+    </fail>
+
+    <!-- Test explicit profile deactivation -->
+    <artifact:pom file="src/test/pom-with-profiles.xml" id="project.noprofile" >
+      <profile id="default" active="false" />
+    </artifact:pom>
+
+    <echo>Current profile = ${project.noprofile.build.finalName}</echo>
+
+    <fail message="failed to deactivate default profile">
+      <condition>
+        <not><equals arg1="${project.noprofile.build.finalName}" arg2="noprofile"/></not>
       </condition>
     </fail>
   </target>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>it.ant-tasks</groupId>
+  <artifactId>profiles</artifactId>
+  <packaging>jar</packaging>
+
+  <name>profiles</name>
+  <version>0.10-SNAPSHOT</version>
+  <description>
+    Check that the profiles work corretly.
+  </description>
+  
+  <build>
+    <finalName>noprofile</finalName>
+  </build>
+  
+  <profiles>
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <finalName>default</finalName>
+      </build>
+    </profile>
+    <profile>
+      <id>myprofile1</id>
+      <build>
+        <finalName>myprofile1</finalName>
+      </build>
+    </profile>
+    <profile>
+      <id>myprofile2</id>
+      <build>
+        <finalName>myprofile2</finalName>
+      </build>
+    </profile>
+  </profiles>
+</project>
