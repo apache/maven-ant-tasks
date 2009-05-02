@@ -20,14 +20,14 @@
 
 
     REQUIRED SETUP FOR RUNNING DEPLOYMENT TESTS
-    
-    Some of the deploy tests require that you have the ssh daemon (sshd) running 
+
+    Some of the deploy tests require that you have the ssh daemon (sshd) running
     on your local system.  This allows the deploy taks to scp artifacts to a local
     test repository.
-    
-    How you start sshd will depend on your system.  For example on Fedora, 
+
+    How you start sshd will depend on your system.  For example on Fedora,
     you can start the ssh deamon using "service sshd start"
-    
+
   -->
 
   <target name="initClassloader">
@@ -119,7 +119,7 @@
   </target>
 
   <target name="test-pom-profiles" depends="initTaskDefs">
-    
+
     <!-- Test default profile activation -->
     <artifact:pom file="src/test/pom-with-profiles.xml" id="project.default"/>
 
@@ -410,16 +410,20 @@
   </target>
 
   <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">
+    <delete file="${basedir}/target/local-repo/org/apache/maven/maven-ant-tasks/maven-metadata-remote.*"/>
     <echo file="target/test file.txt">dummy</echo>
     <artifact:deploy file="target/test file.txt">
       <!-- intentionnally left without id to check default id: see MANTTASKS-103 -->
-      <remoteRepository url="scp://localhost/tmp/deployment-repo" id="scp.localhost.repo"/>
+      <remoteRepository url="scp://localhost/tmp/deployment-repo"/>
       <localrepository refid="local.repository"/>
       <pom refid="maven.project"/>
     </artifact:deploy>
 
-    <!-- MANTTASKS-103: maven-metadata-scp: should not exist since scp: is an illegal remoteRepository id -->
+    <!-- MANTTASKS-103: maven-metadata-scp: should not exist since scp: is an illegal remoteRepository id
+      replaced instead by "remote" id in DeployTask.java
+    -->
     <check.file.not.exists file="${basedir}/target/local-repo/org/apache/maven/maven-ant-tasks/maven-metadata-scp://localhost"/>
+    <check.file.exists file="${basedir}/target/local-repo/org/apache/maven/maven-ant-tasks/maven-metadata-remote.xml"/>
   </target>
 
   <target name="test-deploy" depends="initTaskDefs,installSshProvider">
