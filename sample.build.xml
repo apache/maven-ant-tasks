@@ -574,7 +574,7 @@
     <artifact:pom file="${user.dir}/src/test/pom-with-parent2.xml" id="my.maven.project2">
       <localRepository path="${basedir}/target/tmp"/>
     </artifact:pom>
-    <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.0/pom-1.0.pom" type="file"/>
+    <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.1/pom-1.1.pom" type="file"/>
   </target>
 
   <macrodef name="check.file.exists">
