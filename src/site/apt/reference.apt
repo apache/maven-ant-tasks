@@ -186,9 +186,11 @@
 *----------------------+--------------------------------------------------------+--------------+
 | <<Attribute>>        | <<Description>>                                        | <<Required>> |
 *----------------------+--------------------------------------------------------+--------------+
-| <<<layout>>>         | The layout of the remote repository. The valid options are <<<legacy>>> (Maven 1), or <<<default>>> (Maven 2). Defaults to <<<default>>>. | No |
+| <<<id>>>             | A unique ID of the repository.                         | Yes          |
 *----------------------+--------------------------------------------------------+--------------+
 | <<<url>>>            | The URL of the repository.                             | Yes          |
+*----------------------+--------------------------------------------------------+--------------+
+| <<<layout>>>         | The layout of the remote repository. The valid options are <<<legacy>>> (Maven 1), or <<<default>>> (Maven 2). Defaults to <<<default>>>. | No |
 *----------------------+--------------------------------------------------------+--------------+
 
   The <<<remoteRepository>>> can have the following nested elements: <<<releases>>>, <<<snapshots>>>, <<<authentication>>> and <<<proxy>>>.
