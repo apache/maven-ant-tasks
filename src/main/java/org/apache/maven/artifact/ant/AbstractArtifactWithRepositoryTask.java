@@ -143,13 +143,17 @@ public abstract class AbstractArtifactWithRepositoryTask
         }
         if ( remoteRepository.getId() == null || remoteRepository.getId().equals( remoteRepository.getUrl() ) )
         {
-            log( "Each remote repository should specify a unique id.", Project.MSG_WARN );
+            log( "Each remote repository must specify a unique id. For backward-compatibility, "
+                 + "a default id will be used. In future releases, a missing repository id will raise an error.",
+                  Project.MSG_WARN );
             remoteRepository.setId( generateDefaultRepositoryId( remoteRepository ) );
         }
         remoteRepositories.add( remoteRepository );
     }
     
     public final String MD5_ALGO_NAME = "MD5";
+    
+    public final String UTF_ENC_NAME = "UTF-8";
     
     /**
      * Generates an MD5 digest based on the url of the repository.
@@ -164,11 +168,11 @@ public abstract class AbstractArtifactWithRepositoryTask
         try
         {
             MessageDigest md = MessageDigest.getInstance( MD5_ALGO_NAME );
-            md.update( repository.getUrl().getBytes() );
+            md.update( repository.getUrl().getBytes( UTF_ENC_NAME ) );
             BigInteger digest = new BigInteger( md.digest() );
             return digest.toString( 16 );
         }
-        catch ( NoSuchAlgorithmException e )
+        catch ( Exception e )
         {
             log( "Unable to generate unique repository Id: " + e, Project.MSG_WARN );
             return "default";
