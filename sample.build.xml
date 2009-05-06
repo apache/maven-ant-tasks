@@ -71,7 +71,7 @@
     depends="test-deploy-spaces,test-deploy,test-no-dist-mgmt,test-install-attached,test-deploy-attached"/>
 
   <target name="test-all" description="All tests"
-    depends="test-all-deps,test-all-pubs,test-install-provider,checkClassloader">
+    depends="test-all-deps,test-all-pubs,test-install-provider,checkClassloader,test-mvn">
     <echo>Tests completed successfully.</echo>
     <echo>test-scm not run, since it fails...</echo>
   </target>
@@ -575,6 +575,13 @@
       <localRepository path="${basedir}/target/tmp"/>
     </artifact:pom>
     <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.1/pom-1.1.pom" type="file"/>
+  </target>
+  
+  <target name="test-mvn" depends="initTaskDefs">
+    <artifact:mvn pom="src/test/pom.xml" mavenVersion="2.1.0" fork="true">
+      <arg value="package"/>
+      <localRepository path="${basedir}/target/tmp"/>
+    </artifact:mvn>
   </target>
 
   <macrodef name="check.file.exists">

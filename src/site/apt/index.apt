@@ -57,6 +57,8 @@ Maven Ant Tasks
   
   * {{{examples/pom.html}Pom task}}
   
+  * {{{examples/mvn.html}Mvn task}}
+  
 * Getting Help
 
   If you have any questions specific to the Ant tasks, please contact the

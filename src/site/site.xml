@@ -32,6 +32,7 @@
       <item name="dependencies" href="examples/dependencies.html"/>
       <item name="install, deploy" href="examples/install-deploy.html"/>
       <item name="pom" href="examples/pom.html"/>
+      <item name="mvn" href="examples/mvn.html"/>
     </menu>
     <menu name="Reference">
       <item name="dependencies" href="reference.html#dependencies"/>

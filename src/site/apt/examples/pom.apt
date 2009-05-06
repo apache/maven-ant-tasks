@@ -117,7 +117,7 @@ Accessing dependencies in the POM
 Using profiles in the POM
 
   POM profiles can be activated or deactivated using the nested profile element.  For example
-  to activate a profile called <<my-profile>>.
+  to activate a profile called <<<my-profile>>>.
   
 -----
     <artifact:pom id="maven.project" file="pom.xml">
