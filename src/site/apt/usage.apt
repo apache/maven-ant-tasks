@@ -60,14 +60,6 @@ Using Maven Ant Tasks
 </javac>
 -----
 
-  <(since 2.0.8)> For each dependency resolved using either inline declaration or a pom reference, the property
-  <<<groupId:artifactId:type[:classifier]>>> is defined pointing to the corresponding file.  For example,
-  a resolved dependency on junit can be accessed in the following way:
-
------
-<echo message="JUnit jar file downloaded to ${junit:junit:jar}"/>
------
-
   Another option you can use is <<<filesetId>>>, which will give you a fileset reference that can be used to copy
   files into a particular location. For example, to populate <<<WEB-INF/lib>>> with your dependencies
   you could use the following:
@@ -137,6 +129,16 @@ Using Maven Ant Tasks
   by {{{installation.html#typedef} declaring a <<<typedef>>>}}.
   It can be omitted if Maven Ant Tasks was
   {{{installation.html#lib} installed in Ant's <<<lib>>> directory}}.
+
+** Accessing dependencies using properties
+
+  <(since 2.0.8)> For each dependency resolved using either inline declaration or a pom reference, the property
+  <<<groupId:artifactId:type[:classifier]>>> is defined pointing to the corresponding file.  For example,
+  a resolved dependency on junit can be accessed in the following way:
+
+-----
+<echo message="JUnit jar file downloaded to ${junit:junit:jar}"/>
+-----
 
 * Declaring Repositories
 
@@ -235,21 +237,34 @@ Using Maven Ant Tasks
   you can use the following:
 
 -----
-  <artifact:pom id="maven.project" file="pom.xml" />
+  <artifact:pom id="mypom" file="pom.xml" />
 
-  <echo>The version is ${maven.project.version}</echo>
+  <echo>The version is ${mypom.version}</echo>
 -----
 
   You can also access nested parts of the POM. For example, you can read the default value of the <<<directory>>>
   element within the <<<build>>> element using a <<<.>>> separator.
 
 -----
-  <artifact:pom id="project" file="pom.xml" />
+  <artifact:pom id="mypom" file="pom.xml" />
 
-  <echo>The build directory is ${project.build.directory}</echo>
+  <echo>The build directory is ${mypom.build.directory}</echo>
 -----
 
   For more information on the elements available in the POM, see the {{{http://maven.apache.org/maven-model/maven.html} descriptor reference}}.
+
+** Accessing dependencies in the POM
+
+  The <<<pom>>> task can be used in combination with the <<<dependencies>>> task to declare a list of dependencies.
+  
+-----
+  <artifact:pom id="mypom" file="pom.xml" />
+  
+  <artifact:dependencies filesetId="mydeps" pomRefId="mypom" />
+-----
+
+  In this example, the <<<dependencies>>> task in this example will resolve the list of dependencies in the pom
+  and add them to the fileset.
 
 ** Using profiles in the POM
 
