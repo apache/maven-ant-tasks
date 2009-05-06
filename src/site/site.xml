@@ -1,33 +1,26 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
+
 <!--
-Licensed to the Apache Software Foundation (ASF) under one
-or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
-regarding copyright ownership.  The ASF licenses this file
-to you under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
 
-  http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
 -->
-<project>
-  <!-- TODO: Inherit publish date -->
-  <publishDate position="right" />
-  <body>
-    <!-- TODO: Inherit breadcrumbs -->
-    <breadcrumbs>
-      <item name="Apache" href="http://www.apache.org/"/>
-      <item name="Maven" href="http://maven.apache.org/"/>
-      <item name="Ant Tasks" href="http://maven.apache.org/ant-tasks/"/>
-    </breadcrumbs>
 
+<project>
+  <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Installation" href="installation.html"/>
@@ -47,23 +40,6 @@ under the License.
         <item name="pom" href="reference.html#pom"/>
       </item>
       <item name="VersionMapper" href="reference.html#VersionMapper"/>
-    </menu>
-
-    <!-- TODO: Inherit Maven Projects -->
-    <menu name="Maven Projects" inherit="bottom">
-      <item name="Ant Tasks"         href="http://maven.apache.org/ant-tasks/index.html" />
-      <!-- No site available for archetype yet
-      <item name="Archetype"         href="http://maven.apache.org/archetype/index.html" />
-      -->
-      <item name="Doxia"             href="http://maven.apache.org/doxia/index.html" />
-      <item name="JXR"               href="http://maven.apache.org/jxr/index.html" />
-      <item name="Maven 1.x"         href="http://maven.apache.org/maven-1.x/index.html" />
-      <item name="Maven 2"           href="http://maven.apache.org/index.html" />
-      <item name="Plugins"           href="http://maven.apache.org/plugins/index.html" />
-      <item name="SCM"               href="http://maven.apache.org/scm/index.html" />
-      <item name="Shared Components" href="http://maven.apache.org/shared/index.html" />
-      <item name="Surefire"          href="http://maven.apache.org/surefire/index.html" />
-      <item name="Wagon"             href="http://maven.apache.org/wagon/index.html" />
     </menu>
   </body>
 </project>
