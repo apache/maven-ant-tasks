@@ -230,26 +230,26 @@ public abstract class AbstractArtifactTask
     {
         if ( userSettingsFile == null )
         {
-            File settingsFile = newFile( System.getProperty( "user.home" ), ".ant", "settings.xml" );
-            if ( settingsFile.exists() )
+            File tempSettingsFile = newFile( System.getProperty( "user.home" ), ".ant", "settings.xml" );
+            if ( tempSettingsFile.exists() )
             {
-                userSettingsFile = settingsFile;
+                userSettingsFile = tempSettingsFile;
             }
             else
             {
-                settingsFile = newFile( System.getProperty( "user.home" ), ".m2", "settings.xml" );
-                if ( settingsFile.exists() )
+                tempSettingsFile = newFile( System.getProperty( "user.home" ), ".m2", "settings.xml" );
+                if ( tempSettingsFile.exists() )
                 {
-                    userSettingsFile = settingsFile;
+                    userSettingsFile = tempSettingsFile;
                 }
             }
         }
         if ( globalSettingsFile == null )
         {
-            File settingsFile = newFile( System.getProperty( "ant.home" ), "etc", "settings.xml" );
-            if ( settingsFile.exists() )
+            File tempSettingsFile = newFile( System.getProperty( "ant.home" ), "etc", "settings.xml" );
+            if ( tempSettingsFile.exists() )
             {
-                globalSettingsFile = settingsFile;
+                globalSettingsFile = tempSettingsFile;
             }
             else
             {
@@ -261,7 +261,11 @@ public abstract class AbstractArtifactTask
                     if ( var.startsWith( "M2_HOME=" ) )
                     {
                         String m2Home = var.substring( "M2_HOME=".length() );
-                        globalSettingsFile = newFile( m2Home, "conf", "settings.xml" );
+                        tempSettingsFile = newFile( m2Home, "conf", "settings.xml" );
+                        if ( tempSettingsFile.exists() )
+                        {
+                            globalSettingsFile = tempSettingsFile;
+                        }
                         break;
                     }
                 }
