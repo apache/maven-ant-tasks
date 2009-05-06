@@ -47,98 +47,35 @@ Using Maven Ant Tasks
   The above example will download those 3 dependencies, and their dependencies, and so on. They will be stored in
   the default local repository location, <<<$\{user.home\}/.m2/repository>>>.
 
-  You can also use a Maven 2.0 POM to declare your dependencies, which is {{{./reference.html#pom} explained in the reference}}. This is the
-  recommended practice so that you can reuse the file to deploy your own artifacts.
-
   You may have noticed the <<<pathId>>> reference. This is optional, but if given will create a classpath reference
   that includes the local files downloaded as dependencies. This is usually used to pass to <<<javac>>> or other tasks:
 
------
-<javac ...>
-  <classpath refid="dependency.classpath" />
-  ...
-</javac>
------
+  You can also use a Maven 2.0 POM to declare your dependencies, which is {{{examples/pom.html} described in the examples}}. 
+  This is the recommended practice so that you can reuse the file to deploy your own artifacts.
 
-  Another option you can use is <<<filesetId>>>, which will give you a fileset reference that can be used to copy
-  files into a particular location. For example, to populate <<<WEB-INF/lib>>> with your dependencies
-  you could use the following:
+  For more examples of using the dependencies task, see the {{{examples/dependencies.html} examples page}}.
 
------
-<artifact:dependencies filesetId="dependency.fileset" useScope="runtime">
-  <!-- Your dependency definitions go here -->
-  ...
-</artifact:dependencies>
-<copy todir="${webapp.output}/WEB-INF/lib">
-  <fileset refid="dependency.fileset" />
-  <!-- This mapper strips off all leading directory information -->
-  <mapper type="flatten" />
-</copy>
------
+* Installing and Deploying Your Own Artifacts to a Repository
 
-  Note the <<<useScope>>> attribute in this call. This ensures that your web application only includes your compile
-  and runtime dependencies, excluding those that are only for testing or are expected to already be provided by
-  the servlet container.
+  Maven allows artifacts to be shared between projects by using local and remote repository.
+  The <<<install>>> task allows an artifact to be copied to the local maven repository (typically
+  located in ~/.m2/repository).
+  
+  The <<<deploy>>> task allows artifacts to be deployed to a remote maven repository where they will
+  be available to other projects.
+  
+  For examples of using the install and deploy tasks, see the {{{examples/install-deploy.html} examples page}}.
 
-  You can also specify a <<<scope>>> parameter on each dependency. This changes the behavior of
-  transitive dependencies and is useful for building different types of classpaths. To see how it affects
-  the behaviour of the dependencies, see the {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html} Dependency Mechanism}}
-  documentation on the Maven 2.0 site.
+* Using a Maven {POM} File
 
-  Other options are:
+  In Maven, the Project Object Model (POM) represents a unit of work - one exists for each artifact that is built.
 
-    * <<<sourcesFilesetId>>>, which will give you a fileset reference containing sources artifacts, <(since 2.0.6)>
+  A Maven 2.0 POM file is required for deploying your own artifact to a repository for use in the dependencies
+  elements of other projects.
 
-    * <<<javadocFilesetId>>>, which will give you a fileset reference containing javadoc artifacts, <(since 2.0.9)>
+  It can also be reused for declaring your own dependencies, instead of specifying the inline version given earlier.
 
-    * {<<<versionsId>>>}, which can be used to drop version numbers in filenames <(since 2.0.7)>
-
-  For example, to populate <<<lib>>> with your dependencies without the version in the filenames, <<<lib/src>>> with the corresponding sources
-  and <<<lib/javadoc>>> with the corresponding javadocs:
-
------
-<artifact:dependencies filesetId="dependency.fileset"
-        sourcesFilesetId="sources.dependency.fileset"
-        javadocFilesetId="javadoc.dependency.fileset"
-        versionsId="dependency.versions">
-  <!-- Your dependency definitions go here -->
-  ...
-</artifact:dependencies>
-<copy todir="lib">
-  <fileset refid="dependency.fileset" />
-  <mapper classpathref="maven-ant-tasks.classpath"
-          classname="org.apache.maven.artifact.ant.VersionMapper"
-          from="${dependency.versions}" to="flatten" />
-</copy>
-<copy todir="lib/src">
-  <fileset refid="sources.dependency.fileset" />
-  <mapper classpathref="maven-ant-tasks.classpath"
-          classname="org.apache.maven.artifact.ant.VersionMapper"
-          from="${dependency.versions}" to="flatten" />
-</copy>
-<copy todir="lib/javadoc">
-  <fileset refid="javadoc.dependency.fileset" />
-  <mapper classpathref="maven-ant-tasks.classpath"
-          classname="org.apache.maven.artifact.ant.VersionMapper"
-          from="${dependency.versions}" to="flatten" />
-</copy>
------
-
-  <<Note:>> In the above example you only need to specify
-  <<<classpathref="maven-ant-tasks.classpath">>> if are using Maven Ant Tasks
-  by {{{installation.html#typedef} declaring a <<<typedef>>>}}.
-  It can be omitted if Maven Ant Tasks was
-  {{{installation.html#lib} installed in Ant's <<<lib>>> directory}}.
-
-** Accessing dependencies using properties
-
-  <(since 2.0.8)> For each dependency resolved using either inline declaration or a pom reference, the property
-  <<<groupId:artifactId:type[:classifier]>>> is defined pointing to the corresponding file.  For example,
-  a resolved dependency on junit can be accessed in the following way:
-
------
-<echo message="JUnit jar file downloaded to ${junit:junit:jar}"/>
------
+  For examples of creating a pom and using the <<<pom>>> task, see the {{{examples/pom.html}examples page}}.
 
 * Declaring Repositories
 
@@ -173,181 +110,6 @@ Using Maven Ant Tasks
 -----
 <authentication username="brett" privateKey="${user.home}/.ssh/id_dsa" />
 -----
-
-* Using a Maven {POM} File
-
-  In Maven, the Project Object Model (POM) represents a unit of work - one exists for each artifact that is built.
-
-  A Maven 2.0 POM file is required for deploying your own artifact to a repository for use in the dependencies
-  elements of other projects.
-
-  It can also be reused for declaring your own dependencies, instead of specifying the inline version given earlier.
-
-  Here is the earlier example, expressed as a POM:
-
------
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.mycompany.project</groupId>
-  <artifactId>project-model</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.modello</groupId>
-      <artifactId>modello-core</artifactId>
-      <version>1.0-alpha-2-SNAPSHOT</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.4</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-</project>
------
-
-  These elements represent:
-
-    * <modelVersion> - this is the version of the POM layout in use, currently <<<4.0.0>>>.
-
-    * <groupId> - the group ID represents your organisation and project name, much like a Java package name.
-      This must be universally unique. This becomes the base directory in the repository as well.
-
-    * <artifactId> - the artifact ID represents the current build unit. It usually equals the filename of the
-      resulting file, and must be unique within the group.
-
-    * <version> - the version of the artifact you are building.
-
-    * <dependencies> - the artifacts that this project is dependant on.
-
-  This is all that is required for most projects. However, it is also possible to use other fields available in
-  Maven to describe your project, and reference them from your build script.
-
-  To access a part of the POM as an Ant property, you must define it as a reference. For example, to access the version from a POM,
-  you can use the following:
-
------
-  <artifact:pom id="mypom" file="pom.xml" />
-
-  <echo>The version is ${mypom.version}</echo>
------
-
-  You can also access nested parts of the POM. For example, you can read the default value of the <<<directory>>>
-  element within the <<<build>>> element using a <<<.>>> separator.
-
------
-  <artifact:pom id="mypom" file="pom.xml" />
-
-  <echo>The build directory is ${mypom.build.directory}</echo>
------
-
-  For more information on the elements available in the POM, see the {{{http://maven.apache.org/maven-model/maven.html} descriptor reference}}.
-
-** Accessing dependencies in the POM
-
-  The <<<pom>>> task can be used in combination with the <<<dependencies>>> task to declare a list of dependencies.
-  
------
-  <artifact:pom id="mypom" file="pom.xml" />
-  
-  <artifact:dependencies filesetId="mydeps" pomRefId="mypom" />
------
-
-  In this example, the <<<dependencies>>> task in this example will resolve the list of dependencies in the pom
-  and add them to the fileset.
-
-** Using profiles in the POM
-
-  POM profiles can be activated or deactivated using the nested profile element.  For example
-  to activate a profile called <<my-profile>>.
-  
------
-    <artifact:pom id="maven.project" file="pom.xml">
-      <profile id="my-profile"/>
-    </artifact:pom>
------
-    
-  This can also be used to deactivate a POM profile that is active by default.
-  
------
-    <artifact:pom id="maven.project" file="pom.xml">
-      <profile id="my-default-profile" active="false"/>
-    </artifact:pom>
------
-
-* Installing and Deploying Your Own Artifacts to a Repository
-
-  If you want to share your built artifacts between projects, you can use two other tasks: <<<install>>> for
-  installing them in your local repository for access as dependencies in other scripts, and <<<deploy>>> for
-  deploying them to a remote location you have set up to serve as a repository in your organisation.
-
-  <<Note:>> that the installation and deployment require that you have a Maven 2.0 POM file to deploy along with it.
-  These are required for the transitive dependency mechanism to work effectively, and can be quite simple to
-  create.
-
-  ~~ TODO: Write an introductory text explaining the example below
-
------
-...
-  <artifact:pom id="maven.project" file="pom.xml" />
-
-  <artifact:install file="target/maven-artifact-ant-2.0-alpha-3.jar">
-    <pom refid="maven.project"/>
-  </artifact:install>
-
-  <artifact:deploy file="target/maven-artifact-ant-2.0-alpha-3.jar">
-    <remoteRepository url="file://localhost/www/repository"/>
-    <pom refid="maven.project"/>
-  </artifact:deploy>
-...
------
-
-  For deploying using a protocol other than local file system, you need to register a provider to make the other
-  protocols available. For example:
-
------
-...
-  <artifact:install-provider artifactId="wagon-ssh" version="1.0-beta-2"/>
-
-  <artifact:deploy file="target/maven-artifact-ant-2.0-alpha-3.jar">
-    <remoteRepository url="scp://localhost/www/repository">
-      <authentication username="${repository.username}" privateKey="${user.home}/.ssh/id_dsa"/>
-    </remoteRepository>
-    <pom refid="maven.project"/>
-  </artifact:deploy>
-...
------
-
-  <<Note:>> that if you use <<<antcall>>>, the provider isn't available during the Ant call: you have to register
-  it again if you need it.
-
-  ~~ TODO: Explain more thoroughly when you need to register a provider
-
-  Maven Ant Tasks contain <<<wagon-file>>> and <<<wagon-http-lightweight>>> providers. The other available providers are:
-
-*--------------+--------------------------+-------------------+
-| Protocol     | Artifact ID              | Version           |
-*--------------+--------------------------+-------------------+
-| <<<http>>>   | <<<wagon-http>>>         | <<<1.0-beta-2>>>  |
-*--------------+--------------------------+-------------------+
-| <<<scp>>>    | <<<wagon-ssh>>>          | <<<1.0-beta-2>>>  |
-*--------------+--------------------------+-------------------+
-| <<<scpexe>>> | <<<wagon-ssh-external>>> | <<<1.0-beta-2>>>  |
-*--------------+--------------------------+-------------------+
-| <<<ftp>>>    | <<<wagon-ftp>>>          | <<<1.0-beta-2>>>  |
-*--------------+--------------------------+-------------------+
-| <<<webdav>>> | <<<wagon-webdav>>>       | <<<1.0-beta-2>>>  |
-*--------------+--------------------------+-------------------+
 
 * The Settings File
 
@@ -410,6 +172,12 @@ Using Maven Ant Tasks
       in the Maven installation.
 
 * Examples
+
+  * {{{examples/dependencies.html} dependencies task}}
+
+  * {{{examples/install-deploy.html} install and deploy tasks }}
+
+  * {{{examples/pom.html} pom task }}
 
   * Maven Ant Tasks's
     {{{http://svn.apache.org/repos/asf/maven/ant-tasks/branches/maven-ant-tasks-2.0.x/sample.build.xml} sample.build.xml}}

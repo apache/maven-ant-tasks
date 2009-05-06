@@ -247,7 +247,7 @@
 | <<<active>>>     | Set to <<<true>>> or <<<false>>> to determine whether the profile should be active. Default is <<<true>>>. | No    |
 *------------------+--------------------------------------------------------+--------------+
 
-* <<<{VersionMapper}>>> <(since 2.0.7)>
+* <<<{versionMapper}>>> <(since 2.0.7)>
 
   This is a {{{http://ant.apache.org/manual/CoreTypes/mapper.html}filename mapper}}
   that removes version info from the filename when copying dependencies. It can
@@ -264,4 +264,4 @@
 | <<<to>>>         | If this is set to <<<flatten>>> the directory info is also removed from the filename. | No |
 *------------------+--------------------------------------------------------+--------------+
 
-  You can see a full working example in the {{{usage.html#versionsId} Usage}} page.
+  You can see a full working example in the {{{examples/dependencies.html} examples}}.

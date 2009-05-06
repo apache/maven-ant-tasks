@@ -27,10 +27,10 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Ant Tasks for Maven 
+Maven Ant Tasks 
 
-  Maven comes with a set of Ant tasks that can be used to utilize Maven's artifact handling features
-  from within Ant. This includes:
+  The Mavent Ant Tasks allow many of Maven's artifact handling features to be used
+  from within Ant. These include:
 
     * <Dependency management> - including transitive dependencies, scope recognition and SNAPSHOT handling
 
@@ -38,10 +38,25 @@ Ant Tasks for Maven
 
     * <POM processing> - for reading a Maven 2.0.x <<<pom.xml>>> file
 
-  The Ant tasks can be downloaded from {{{http://maven.apache.org/download.html} Maven 2.0 download page}}.
+  The Ant tasks can be downloaded from the {{{http://maven.apache.org/download.html} Maven 2.0 download page}}.
 
   Ant 1.6.x or 1.7.x is required to use Maven Ant tasks.
 
+* Usage
+
+  Instructions for installing and using the maven ant tasks can be found on the {{{installation.html}installation page}}
+  and the {{{usage.html}usage page}} respectively. 
+
+* Examples
+
+  Several common usage examples are provided for the following tasks:
+
+  * {{{examples/dependencies.html}Dependencies task}}
+
+  * {{{examples/install-deploy.html}Install and Deploy tasks}}
+  
+  * {{{examples/pom.html}Pom task}}
+  
 * Getting Help
 
   If you have any questions specific to the Ant tasks, please contact the

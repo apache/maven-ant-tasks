@@ -28,17 +28,18 @@
       <item name="Release Notes" href="release-notes.html"/>
       <item name="FAQ" href="faq.html"/>
     </menu>
-    <menu name="References">
-      <item name="Task Reference" href="reference.html#Task">
-        <item name="dependencies" href="reference.html#dependencies"/>
-        <item name="install, deploy" href="reference.html#install"/>
-        <item name="install-provider" href="reference.html#install-provider"/>
-      </item>
-      <item name="Type Reference" href="reference.html#Type">
-        <item name="localRepository" href="reference.html#localRepository"/>
-        <item name="remoteRepository" href="reference.html#remoteRepository"/>
-        <item name="pom" href="reference.html#pom"/>
-      </item>
+    <menu name="Examples">
+      <item name="dependencies" href="examples/dependencies.html"/>
+      <item name="install, deploy" href="examples/install-deploy.html"/>
+      <item name="pom" href="examples/pom.html"/>
+    </menu>
+    <menu name="Reference">
+      <item name="dependencies" href="reference.html#dependencies"/>
+      <item name="install, deploy" href="reference.html#install"/>
+      <item name="install-provider" href="reference.html#install-provider"/>
+      <item name="localRepository" href="reference.html#localRepository"/>
+      <item name="remoteRepository" href="reference.html#remoteRepository"/>
+      <item name="pom" href="reference.html#pom"/>
       <item name="VersionMapper" href="reference.html#VersionMapper"/>
     </menu>
   </body>
