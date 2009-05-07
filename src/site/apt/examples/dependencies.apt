@@ -133,19 +133,13 @@ Using Properties to Access Dependencies
 
 Filtering Dependencies by Scope
 
-  Dependencies from a Pom file can be filtered by scope using the task attribute <<<useScope>>>.
-  <(since 2.0.10)> The <<<useScope>>> attribute accepts a comma separated list of scopes to 
-  include in the filtering.   If no value is specified, all scopes are included.  The following 
-  example includes only dependencies with a scope of either "provided" or "test".
+  There are two options available for filtering pom dependencies by scope, the <<<useScope>>>
+  attribute, and the <<<scopes>>> atribute.  One or the other of these attributes should be used
+  but not both.
   
------
-    <artifact:dependencies filesetId="deps.fileset" useScope="provided, test">
-      <pom file="mypom.xml"/>
-    </artifact:dependencies>
------
-  
-  Note: prior to version 2.0.10 of the ant tasks, only compile, runtime, and test scopes were supported
-  and they had the following behaviour.
+  The <<<useScopes>>> follows the maven conventions for scoping behaviour.  This means attribute 
+  can be set to one of three possible scopes: compile, runtime, or test.  These scopes will
+  behave as follows.
   
   * compile - Includes scopes compile, system, and provided
     
@@ -153,4 +147,25 @@ Filtering Dependencies by Scope
     
   * test - Includes scopes system, provided, compile, runtime, and test
   
+  For example, using the scope <<<runtime>>>, any dependencies defined with compile, 
+  runtime, or nothing (defaults to compile) in the scope field will be included in 
+  the resulting fileset.
+  
+-----
+    <artifact:dependencies filesetId="deps.fileset" useScope="runtime">
+      <pom file="mypom.xml"/>
+    </artifact:dependencies>
+-----
+
+  <Since 2.0.10> The <<<scopes>>> attribute accepts a comma separated list of scopes to 
+  include in the filtering.   Only dependencies with these specific scopes will be
+  included in the resulting fileset.  If no value is specified, all scopes are included.  
+  The following example includes only dependencies with a scope of either "provided" or "test".
+  
+-----
+    <artifact:dependencies filesetId="deps.fileset" scopes="provided, test">
+      <pom file="mypom.xml"/>
+    </artifact:dependencies>
+-----
+    
 

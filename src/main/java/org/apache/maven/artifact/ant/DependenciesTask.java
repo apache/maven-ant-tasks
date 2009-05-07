@@ -77,6 +77,8 @@ public class DependenciesTask
 
     private String useScope;
 
+    private String scopes;
+
     private String type;
 
     private boolean verbose;
@@ -84,6 +86,11 @@ public class DependenciesTask
     protected void doExecute()
     {
         showVersion();
+        
+        if ( useScope != null && scopes != null )
+        {
+            throw new BuildException( "You cannot specify both useScope and scopes in the dependencies task." );
+        }
         
         ArtifactRepository localRepo = createLocalArtifactRepository();
         log( "Using local repository: " + localRepo.getBasedir(), Project.MSG_VERBOSE );
@@ -137,7 +144,11 @@ public class DependenciesTask
             ArtifactFilter filter = null;
             if ( useScope != null )
             {
-                filter = new SpecificScopesArtifactFilter( useScope );
+                filter = new ScopeArtifactFilter( useScope );
+            }
+            if ( scopes != null )
+            {
+                filter = new SpecificScopesArtifactFilter( scopes );
             }
             if ( type != null )
             {
@@ -361,6 +372,16 @@ public class DependenciesTask
     public void setType( String type )
     {
         this.type = type;
+    }
+
+    public String getScopes()
+    {
+        return scopes;
+    }
+
+    public void setScopes( String scopes )
+    {
+        this.scopes = scopes;
     }
 
     private void showVersion()

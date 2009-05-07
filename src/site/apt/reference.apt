@@ -56,7 +56,9 @@
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<type>>>              | The type of artifacts to be retrieved. The default is <<<jar>>>.          | No           |             |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<useScope>>>          | A comma separated list of scopes to be retrieved.  If no value is provided, all scopes will be included.  | No   |    | 
+| <<<useScope>>>          | Follows the maven scope behaviour.  Can be set to <<<compile>>>, <<<runtime>>>, or <<<test>>>.  If no value is provided, all scopes will be included.  | No   |    | 
+*-------------------------+---------------------------------------------------------------------------+--------------+-------------+
+| <<<scopes>>>            | <since 2.0.10> A comma separated list of specific scopes to be retrieved.  If no value is provided, all scopes will be included.  | No   |    | 
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<verbose>>>           | If <<<true>>> this displays the results of each dependency resolution and their relationships. Default is <false>. | No | |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+

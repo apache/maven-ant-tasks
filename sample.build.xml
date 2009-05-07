@@ -585,7 +585,7 @@
   </target>
 
   <target name="test-deps-scopes" depends="initTaskDefs">
-    <artifact:dependencies filesetId="dependency.scopes.fileset" useScope=" provided , test ">
+    <artifact:dependencies filesetId="dependency.scopes.fileset" scopes=" provided , test ">
       <pom file="src/test/pom-with-scopes.xml"/>
     </artifact:dependencies>
     
