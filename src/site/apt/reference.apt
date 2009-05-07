@@ -56,7 +56,7 @@
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<type>>>              | The type of artifacts to be retrieved. The default is <<<jar>>>.          | No           |             |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<useScope>>>          | The scope to be retrieved.                                                | No           |             |
+| <<<useScope>>>          | A comma separated list of scopes to be retrieved.  If no value is provided, all scopes will be included.  | No   |    | 
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<verbose>>>           | If <<<true>>> this displays the results of each dependency resolution and their relationships. Default is <false>. | No | |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
@@ -72,7 +72,7 @@
       or a <<<pomRefId>>> attribute
       or one or more <<<dependency>>> elements.
 
-  If you have set a value for <<<versionsId>>>, you can later use {{{reference.html#VersionMapper} <<<VersionMapper>>>}}.
+  If you have set a value for <<<versionsId>>>, you can later use {{{reference.html#versionMapper} <<<VersionMapper>>>}}.
 
   <(since 2.0.8)> For each dependency resolved, the property <<<groupId:artifactId:type[:classifier]>>> is defined pointing to
   the corresponding file.

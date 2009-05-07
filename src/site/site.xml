@@ -41,7 +41,7 @@
       <item name="localRepository" href="reference.html#localRepository"/>
       <item name="remoteRepository" href="reference.html#remoteRepository"/>
       <item name="pom" href="reference.html#pom"/>
-      <item name="VersionMapper" href="reference.html#VersionMapper"/>
+      <item name="versionMapper" href="reference.html#versionMapper"/>
     </menu>
   </body>
 </project>

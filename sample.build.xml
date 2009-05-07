@@ -63,7 +63,7 @@
   </target>
 
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom, test-pom-profiles, test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty,test-deps-profile">
+    depends="test-pom, test-pom-profiles, test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty,test-deps-profile,test-deps-scopes">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -579,9 +579,27 @@
   
   <target name="test-mvn" depends="initTaskDefs">
     <artifact:mvn pom="src/test/pom.xml" mavenVersion="2.1.0" fork="true">
-      <arg value="package"/>
+      <arg value="test"/>
       <localRepository path="${basedir}/target/tmp"/>
     </artifact:mvn>
+  </target>
+
+  <target name="test-deps-scopes" depends="initTaskDefs">
+    <artifact:dependencies filesetId="dependency.scopes.fileset" useScope=" provided , test ">
+      <pom file="src/test/pom-with-scopes.xml"/>
+    </artifact:dependencies>
+    
+    <delete dir="target/files/scopes-test"/>
+    <mkdir dir="target/files/scopes-test"/>
+    <copy todir="target/files/scopes-test">
+      <fileset refid="dependency.scopes.fileset"/>
+    </copy>
+    
+    <!-- excluded dependency junit:junit -->
+    <check.file.exists file="target/files/scopes-test/commons-lang/commons-lang" type="dir"/>
+    <check.file.exists file="target/files/scopes-test/commons-collections/commons-collections" type="dir"/>
+    <check.file.not.exists file="target/files/scopes-test/org/apache/commons/commons-io" type="dir"/>
+    <check.file.not.exists file="target/files/scopes-test/commons-logging/commons-logging" type="dir"/>
   </target>
 
   <macrodef name="check.file.exists">

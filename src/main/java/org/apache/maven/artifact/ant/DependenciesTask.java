@@ -137,7 +137,7 @@ public class DependenciesTask
             ArtifactFilter filter = null;
             if ( useScope != null )
             {
-                filter = new ScopeArtifactFilter( useScope );
+                filter = new SpecificScopesArtifactFilter( useScope );
             }
             if ( type != null )
             {
