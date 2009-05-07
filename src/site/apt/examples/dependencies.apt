@@ -5,7 +5,7 @@
  Herve Boutemy
  Paul Gier
  ------
- 2009-05-06
+ 2009-05-07
  ------
 
  ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -133,11 +133,11 @@ Using Properties to Access Dependencies
 
 Filtering Dependencies by Scope
 
-  There are two options available for filtering pom dependencies by scope, the <<<useScope>>>
-  attribute, and the <<<scopes>>> atribute.  One or the other of these attributes should be used
+  There are two options available for filtering POM dependencies by scope, the <<<useScope>>>
+  attribute, and the <<<scopes>>> attribute.  One or the other of these attributes should be used
   but not both.
   
-  The <<<useScopes>>> follows the maven conventions for scoping behaviour.  This means attribute 
+  The <<<useScopes>>> follows the Maven conventions for scoping behaviour.  This means the attribute 
   can be set to one of three possible scopes: compile, runtime, or test.  These scopes will
   behave as follows.
 
