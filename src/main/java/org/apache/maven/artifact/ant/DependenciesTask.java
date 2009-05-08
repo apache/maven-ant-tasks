@@ -30,7 +30,6 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.TypeArtifactFilter;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.artifact.MavenMetadataSource;
@@ -152,7 +151,7 @@ public class DependenciesTask
             }
             if ( type != null )
             {
-                TypeArtifactFilter typeArtifactFilter = new TypeArtifactFilter( type );
+                ArtifactFilter typeArtifactFilter = new TypesArtifactFilter( type );
                 if ( filter != null )
                 {
                     AndArtifactFilter andFilter = new AndArtifactFilter();

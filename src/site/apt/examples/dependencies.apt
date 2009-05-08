@@ -171,8 +171,8 @@ Filtering Dependencies by Scope
 
 Filtering Dependencies by Type
 
-  Dependencies can be filterd by type by using the <<<type>>> attribute.  This can be set to a string
-  containing the desired type.  The following example will only include artifacts of the jar type.
+  Dependencies can be filterd by type by using the <<<type>>> attribute.  This can be set to a 
+  comma separate list of the types to select.  The following example will only include artifacts of the jar type.
 
 -----
     <artifact:dependencies filesetId="deps.fileset" type="jar">
