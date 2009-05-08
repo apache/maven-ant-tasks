@@ -54,7 +54,7 @@
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<sourcesFilesetId>>>  | The reference ID to store a fileset under, for the sources attachements of the resolved dependencies. | No | 2.0.6 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<type>>>              | The type of artifacts to be retrieved. The default is <<<jar>>>.          | No           |             |
+| <<<type>>>              | The type of artifacts to be retrieved. By default all artifact types will be included.   | No     |    |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<useScope>>>          | Follows the maven scope behaviour.  Can be set to <<<compile>>>, <<<runtime>>>, or <<<test>>>.  If no value is provided, all scopes will be included.  | No   |    | 
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+

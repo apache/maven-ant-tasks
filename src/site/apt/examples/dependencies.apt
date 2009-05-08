@@ -167,5 +167,17 @@ Filtering Dependencies by Scope
       <pom file="mypom.xml"/>
     </artifact:dependencies>
 -----
-    
 
+
+Filtering Dependencies by Type
+
+  Dependencies can be filterd by type by using the <<<type>>> attribute.  This can be set to a string
+  containing the desired type.  The following example will only include artifacts of the jar type.
+
+-----
+    <artifact:dependencies filesetId="deps.fileset" type="jar">
+      <pom file="mypom.xml"/>
+    </artifact:dependencies>
+-----
+
+  By default all artifact types will be included when building the list of dependencies.
