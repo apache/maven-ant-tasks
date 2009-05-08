@@ -401,11 +401,6 @@ public class Pom extends AbstractArtifactWithRepositoryTask
      */
     private void addAntRepositoriesToProfileManager()
     {
-        if ( this.getProfileManager() == null )
-        {
-            return;
-        }
-
         List remoteRepositories = this.getRemoteRepositories();
 
         if ( remoteRepositories == null || remoteRepositories.isEmpty() )
@@ -424,10 +419,9 @@ public class Pom extends AbstractArtifactWithRepositoryTask
             mavenRepo.setUrl( antRepo.getUrl() );
             repositoriesProfile.addRepository( mavenRepo );
         }
-        ProfileManager profMan = this.getProfileManager();
-        profMan.addProfile( repositoriesProfile );
-        profMan.explicitlyActivate( repositoriesProfile.getId() );
 
+        getProfileManager().addProfile( repositoriesProfile );
+        getProfileManager().explicitlyActivate( repositoriesProfile.getId() );
     }
     
     private ProfileManager getActivatedProfiles()

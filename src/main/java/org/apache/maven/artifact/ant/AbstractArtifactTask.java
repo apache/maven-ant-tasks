@@ -284,8 +284,6 @@ public abstract class AbstractArtifactTask
             settings.setLocalRepository( location );
         }
 
-        profileManager = new DefaultProfileManager( getContainer(), getSettings(), System.getProperties() );
-
         WagonManager wagonManager = (WagonManager) lookup( WagonManager.ROLE );
         wagonManager.setDownloadMonitor( new AntDownloadMonitor() );
         if ( settings.isOffline() )
@@ -636,6 +634,10 @@ public abstract class AbstractArtifactTask
 
     protected ProfileManager getProfileManager()
     {
+        if ( profileManager == null )
+        {
+            profileManager = new DefaultProfileManager( getContainer(), getSettings(), System.getProperties() );
+        }
         return profileManager;
     }
 
