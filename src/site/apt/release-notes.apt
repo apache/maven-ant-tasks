@@ -28,6 +28,43 @@
 
 Maven Ant Tasks
 
+* 2.0.10 Release Notes 
+
+  The full list of changes can be found in our {{{http://jira.codehaus.org/secure/IssueNavigator.jspa?reset=true&pid=11533&fixfor=14199}issue management system}}, and is reproduced below.
+
+**Bug
+
+    * [MANTTASKS-87] - Using a pom.xml for dependencies, in which the pom.xml has a parent pom.xml will cause a "Error downloading parent pom" error
+
+    * [MANTTASKS-106] - Maven ant tasks artifact has maven inside the jar and so can't be used from inside the maven (maven-antrun-plugin) - classes do conflict
+
+    * [MANTTASKS-111] - Support for SNAPSHOT deployment
+
+    * [MANTTASKS-116] - NPE when install target is missing file and pom type is JAR
+
+    * [MANTTASKS-142] - Default remote repository id not safe
+
+    * [MANTTASKS-144] - "Error reading settings file" error is reported when settings.xml is deleted from maven/conf folder.
+
+    * [MANTTASKS-145] - Dependency management doesn't work with pom and dependencies tasks
+
+** Improvement
+
+    * [MANTTASKS-35] - Support profiles in pom type
+
+    * [MANTTASKS-114] - improve documentation
+
+    * [MANTTASKS-146] - Improvements to site documentation
+
+    * [MANTTASKS-147] - Improvements to scope filtering
+
+** New Feature
+
+    * [MANTTASKS-71] - running m2 inside Ant
+
+    * [MANTTASKS-149] - Allow multiple types in the type filter
+
+
 * 2.0.9 Release Notes
 
   The full list of changes can be found in our {{{http://jira.codehaus.org/secure/IssueNavigator.jspa?reset=true&pid=11533&fixfor=13935&sorter/field=issuekey&sorter/order=DESC}issue management system}}, and is reproduced below.

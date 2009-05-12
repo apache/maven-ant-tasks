@@ -44,7 +44,7 @@ Maven Ant Tasks
 
 * Usage
 
-  Instructions for installing and using the maven ant tasks can be found on the {{{installation.html}installation page}}
+  General instructions for installing and using the maven ant tasks can be found on the {{{installation.html}installation page}}
   and the {{{usage.html}usage page}} respectively. 
 
 * Examples
@@ -64,7 +64,7 @@ Maven Ant Tasks
   If you have any questions specific to the Ant tasks, please contact the
   {{{http://maven.apache.org/mail-lists.html} Maven Users Mailing List}}.
 
-  For more on the Maven functionality behind them, try the following links:
+  For more on the Maven functionality behind the Ant tasks, try the following links:
 
     * {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html} Dependency Mechanism}}
 

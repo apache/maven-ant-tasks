@@ -24,8 +24,8 @@ under the License.
     <faq id="build">
       <question>How to build a Maven project with Maven Ant Tasks?</question>
       <answer>
-        <p>Maven Ant Tasks are not meant to <i>build</i> a project based on its <code>pom.xml</code>, but only
-        get dependencies defined in <code>pom.xml</code>.</p>
+        <p>See the <a href="examples/mvn.html">examples page</a> for the mvn task for information about building 
+        a maven project from ant. </p>
       </answer>
     </faq>
   </part>

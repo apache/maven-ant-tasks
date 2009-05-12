@@ -31,7 +31,7 @@ The Mvn Task
   <<Note: This task is only available since version 2.0.10>>
 
   The maven ant tasks have some limited support for calling a full maven build from ant.
-  The <<<mvn>>> task is a subclass of the Ant {{{java}http://ant.apache.org/manual/CoreTasks/java.html}}
+  The <<<mvn>>> task is a subclass of the Ant {{{http://ant.apache.org/manual/CoreTasks/java.html}java}}
   task and supports all of it's options such as args, fork, resultproperty, etc.
   
   If maven is already installed on the local system the maven build can be called using
@@ -69,7 +69,7 @@ Running the Mvn Task without a Maven Installation
   </artifact:mvn>
 -----
 
-  <<Note: this will use the 2.0.10 version of the core maven  jar files>>
+  <<Note: this will use version 2.0.10 of the core maven jar files>>
   
 Using the Java Task
 
