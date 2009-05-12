@@ -2,7 +2,7 @@
   Introduction
   --------
   Brett Porter
-  Herve Boutemy
+  Hervé Boutemy
   --------
   2008-07-17
   --------
@@ -27,7 +27,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Maven Ant Tasks 
+Maven Ant Tasks
 
   The Mavent Ant Tasks allow many of Maven's artifact handling features to be used
   from within Ant. These include:
@@ -45,7 +45,7 @@ Maven Ant Tasks
 * Usage
 
   General instructions for installing and using the maven ant tasks can be found on the {{{installation.html}installation page}}
-  and the {{{usage.html}usage page}} respectively. 
+  and the {{{usage.html}usage page}} respectively.
 
 * Examples
 
@@ -54,11 +54,11 @@ Maven Ant Tasks
   * {{{examples/dependencies.html}Dependencies task}}
 
   * {{{examples/install-deploy.html}Install and Deploy tasks}}
-  
+
   * {{{examples/pom.html}Pom task}}
-  
+
   * {{{examples/mvn.html}Mvn task}}
-  
+
 * Getting Help
 
   If you have any questions specific to the Ant tasks, please contact the

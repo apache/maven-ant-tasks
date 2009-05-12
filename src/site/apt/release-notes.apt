@@ -1,7 +1,7 @@
   ------
   Release Notes
   ------
-  Herve Boutemy
+  Hervé Boutemy
   ------
   2008-10-12
   ------
@@ -28,7 +28,7 @@
 
 Maven Ant Tasks
 
-* 2.0.10 Release Notes 
+* 2.0.10 Release Notes
 
   The full list of changes can be found in our {{{http://jira.codehaus.org/secure/IssueNavigator.jspa?reset=true&pid=11533&fixfor=14199}issue management system}}, and is reproduced below.
 
@@ -72,17 +72,17 @@ Maven Ant Tasks
 **Bug
 
     * [MANTTASKS-13] - Ant Tasks use of <authentication> is inconsistent
-  
+
     * [MANTTASKS-91] - [task dependencies]Trouble between mvn and manttasks
-  
+
     * [MANTTASKS-103] - Can't deploy to a file: repository
-  
+
     * [MANTTASKS-104] - files returned in sourcesFileset when no dependencies sources available
-  
+
     * [MANTTASKS-105] - dependencies task don't read remote repositories from settings xml
-  
+
     * [MANTTASKS-107] - repository defined in pom not used to download parent pom when defining pom reference
-  
+
     * [MANTTASKS-108] - Maven Ant Tasks are switching the Classloader of the Main Ant Thread
 
 **Improvement

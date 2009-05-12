@@ -2,7 +2,7 @@
  Usage
  ------
  Brett Porter
- Herve Boutemy
+ Hervé Boutemy
  ------
  2008-07-17
  ------
@@ -50,7 +50,7 @@ Using Maven Ant Tasks
   You may have noticed the <<<pathId>>> reference. This is optional, but if given will create a classpath reference
   that includes the local files downloaded as dependencies. This is usually used to pass to <<<javac>>> or other tasks:
 
-  You can also use a Maven 2.0 POM to declare your dependencies, which is {{{examples/pom.html} described in the examples}}. 
+  You can also use a Maven 2.0 POM to declare your dependencies, which is {{{examples/pom.html} described in the examples}}.
   This is the recommended practice so that you can reuse the file to deploy your own artifacts.
 
   For more examples of using the dependencies task, see the {{{examples/dependencies.html} examples page}}.
@@ -60,10 +60,10 @@ Using Maven Ant Tasks
   Maven allows artifacts to be shared between projects by using local and remote repository.
   The <<<install>>> task allows an artifact to be copied to the local maven repository (typically
   located in ~/.m2/repository).
-  
+
   The <<<deploy>>> task allows artifacts to be deployed to a remote maven repository where they will
   be available to other projects.
-  
+
   For examples of using the install and deploy tasks, see the {{{examples/install-deploy.html} examples page}}.
 
 * Using a Maven {POM} File
