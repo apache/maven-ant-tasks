@@ -30,11 +30,11 @@ The Mvn Task
 
   <<Note: This task is only available since version 2.0.10>>
 
-  The maven ant tasks have some limited support for calling a full maven build from ant.
+  The Maven Ant Tasks have some limited support for calling a full Maven build from Ant.
   The <<<mvn>>> task is a subclass of the Ant {{{http://ant.apache.org/manual/CoreTasks/java.html}java}}
-  task and supports all of it's options such as args, fork, resultproperty, etc.
-  
-  If maven is already installed on the local system the maven build can be called using
+  task and supports all of its options such as args, fork, resultproperty, etc.
+
+  If Maven is already installed on the local system, the Maven build can be called using
   this local installation by specifying the <<<mavenHome>>> parameter.
 
 -----
@@ -44,10 +44,10 @@ The Mvn Task
 -----
 
   Maven will search for a pom.xml file in the current directory and run the <<<install>>> goal.
-  
+
   If the pom file is not located in the current directory, an alternate path to the pom can
   be specified.
-  
+
 -----
   <artifact:mvn pom="path/to/my-pom.xml" mavenHome="/path/to/maven-2.0.x">
     <arg value="install"/>
@@ -56,12 +56,12 @@ The Mvn Task
 
 Running the Mvn Task without a Maven Installation
 
-  If no local maven installation is available, the mvn task will attempt to resolve (download)
-  the necessary jar files from the central maven repository and run the maven build using 
+  If no local Maven installation is available, the mvn task will attempt to resolve (download)
+  the necessary jar files from the central Maven repository and run the Maven build using
   these jar files.
-  
+
   When the <<<mavenHome>>> attribute is not set, the <<<mvn>>> task will attempt to automatically
-  resolve the required jar files.  
+  resolve the required jar files.
 
 -----
   <artifact:mvn pom="path/to/my-pom.xml">
@@ -69,15 +69,15 @@ Running the Mvn Task without a Maven Installation
   </artifact:mvn>
 -----
 
-  <<Note: this will use version 2.0.10 of the core maven jar files>>
-  
+  <<Note: this will use version 2.0.10 of the core Maven jar files>>
+
 Using the Java Task
 
-  The java task can be used directly without any need for the maven ant tasks.  However,
-  this method requires that Maven is already installed on the system.  A 
-  property called <<<maven.home>>> must be set to point to the local maven installation, 
-  then an ant macro can be defined for calling maven.
-  
+  The java task can be used directly without any need for the Maven Ant Tasks.  However,
+  this method requires that Maven is already installed on the system. A
+  property called <<<maven.home>>> must be set to point to the local Maven installation,
+  then an Ant macro can be defined for calling Maven.
+
 -----
   <macrodef name="maven">
     <attribute name="options" default="" />
@@ -86,7 +86,7 @@ Using the Java Task
     <attribute name="resultproperty" default="maven.result" />
     <element name="args" implicit="true" optional="true" />
     <sequential>
-      <java classname="org.codehaus.classworlds.Launcher" fork="true" 
+      <java classname="org.codehaus.classworlds.Launcher" fork="true"
             dir="@{basedir}" resultproperty="@{resultproperty}">
         <jvmarg value="-Xmx512m"/>
         <classpath>
@@ -105,13 +105,13 @@ Using the Java Task
   </macrodef>
 -----
 
-  This example defines an ant macro called <<<maven>>>.  The macro can then be used in 
+  This example defines an Ant macro called <<<maven>>>.  The macro can then be used in
   the build like this:
-  
+
 -----
-      <maven basedir="${basedir}" 
-             options="${maven.opts}" 
+      <maven basedir="${basedir}"
+             options="${maven.opts}"
              goal="install"
              resultproperty="maven.build.result"/>
 -----
-  
+

@@ -104,10 +104,10 @@ The Pom Task
 Accessing dependencies in the POM
 
   The <<<pom>>> task can be used in combination with the <<<dependencies>>> task to declare a list of dependencies.
-  
+
 -----
   <artifact:pom id="mypom" file="pom.xml" />
-  
+
   <artifact:dependencies filesetId="mydeps" pomRefId="mypom" />
 -----
 
@@ -118,15 +118,15 @@ Using profiles in the POM
 
   POM profiles can be activated or deactivated using the nested profile element.  For example
   to activate a profile called <<<my-profile>>>.
-  
+
 -----
     <artifact:pom id="maven.project" file="pom.xml">
       <profile id="my-profile"/>
     </artifact:pom>
 -----
-    
+
   This can also be used to deactivate a POM profile that is active by default.
-  
+
 -----
     <artifact:pom id="maven.project" file="pom.xml">
       <profile id="my-default-profile" active="false"/>

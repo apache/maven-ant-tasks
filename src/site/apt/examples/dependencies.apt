@@ -30,7 +30,7 @@
 
 Basic Example
 
-  The following example declares three dependencies and adds them to the pathId <<<dependency.classpath>>>.
+  The following example declares three dependencies and adds them to the <<<dependency.classpath>>> pathId.
 
 -----
 <artifact:dependencies pathId="dependency.classpath">
@@ -40,8 +40,8 @@ Basic Example
 </artifact:dependencies>
 -----
 
-  The pathId can be used in the ant build file for example in the <<<javac>>> task.
-  
+  The pathId can be used in the Ant build file for example in the <<<javac>>> task.
+
 -----
 <javac ...>
   <classpath refid="dependency.classpath" />
@@ -133,11 +133,11 @@ Using Properties to Access Dependencies
 
 Filtering Dependencies by Scope
 
-  There are two options available for filtering POM dependencies by scope, the <<<useScope>>>
+  There are two options available for filtering POM dependencies by scope: the <<<useScope>>>
   attribute, and the <<<scopes>>> attribute.  One or the other of these attributes should be used
   but not both.
-  
-  The <<<useScopes>>> follows the Maven conventions for scoping behaviour.  This means the attribute 
+
+  The <<<useScopes>>> follows the Maven conventions for scoping behaviour.  This means the attribute
   can be set to one of three possible scopes: compile, runtime, or test.  These scopes will
   behave as follows.
 
@@ -147,21 +147,21 @@ Filtering Dependencies by Scope
 
     * test - Includes scopes system, provided, compile, runtime, and test
 
-  For example, using the scope <<<runtime>>>, any dependencies defined with compile, 
-  runtime, or nothing (defaults to compile) in the scope field will be included in 
+  For example, using the scope <<<runtime>>>, any dependencies defined with compile,
+  runtime, or nothing (defaults to compile) in the scope field will be included in
   the resulting fileset.
-  
+
 -----
     <artifact:dependencies filesetId="deps.fileset" useScope="runtime">
       <pom file="mypom.xml"/>
     </artifact:dependencies>
 -----
 
-  <(Since 2.0.10)> The <<<scopes>>> attribute accepts a comma separated list of scopes to 
+  <(Since 2.0.10)> The <<<scopes>>> attribute accepts a comma separated list of scopes to
   include in the filtering.   Only dependencies with these specific scopes will be
-  included in the resulting fileset.  If no value is specified, all scopes are included.  
+  included in the resulting fileset.  If no value is specified, all scopes are included.
   The following example includes only dependencies with a scope of either "provided" or "test".
-  
+
 -----
     <artifact:dependencies filesetId="deps.fileset" scopes="provided, test">
       <pom file="mypom.xml"/>
@@ -171,7 +171,7 @@ Filtering Dependencies by Scope
 
 Filtering Dependencies by Type
 
-  Dependencies can be filterd by type by using the <<<type>>> attribute.  This can be set to a 
+  Dependencies can be filterd by type by using the <<<type>>> attribute.  This can be set to a
   comma separate list of the types to select.  The following example will only include artifacts of the jar type.
 
 -----
