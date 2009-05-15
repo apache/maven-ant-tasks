@@ -2,28 +2,20 @@
   <id>src</id>
   <formats>
     <format>tar.gz</format>
+    <format>tar.bz2</format>
     <format>zip</format>
   </formats>
-  <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
       <directory>${project.basedir}</directory>
       <outputDirectory>/</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
-      <excludes>
-        <exclude>target/**</exclude>
-        <exclude>*~</exclude>
-        <exclude>*.log</exclude>
-        <exclude>.classpath</exclude>
-        <exclude>.project</exclude>
-        <exclude>.settings/**</exclude>
-        <exclude>*.ipr</exclude>
-        <exclude>*.iws</exclude>
-        <exclude>*.iml</exclude>
-        <exclude>.wtpmodules</exclude>
-        <exclude>target-eclipse/**</exclude>
-        <exclude>bin/**</exclude>
-      </excludes>
+      <includes>
+        <include>src/**</include>
+        <include>pom.xml</include>
+        <include>sample-build-test.pom</include>
+        <include>sample.build.xml</include>
+      </includes>
     </fileSet>
   </fileSets>
 </assembly>
