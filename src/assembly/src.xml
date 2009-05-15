@@ -15,6 +15,16 @@
         <include>pom.xml</include>
         <include>sample-build-test.pom</include>
         <include>sample.build.xml</include>
+        <include>README*</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>${project.build.outputDirectory}/META-INF</directory>
+      <outputDirectory>/</outputDirectory>
+      <useDefaultExcludes>true</useDefaultExcludes>
+      <includes>
+        <include>LICENSE*</include>
+        <include>NOTICE*</include>
       </includes>
     </fileSet>
   </fileSets>
