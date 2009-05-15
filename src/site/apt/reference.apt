@@ -58,11 +58,13 @@
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<useScope>>>          | Follows the maven scope behaviour.  Can be set to <<<compile>>>, <<<runtime>>>, or <<<test>>>.  If no value is provided, all scopes will be included.  | No   |    |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<scopes>>>            | <(since 2.0.10)>  A comma separated list of specific scopes to be retrieved.  If no value is provided, all scopes will be included.  | No   |    |
+| <<<scopes>>>            | A comma separated list of specific scopes to be retrieved.  If no value is provided, all scopes will be included.  | No   |  2.0.10  |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<verbose>>>           | If <<<true>>> this displays the results of each dependency resolution and their relationships. Default is <false>. | No | |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<versionsId>>>        | The property ID to store the versions of the resolved dependencies, for use by a {{{reference.html#VersionMapper} <<<VersionMapper>>>}}. | No | 2.0.7 |
+*-------------------------+---------------------------------------------------------------------------+--------------+-------------+
+| <<<addArtifactFileSetRefs>>> | If set to true, will add a fileset for each resolved dependency.  The fileset has an id of <<<groupId:artifactId:type[:classifier]>>>.  Default is <false>.  | No | 2.0.10 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 
   The task can include the <<<dependency>>> nested type, in addition to the other shared types
