@@ -81,6 +81,8 @@ public class DependenciesTask
     private String type;
 
     private boolean verbose;
+    
+    private boolean addArtifactFileSetRefs;
 
     protected void doExecute()
     {
@@ -273,6 +275,13 @@ public class DependenciesTask
         }
 
         getProject().setProperty( artifact.getDependencyConflictId(), artifact.getFile().getAbsolutePath() );
+        
+        if ( isAddArtifactFileSetRefs() )
+        {
+            FileSet artifactFileSet = new FileSet();
+            artifactFileSet.setFile( artifact.getFile() );
+            getProject().addReference( artifact.getDependencyConflictId(), artifactFileSet );
+        }
     }
 
     private void resolveSource( ArtifactFactory artifactFactory, ArtifactResolver resolver,
@@ -411,5 +420,15 @@ public class DependenciesTask
         {
             log( "Unable to determine version from Maven Ant Tasks JAR file: " + e.getMessage(), Project.MSG_WARN );
         }
+    }
+
+    public boolean isAddArtifactFileSetRefs()
+    {
+        return addArtifactFileSetRefs;
+    }
+
+    public void setAddArtifactFileSetRefs( boolean addArtifactFileSetRefs )
+    {
+        this.addArtifactFileSetRefs = addArtifactFileSetRefs;
     }
 }
