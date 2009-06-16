@@ -39,20 +39,19 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
 import org.apache.maven.settings.TrackableBase;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
+import org.apache.maven.usability.diagnostics.ErrorDiagnostics;
 import org.apache.maven.wagon.Wagon;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Execute;
-import org.codehaus.plexus.ContainerConfiguration;
-import org.codehaus.plexus.DefaultContainerConfiguration;
-import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.classworlds.ClassWorld;
+import org.codehaus.classworlds.DuplicateRealmException;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
-import org.codehaus.plexus.classworlds.ClassWorld;
-import org.codehaus.plexus.classworlds.realm.DuplicateRealmException;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.embed.Embedder;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
@@ -231,26 +230,26 @@ public abstract class AbstractArtifactTask
     {
         if ( userSettingsFile == null )
         {
-            File settingsFile = newFile( System.getProperty( "user.home" ), ".ant", "settings.xml" );
-            if ( settingsFile.exists() )
+            File tempSettingsFile = newFile( System.getProperty( "user.home" ), ".ant", "settings.xml" );
+            if ( tempSettingsFile.exists() )
             {
-                userSettingsFile = settingsFile;
+                userSettingsFile = tempSettingsFile;
             }
             else
             {
-                settingsFile = newFile( System.getProperty( "user.home" ), ".m2", "settings.xml" );
-                if ( settingsFile.exists() )
+                tempSettingsFile = newFile( System.getProperty( "user.home" ), ".m2", "settings.xml" );
+                if ( tempSettingsFile.exists() )
                 {
-                    userSettingsFile = settingsFile;
+                    userSettingsFile = tempSettingsFile;
                 }
             }
         }
         if ( globalSettingsFile == null )
         {
-            File settingsFile = newFile( System.getProperty( "ant.home" ), "etc", "settings.xml" );
-            if ( settingsFile.exists() )
+            File tempSettingsFile = newFile( System.getProperty( "ant.home" ), "etc", "settings.xml" );
+            if ( tempSettingsFile.exists() )
             {
-                globalSettingsFile = settingsFile;
+                globalSettingsFile = tempSettingsFile;
             }
             else
             {
@@ -262,7 +261,11 @@ public abstract class AbstractArtifactTask
                     if ( var.startsWith( "M2_HOME=" ) )
                     {
                         String m2Home = var.substring( "M2_HOME=".length() );
-                        globalSettingsFile = newFile( m2Home, "conf", "settings.xml" );
+                        tempSettingsFile = newFile( m2Home, "conf", "settings.xml" );
+                        if ( tempSettingsFile.exists() )
+                        {
+                            globalSettingsFile = tempSettingsFile;
+                        }
                         break;
                     }
                 }
@@ -280,8 +283,6 @@ public abstract class AbstractArtifactTask
             String location = newFile( System.getProperty( "user.home" ), ".m2", "repository" ).getAbsolutePath();
             settings.setLocalRepository( location );
         }
-
-        profileManager = new DefaultProfileManager( getContainer(), getSettings(), System.getProperties() );
 
         WagonManager wagonManager = (WagonManager) lookup( WagonManager.ROLE );
         wagonManager.setDownloadMonitor( new AntDownloadMonitor() );
@@ -377,7 +378,7 @@ public abstract class AbstractArtifactTask
 
             RuntimeInfo rtInfo = new RuntimeInfo( settings );
 
-            //rtInfo.setFile( settingsFile );
+            rtInfo.setFile( settingsFile );
 
             settings.setRuntimeInfo( rtInfo );
         }
@@ -486,10 +487,14 @@ public abstract class AbstractArtifactTask
                 try
                 {
                     ClassWorld classWorld = new ClassWorld();
+
                     classWorld.newRealm( "plexus.core", getClass().getClassLoader() );
-                    ContainerConfiguration configuration = new DefaultContainerConfiguration();
-                    configuration.setClassWorld( classWorld );                    
-                    container = new DefaultPlexusContainer( configuration );
+
+                    Embedder embedder = new Embedder();
+
+                    embedder.start( classWorld );
+
+                    container = embedder.getContainer();
                 }
                 catch ( PlexusContainerException e )
                 {
@@ -584,6 +589,29 @@ public abstract class AbstractArtifactTask
         return StringUtils.join( getSupportedProtocols(), ", " );
     }
     
+    public void diagnoseError( Throwable error )
+    {
+        try
+        {
+            ErrorDiagnostics diagnostics = (ErrorDiagnostics) container.lookup( ErrorDiagnostics.ROLE );
+
+            StringBuffer message = new StringBuffer();
+
+            message.append( "An error has occurred while processing the Maven artifact tasks.\n" );
+            message.append( " Diagnosis:\n\n" );
+
+            message.append( diagnostics.diagnose( error ) );
+
+            message.append( "\n\n" );
+
+            log( message.toString(), Project.MSG_INFO );
+        }
+        catch ( ComponentLookupException e )
+        {
+            log( "Failed to retrieve error diagnoser.", Project.MSG_DEBUG );
+        }
+    }
+
     public void addPom( Pom pom )
     {
         this.pom = pom;
@@ -606,6 +634,10 @@ public abstract class AbstractArtifactTask
 
     protected ProfileManager getProfileManager()
     {
+        if ( profileManager == null )
+        {
+            profileManager = new DefaultProfileManager( getContainer(), getSettings(), System.getProperties() );
+        }
         return profileManager;
     }
 
@@ -647,8 +679,8 @@ public abstract class AbstractArtifactTask
         }
         catch ( BuildException e )
         {
-            e.printStackTrace();
-            
+            diagnoseError( e );
+
             throw e;
         }
         finally

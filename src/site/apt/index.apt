@@ -1,0 +1,73 @@
+  --------
+  Introduction
+  --------
+  Brett Porter
+  Hervé Boutemy
+  --------
+  2008-07-17
+  --------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Maven Ant Tasks
+
+  The Mavent Ant Tasks allow many of Maven's artifact handling features to be used
+  from within Ant. These include:
+
+    * <Dependency management> - including transitive dependencies, scope recognition and SNAPSHOT handling
+
+    * <Artifact deployment> - deployment to a Maven repository (file integrated, other with extensions)
+
+    * <POM processing> - for reading a Maven 2.0.x <<<pom.xml>>> file
+
+  The Ant tasks can be downloaded from the {{{http://maven.apache.org/download.html} Maven 2.0 download page}}.
+
+  Ant 1.6.x or 1.7.x is required to use Maven Ant tasks.
+
+* Usage
+
+  General instructions for installing and using the maven ant tasks can be found on the {{{installation.html}installation page}}
+  and the {{{usage.html}usage page}} respectively.
+
+* Examples
+
+  Several common usage examples are provided for the following tasks:
+
+  * {{{examples/dependencies.html}Dependencies task}}
+
+  * {{{examples/install-deploy.html}Install and Deploy tasks}}
+
+  * {{{examples/pom.html}Pom task}}
+
+  * {{{examples/mvn.html}Mvn task}}
+
+* Getting Help
+
+  If you have any questions specific to the Ant tasks, please contact the
+  {{{http://maven.apache.org/mail-lists.html} Maven Users Mailing List}}.
+
+  For more on the Maven functionality behind the Ant tasks, try the following links:
+
+    * {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html} Dependency Mechanism}}
+
+    * {{{http://maven.apache.org/maven-settings/settings.html} Settings Reference}}
+
+    * {{{http://maven.apache.org/maven-model/maven.html} POM Reference}}

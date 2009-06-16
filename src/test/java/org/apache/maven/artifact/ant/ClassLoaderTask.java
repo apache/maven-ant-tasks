@@ -27,7 +27,7 @@ import org.apache.tools.ant.Task;
  * Task to test context classloader.
  * 
  * @author <a href="mailto:hboutemy@apache.org">Herve Boutemy</a>
- * @version $Id:$
+ * @version $Id$
  */
 public class ClassLoaderTask
     extends Task

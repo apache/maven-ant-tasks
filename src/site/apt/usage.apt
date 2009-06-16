@@ -1,0 +1,183 @@
+ ------
+ Usage
+ ------
+ Brett Porter
+ Hervé Boutemy
+ ------
+ 2008-07-17
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Using Maven Ant Tasks
+
+* Declaring Dependencies
+
+  The main purpose of the Maven Ant Tasks is to utilize Maven's {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html} dependency management features}}.
+
+  This is achieved with the <<<dependencies>>> task. The simplest usage involves specifying your dependencies inline,
+  such as in the following example:
+
+-----
+<artifact:dependencies pathId="dependency.classpath">
+  <dependency groupId="junit" artifactId="junit" version="3.8.2" scope="test"/>
+  <dependency groupId="org.codehaus.modello" artifactId="modello-core" version="1.0-alpha-2-SNAPSHOT"/>
+  <dependency groupId="javax.servlet" artifactId="servlet-api" version="2.4" scope="provided"/>
+</artifact:dependencies>
+-----
+
+  The above example will download those 3 dependencies, and their dependencies, and so on. They will be stored in
+  the default local repository location, <<<$\{user.home\}/.m2/repository>>>.
+
+  You may have noticed the <<<pathId>>> reference. This is optional, but if given will create a classpath reference
+  that includes the local files downloaded as dependencies. This is usually used to pass to <<<javac>>> or other tasks:
+
+  You can also use a Maven 2.0 POM to declare your dependencies, which is {{{examples/pom.html} described in the examples}}.
+  This is the recommended practice so that you can reuse the file to deploy your own artifacts.
+
+  For more examples of using the dependencies task, see the {{{examples/dependencies.html} examples page}}.
+
+* Installing and Deploying Your Own Artifacts to a Repository
+
+  Maven allows artifacts to be shared between projects by using local and remote repository.
+  The <<<install>>> task allows an artifact to be copied to the local maven repository (typically
+  located in ~/.m2/repository).
+
+  The <<<deploy>>> task allows artifacts to be deployed to a remote maven repository where they will
+  be available to other projects.
+
+  For examples of using the install and deploy tasks, see the {{{examples/install-deploy.html} examples page}}.
+
+* Using a Maven {POM} File
+
+  In Maven, the Project Object Model (POM) represents a unit of work - one exists for each artifact that is built.
+
+  A Maven 2.0 POM file is required for deploying your own artifact to a repository for use in the dependencies
+  elements of other projects.
+
+  It can also be reused for declaring your own dependencies, instead of specifying the inline version given earlier.
+
+  For examples of creating a pom and using the <<<pom>>> task, see the {{{examples/pom.html}examples page}}.
+
+* Declaring Repositories
+
+  All of the tasks can optionally take one or more remote repositories to download from and upload to, and a
+  local repository to store downloaded and installed archives to.
+
+  These can be specified inline, or if you choose to reuse them, they can be declared with an <<<id>>>/<<<refid>>>
+  combination.
+
+  For example, you can specify the remote repository you want to use:
+
+-----
+<artifact:remoteRepository id="remote.repository" url="http://repository.mycompany.com/" />
+...
+<artifact:dependencies>
+  <!-- Your dependency definitions go here -->
+  ...
+  <remoteRepository refid="remote.repository" />
+</artifact:dependencies>
+-----
+
+  If no remote repositories are specified, the default {{{http://repo1.maven.org/maven2/} http://repo1.maven.org/maven2/}}
+  is used. But if at least one remote repository is specified, repo1 is not automatically added: you have
+  to declare it if you need it.
+
+  <<Note:>> to work with transitive dependencies, you <must> use a Maven 2.0 repository.
+
+  If your repository requires authentication, you can provide this as a nested element. It accepts the
+  attributes <<<username>>>, <<<password>>>, and for SSH based repositories <<<privateKey>>>
+  and <<<passphrase>>>. For example:
+
+-----
+<authentication username="brett" privateKey="${user.home}/.ssh/id_dsa" />
+-----
+
+* The Settings File
+
+  The POM can be used to represent most of the information that the tasks have access to, including remote
+  repositories. Information that are user or environment specific, such as the <<<authentication>>> tag, are
+  specified in the <<<settings.xml>>> file in Maven, and can also be accessed from the Ant tasks.
+
+  The file is first looked for in <<<$\{user.home\}/.ant/settings.xml>>>, then in <<<$\{user.home\}/.m2/settings.xml>>>
+  so that the settings can be shared with Maven 2.0 itself. Since 2.0.7, it is then looked for in
+  <<<$\{ANT_HOME\}/etc/settings.xml>>>, then in <<<$\{M2_HOME\}/conf/settings.xml>>> so that the settings
+  can be set for all users.
+
+  Since 2.0.6, you can provide access to a settings file anywhere using <<<settingsFile>>> attribute:
+
+-----
+<artifact:dependencies settingsFile="/opt/maven/conf/settings.xml">
+  ...
+</artifact:dependencies>
+-----
+
+  For example, to specify your proxy settings, you would specify the following <<<settings.xml>>> file:
+
+-----
+<settings>
+  <proxies>
+    <proxy>
+      <protocol>http</protocol>
+      <host>proxy.host.net</host>
+      <port>8080</port>
+      <nonProxyHosts>localhost</nonProxyHosts>
+    </proxy>
+  </proxies>
+</settings>
+-----
+
+  Or to specify a <<<central>>> mirror, you would specify the following <<<settings.xml>>> file:
+
+-----
+<settings>
+  <mirrors>
+    <mirror>
+      <id>central.mirror</id>
+      <url>http://mirror.host.net/maven2</url>
+      <mirrorOf>central</mirrorOf>
+    </mirror>
+  </mirrors>
+</settings>
+-----
+
+  For more information on configuring <<<settings.xml>>>, see:
+
+    * {{{http://maven.apache.org/guides/mini/guide-configuring-maven.html} Configuring Maven}}.
+
+    * {{{http://maven.apache.org/settings.html} Information about configuring settings.xml}}.
+
+    * {{{http://maven.apache.org/maven-settings/settings.html} Settings Descriptor Reference}}.
+
+    * {{{http://maven.apache.org/guides/mini/guide-mirror-settings.html} Using Mirrors for Repositories}}.
+
+* More Examples
+
+  * Maven Ant Tasks's
+    {{{http://svn.apache.org/repos/asf/maven/ant-tasks/branches/maven-ant-tasks-2.0.x/sample.build.xml} sample.build.xml}}
+    is a sample Ant script showing most of the functionality in action (it's used as unit-tests).
+
+  * Maven itself can be bootstrapped using Maven Ant Tasks:
+    see {{{http://svn.apache.org/repos/asf/maven/components/branches/maven-2.0.x/build.xml} build.xml}} in
+    Maven Core sources. Note that most content is about building Maven project: there is only a little part that is
+    using Maven Ant Tasks, to get dependencies, ie the <<<pull>>> target (with its <<<depends>>> targets).
+
+

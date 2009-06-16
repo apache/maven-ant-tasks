@@ -19,11 +19,14 @@ package org.apache.maven.artifact.ant;
  * under the License.
  */
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.model.Repository;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 /**
@@ -123,8 +126,55 @@ public abstract class AbstractArtifactWithRepositoryTask
         return remoteRepositories;
     }
 
-    public void addRemoteRepository( RemoteRepository remoteRepository )
+    /**
+     * This is called automatically by ant when the task is initialized.
+     * Need to use "addConfigured..." instead of "add..." because the 
+     * repository Id and URL need to be set before the method is called.
+     * 
+     * @param remoteRepository
+     */
+    public void addConfiguredRemoteRepository( RemoteRepository remoteRepository )
     {
+        // Validate the url and id parameters before adding the repository
+        if ( remoteRepository.getUrl() == null )
+        {
+            throw new BuildException( "Each remote repository must specify a url." );
+        }
+        if ( remoteRepository.getId() == null || remoteRepository.getId().equals( remoteRepository.getUrl() ) )
+        {
+            log( "Each remote repository must specify a unique id. For backward-compatibility, "
+                 + "a default id will be used. In future releases, a missing repository id will raise an error.",
+                  Project.MSG_WARN );
+            remoteRepository.setId( generateDefaultRepositoryId( remoteRepository ) );
+        }
         remoteRepositories.add( remoteRepository );
+    }
+    
+    public final String MD5_ALGO_NAME = "MD5";
+    
+    public final String UTF_ENC_NAME = "UTF-8";
+    
+    /**
+     * Generates an MD5 digest based on the url of the repository.
+     * This is safer to use for the id than the url.  
+     * MANTTASKS-142
+     * 
+     * @param repository
+     * @return
+     */
+    public String generateDefaultRepositoryId( RemoteRepository repository )
+    {
+        try
+        {
+            MessageDigest md = MessageDigest.getInstance( MD5_ALGO_NAME );
+            md.update( repository.getUrl().getBytes( UTF_ENC_NAME ) );
+            BigInteger digest = new BigInteger( md.digest() );
+            return digest.toString( 16 );
+        }
+        catch ( Exception e )
+        {
+            log( "Unable to generate unique repository Id: " + e, Project.MSG_WARN );
+            return "default";
+        }
     }
 }

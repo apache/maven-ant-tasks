@@ -18,6 +18,16 @@
     classpath (either by setting the CLASSPATH environment variable
     before calling ant, or place the jars in the $ANT_HOME/lib directory).
 
+
+    REQUIRED SETUP FOR RUNNING DEPLOYMENT TESTS
+
+    Some of the deploy tests require that you have the ssh daemon (sshd) running
+    on your local system.  This allows the deploy taks to scp artifacts to a local
+    test repository.
+
+    How you start sshd will depend on your system.  For example on Fedora,
+    you can start the ssh deamon using "service sshd start"
+
   -->
 
   <target name="initClassloader">
@@ -53,7 +63,7 @@
   </target>
 
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom, test-pom-profiles, test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty,test-deps-profile">
+    depends="test-pom, test-pom-profiles, test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty,test-deps-profile,test-deps-scopes">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -61,7 +71,8 @@
     depends="test-deploy-spaces,test-deploy,test-no-dist-mgmt,test-install-attached,test-deploy-attached"/>
 
   <target name="test-all" description="All tests"
-    depends="test-all-deps,test-all-pubs,test-install-provider,checkClassloader">
+    depends="test-all-deps,test-all-pubs,test-install-provider,checkClassloader,test-mvn">
+    <echo>Tests completed successfully.</echo>
     <echo>test-scm not run, since it fails...</echo>
   </target>
 
@@ -108,7 +119,7 @@
   </target>
 
   <target name="test-pom-profiles" depends="initTaskDefs">
-    
+
     <!-- Test default profile activation -->
     <artifact:pom file="src/test/pom-with-profiles.xml" id="project.default"/>
 
@@ -399,6 +410,7 @@
   </target>
 
   <target name="test-deploy-spaces" depends="initTaskDefs,installSshProvider">
+    <delete file="${basedir}/target/local-repo/org/apache/maven/maven-ant-tasks/maven-metadata-remote.*"/>
     <echo file="target/test file.txt">dummy</echo>
     <artifact:deploy file="target/test file.txt">
       <!-- intentionnally left without id to check default id: see MANTTASKS-103 -->
@@ -407,8 +419,11 @@
       <pom refid="maven.project"/>
     </artifact:deploy>
 
-    <!-- MANTTASKS-103: maven-metadata-scp: should not exist since scp: is an illegal remoteRepository id -->
+    <!-- MANTTASKS-103: maven-metadata-scp: should not exist since scp: is an illegal remoteRepository id
+      replaced instead by "remote" id in DeployTask.java
+    -->
     <check.file.not.exists file="${basedir}/target/local-repo/org/apache/maven/maven-ant-tasks/maven-metadata-scp://localhost"/>
+    <check.file.exists file="${basedir}/target/local-repo/org/apache/maven/maven-ant-tasks/maven-metadata-remote.xml"/>
   </target>
 
   <target name="test-deploy" depends="initTaskDefs,installSshProvider">
@@ -559,14 +574,32 @@
     <artifact:pom file="${user.dir}/src/test/pom-with-parent2.xml" id="my.maven.project2">
       <localRepository path="${basedir}/target/tmp"/>
     </artifact:pom>
-    <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.0/pom-1.0.pom" type="file"/>
-
-    <!-- MANTTASKS-87 repository defined in default profile from settings must be used to download parent pom >
-    <delete dir="${basedir}/target/tmp"/>
-    <artifact:pom file="${user.dir}/src/test/pom-with-parent.xml" id="my.maven.project3" settingsFile="${basedir}/src/test/settings-profile-default.xml">
+    <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.1/pom-1.1.pom" type="file"/>
+  </target>
+  
+  <target name="test-mvn" depends="initTaskDefs">
+    <artifact:mvn pom="src/test/pom.xml" mavenVersion="2.1.0" fork="true">
+      <arg value="test"/>
       <localRepository path="${basedir}/target/tmp"/>
-    </artifact:pom>
-    <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.0/pom-1.0.pom" type="file"/-->
+    </artifact:mvn>
+  </target>
+
+  <target name="test-deps-scopes" depends="initTaskDefs">
+    <artifact:dependencies filesetId="dependency.scopes.fileset" scopes=" provided , test ">
+      <pom file="src/test/pom-with-scopes.xml"/>
+    </artifact:dependencies>
+    
+    <delete dir="target/files/scopes-test"/>
+    <mkdir dir="target/files/scopes-test"/>
+    <copy todir="target/files/scopes-test">
+      <fileset refid="dependency.scopes.fileset"/>
+    </copy>
+    
+    <!-- excluded dependency junit:junit -->
+    <check.file.exists file="target/files/scopes-test/commons-lang/commons-lang" type="dir"/>
+    <check.file.exists file="target/files/scopes-test/commons-collections/commons-collections" type="dir"/>
+    <check.file.not.exists file="target/files/scopes-test/org/apache/commons/commons-io" type="dir"/>
+    <check.file.not.exists file="target/files/scopes-test/commons-logging/commons-logging" type="dir"/>
   </target>
 
   <macrodef name="check.file.exists">

@@ -1,0 +1,183 @@
+ ------
+ Dependencies
+ ------
+ Brett Porter
+ Hervé Boutemy
+ Paul Gier
+ ------
+ 2009-05-07
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Basic Example
+
+  The following example declares three dependencies and adds them to the <<<dependency.classpath>>> pathId.
+
+-----
+<artifact:dependencies pathId="dependency.classpath">
+  <dependency groupId="junit" artifactId="junit" version="3.8.2" scope="test"/>
+  <dependency groupId="org.codehaus.modello" artifactId="modello-core" version="1.0-alpha-2-SNAPSHOT"/>
+  <dependency groupId="javax.servlet" artifactId="servlet-api" version="2.4" scope="provided"/>
+</artifact:dependencies>
+-----
+
+  The pathId can be used in the Ant build file for example in the <<<javac>>> task.
+
+-----
+<javac ...>
+  <classpath refid="dependency.classpath" />
+  ...
+</javac>
+-----
+
+Using FileSets and the Version Mapper
+
+  Another option you can use is <<<filesetId>>>, which will give you a fileset reference that can be used to copy
+  files into a particular location. For example, to populate <<<WEB-INF/lib>>> with your dependencies
+  you could use the following:
+
+-----
+<artifact:dependencies filesetId="dependency.fileset" useScope="runtime">
+  <!-- Your dependency definitions go here -->
+  ...
+</artifact:dependencies>
+<copy todir="${webapp.output}/WEB-INF/lib">
+  <fileset refid="dependency.fileset" />
+  <!-- This mapper strips off all leading directory information -->
+  <mapper type="flatten" />
+</copy>
+-----
+
+  Note the <<<useScope>>> attribute in this call. This ensures that your web application only includes your compile
+  and runtime dependencies, excluding those that are only for testing or are expected to already be provided by
+  the servlet container.
+
+  You can also specify a <<<scope>>> parameter on each dependency. This changes the behavior of
+  transitive dependencies and is useful for building different types of classpaths. To see how it affects
+  the behaviour of the dependencies, see the {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html} Dependency Mechanism}}
+  documentation on the Maven 2.0 site.
+
+  Other options are:
+
+    * <<<sourcesFilesetId>>>, which will give you a fileset reference containing sources artifacts, <(since 2.0.6)>
+
+    * <<<javadocFilesetId>>>, which will give you a fileset reference containing javadoc artifacts, <(since 2.0.9)>
+
+    * {<<<versionsId>>>}, which can be used to drop version numbers in filenames <(since 2.0.7)>
+
+  For example, to populate <<<lib>>> with your dependencies without the version in the filenames, <<<lib/src>>> with the corresponding sources
+  and <<<lib/javadoc>>> with the corresponding javadocs:
+
+-----
+<artifact:dependencies filesetId="dependency.fileset"
+        sourcesFilesetId="sources.dependency.fileset"
+        javadocFilesetId="javadoc.dependency.fileset"
+        versionsId="dependency.versions">
+  <!-- Your dependency definitions go here -->
+  ...
+</artifact:dependencies>
+<copy todir="lib">
+  <fileset refid="dependency.fileset" />
+  <mapper classpathref="maven-ant-tasks.classpath"
+          classname="org.apache.maven.artifact.ant.VersionMapper"
+          from="${dependency.versions}" to="flatten" />
+</copy>
+<copy todir="lib/src">
+  <fileset refid="sources.dependency.fileset" />
+  <mapper classpathref="maven-ant-tasks.classpath"
+          classname="org.apache.maven.artifact.ant.VersionMapper"
+          from="${dependency.versions}" to="flatten" />
+</copy>
+<copy todir="lib/javadoc">
+  <fileset refid="javadoc.dependency.fileset" />
+  <mapper classpathref="maven-ant-tasks.classpath"
+          classname="org.apache.maven.artifact.ant.VersionMapper"
+          from="${dependency.versions}" to="flatten" />
+</copy>
+-----
+
+  <<Note:>> In the above example you only need to specify
+  <<<classpathref="maven-ant-tasks.classpath">>> if are using Maven Ant Tasks
+  by {{{../installation.html#typedef} declaring a <<<typedef>>>}}.
+  It can be omitted if Maven Ant Tasks was
+  {{{../installation.html#lib} installed in Ant's <<<lib>>> directory}}.
+
+Using Properties to Access Dependencies
+
+  <(since 2.0.8)> For each dependency resolved using either inline declaration or a pom reference, the property
+  <<<groupId:artifactId:type[:classifier]>>> is defined pointing to the corresponding file.  For example,
+  a resolved dependency on junit can be accessed in the following way:
+
+-----
+<echo message="JUnit jar file downloaded to ${junit:junit:jar}"/>
+-----
+
+Filtering Dependencies by Scope
+
+  There are two options available for filtering POM dependencies by scope: the <<<useScope>>>
+  attribute, and the <<<scopes>>> attribute.  One or the other of these attributes should be used
+  but not both.
+
+  The <<<useScopes>>> follows the Maven conventions for scoping behaviour.  This means the attribute
+  can be set to one of three possible scopes: compile, runtime, or test.  These scopes will
+  behave as follows.
+
+    * compile - Includes scopes compile, system, and provided
+
+    * runtime - Includes scopes compile and runtime
+
+    * test - Includes scopes system, provided, compile, runtime, and test
+
+  For example, using the scope <<<runtime>>>, any dependencies defined with compile,
+  runtime, or nothing (defaults to compile) in the scope field will be included in
+  the resulting fileset.
+
+-----
+    <artifact:dependencies filesetId="deps.fileset" useScope="runtime">
+      <pom file="mypom.xml"/>
+    </artifact:dependencies>
+-----
+
+  <(Since 2.0.10)> The <<<scopes>>> attribute accepts a comma separated list of scopes to
+  include in the filtering.   Only dependencies with these specific scopes will be
+  included in the resulting fileset.  If no value is specified, all scopes are included.
+  The following example includes only dependencies with a scope of either "provided" or "test".
+
+-----
+    <artifact:dependencies filesetId="deps.fileset" scopes="provided, test">
+      <pom file="mypom.xml"/>
+    </artifact:dependencies>
+-----
+
+
+Filtering Dependencies by Type
+
+  Dependencies can be filterd by type by using the <<<type>>> attribute.  This can be set to a
+  comma separate list of the types to select.  The following example will only include artifacts of the jar type.
+
+-----
+    <artifact:dependencies filesetId="deps.fileset" type="jar">
+      <pom file="mypom.xml"/>
+    </artifact:dependencies>
+-----
+
+  By default all artifact types will be included when building the list of dependencies.

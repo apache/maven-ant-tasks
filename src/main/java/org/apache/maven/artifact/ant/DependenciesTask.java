@@ -30,7 +30,6 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.TypeArtifactFilter;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.artifact.MavenMetadataSource;
@@ -77,13 +76,22 @@ public class DependenciesTask
 
     private String useScope;
 
+    private String scopes;
+
     private String type;
 
     private boolean verbose;
+    
+    private boolean addArtifactFileSetRefs;
 
     protected void doExecute()
     {
         showVersion();
+        
+        if ( useScope != null && scopes != null )
+        {
+            throw new BuildException( "You cannot specify both useScope and scopes in the dependencies task." );
+        }
         
         ArtifactRepository localRepo = createLocalArtifactRepository();
         log( "Using local repository: " + localRepo.getBasedir(), Project.MSG_VERBOSE );
@@ -139,9 +147,13 @@ public class DependenciesTask
             {
                 filter = new ScopeArtifactFilter( useScope );
             }
+            if ( scopes != null )
+            {
+                filter = new SpecificScopesArtifactFilter( scopes );
+            }
             if ( type != null )
             {
-                TypeArtifactFilter typeArtifactFilter = new TypeArtifactFilter( type );
+                ArtifactFilter typeArtifactFilter = new TypesArtifactFilter( type );
                 if ( filter != null )
                 {
                     AndArtifactFilter andFilter = new AndArtifactFilter();
@@ -263,6 +275,13 @@ public class DependenciesTask
         }
 
         getProject().setProperty( artifact.getDependencyConflictId(), artifact.getFile().getAbsolutePath() );
+        
+        if ( isAddArtifactFileSetRefs() )
+        {
+            FileSet artifactFileSet = new FileSet();
+            artifactFileSet.setFile( artifact.getFile() );
+            getProject().addReference( artifact.getDependencyConflictId(), artifactFileSet );
+        }
     }
 
     private void resolveSource( ArtifactFactory artifactFactory, ArtifactResolver resolver,
@@ -363,6 +382,16 @@ public class DependenciesTask
         this.type = type;
     }
 
+    public String getScopes()
+    {
+        return scopes;
+    }
+
+    public void setScopes( String scopes )
+    {
+        this.scopes = scopes;
+    }
+
     private void showVersion()
     {
         InputStream resourceAsStream;
@@ -391,5 +420,15 @@ public class DependenciesTask
         {
             log( "Unable to determine version from Maven Ant Tasks JAR file: " + e.getMessage(), Project.MSG_WARN );
         }
+    }
+
+    public boolean isAddArtifactFileSetRefs()
+    {
+        return addArtifactFileSetRefs;
+    }
+
+    public void setAddArtifactFileSetRefs( boolean addArtifactFileSetRefs )
+    {
+        this.addArtifactFileSetRefs = addArtifactFileSetRefs;
     }
 }
