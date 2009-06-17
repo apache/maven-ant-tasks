@@ -227,12 +227,14 @@
 
   The POM element will load a POM file and make it available as a reference for the other tasks or as properties.
 
-*------------------+--------------------------------------------------------+--------------+
-| <<Attribute>>    | <<Description>>                                        | <<Required>> |
-*------------------+--------------------------------------------------------+--------------+
+*------------------+--------------------------------------------------------+--------------+-------------+
+| <<Attribute>>    | <<Description>>                                        | <<Required>> | << Since >> |
+*------------------+--------------------------------------------------------+--------------+-------------+
 | <<<file>>>       | The file of the POM to load.                           | Yes          |
 *------------------+--------------------------------------------------------+--------------+
 | <<<id>>>         | The reference ID of this POM.                          | No           |
+*------------------+--------------------------------------------------------+--------------+
+| <<<inheritAllProperties>>>  | If set to true, all Ant properties will be passed to the Maven POM.  If set to false, only user (command-line) properties will be passed.  Defaults to true.   | No    | 2.1.0 |
 *------------------+--------------------------------------------------------+--------------+
 | <<<settingsFile>>>  | The settings file to use. Defaults to <<<$\{user.home\}/.ant/settings.xml>>> or if that doesn't exist <<<$\{user.home\}/.m2/settings.xml>>>. | No | 2.0.6 |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+

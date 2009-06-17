@@ -31,9 +31,11 @@ import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.Scm;
 import org.apache.maven.profiles.ProfileManager;
+import org.apache.maven.project.DefaultProjectBuilderConfiguration;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.ProjectBuilderConfiguration;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -42,8 +44,10 @@ import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * A POM typedef.
@@ -68,6 +72,8 @@ public class Pom extends AbstractArtifactWithRepositoryTask
     private File file;
 
     private List profiles = new ArrayList();
+    
+    private boolean inheritAllProperties = true;
 
     /**
      * The property interceptor.
@@ -164,11 +170,10 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         if ( file != null )
         {
             addAntRepositoriesToProfileManager();
-
+            ProjectBuilderConfiguration builderConfig = this.createProjectBuilderConfig( localRepository );
             try
             {
-
-                mavenProject = builder.build( file, localRepository, getActivatedProfiles() );
+                mavenProject = builder.build( file, builderConfig );
             }
             catch ( ProjectBuildingException e )
             {
@@ -325,15 +330,15 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
         initialise( projectBuilder, localRepo );
 
-        Project project = getProject();
+        Project antProject = getProject();
 
         // Add a reference to this task/type
-        project.addReference( antId, this );
+        antProject.addReference( antId, this );
 
         // Register the property interceptor
-        PropertyHelper phelper = PropertyHelper.getPropertyHelper( project );
+        PropertyHelper phelper = PropertyHelper.getPropertyHelper( antProject );
         helper.setNext( phelper.getNext() );
-        helper.setProject( project );
+        helper.setProject( antProject );
         phelper.setNext( helper );
     }
 
@@ -450,4 +455,67 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         }
         return profileManager;
     }
+    
+    /** 
+     * Create a project builder configuration to be used when initializing the maven project.
+     * 
+     * @return
+     */
+    private ProjectBuilderConfiguration createProjectBuilderConfig( ArtifactRepository localArtifactRepository)
+    {
+        ProjectBuilderConfiguration builderConfig = new DefaultProjectBuilderConfiguration();
+        builderConfig.setLocalRepository( localArtifactRepository );
+        builderConfig.setGlobalProfileManager( this.getActivatedProfiles() );
+        builderConfig.setUserProperties( getAntProjectProperties() );
+        builderConfig.setExecutionProperties(  getAntProjectProperties()  );
+        
+        return builderConfig;
+    }
+
+
+    /**
+     * Convert the Hashtable of Ant project properties to a Properties object
+     * 
+     * @return The Ant project properties
+     */
+    public Properties getAntProjectProperties()
+    {
+        Properties properties = new Properties();
+        Hashtable propsTable = null;
+        if ( this.isInheritAllProperties() )
+        {
+            propsTable = getProject().getProperties();
+        }
+        else
+        {
+            propsTable = getProject().getUserProperties();
+        }
+        Iterator propsIter = propsTable.keySet().iterator();
+        
+        while ( propsIter.hasNext() )
+        {
+            String key = (String)propsIter.next();
+            String value = (String)propsTable.get( key );
+            properties.setProperty( key, value );
+        }
+        
+        return properties;
+    }
+
+    /**
+     * If set to true, all properties are passed to the maven pom.
+     * If set to false, only user properties are passed to the pom.
+     * 
+     * @param inheritAllProperties
+     */
+    public void setInheritAllProperties( boolean inheritAllProperties )
+    {
+        this.inheritAllProperties = inheritAllProperties;
+    }
+
+    public boolean isInheritAllProperties()
+    {
+        return inheritAllProperties;
+    }
+    
 }

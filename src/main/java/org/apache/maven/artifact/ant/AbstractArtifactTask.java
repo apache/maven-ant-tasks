@@ -514,7 +514,7 @@ public abstract class AbstractArtifactTask
 
     public Pom buildPom( ArtifactRepository localArtifactRepository )
     {
-        if ( pomRefId != null && pom != null )
+        if ( pomRefId != null && this.pom != null )
         {
             throw new BuildException( "You cannot specify both a POM element and a pomrefid element" );
         }
@@ -689,6 +689,9 @@ public abstract class AbstractArtifactTask
             Thread.currentThread().setContextClassLoader( originalClassLoader );
         }
     }
-
+    
+    /**
+     * The main entry point for the task.
+     */
     protected abstract void doExecute();
 }
