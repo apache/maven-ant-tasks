@@ -89,6 +89,7 @@ public class Mvn
         mavenCore.setVersion( getMavenVersion() );
         
         DependenciesTask depsTask = new DependenciesTask();
+        depsTask.addLocalRepository( getLocalRepository() );
         depsTask.setProject( getProject() );
         depsTask.setPathId( "maven-core-dependencies" );
         depsTask.addDependency( mavenCore );
