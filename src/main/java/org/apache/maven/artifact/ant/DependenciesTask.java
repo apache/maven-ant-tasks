@@ -186,15 +186,11 @@ public class DependenciesTask
         FileList fileList = new FileList();
         fileList.setDir( getLocalRepository().getPath() );
 
-        FileSet fileSet = new FileSet();
-        fileSet.setProject( getProject() );
-        fileSet.setDir( fileList.getDir( getProject() ) );
+        FileSet fileSet = createFileSet();
 
-        FileSet sourcesFileSet = new FileSet();
-        sourcesFileSet.setDir( getLocalRepository().getPath() );
+        FileSet sourcesFileSet = createFileSet();
 
-        FileSet javadocsFileSet = new FileSet();
-        javadocsFileSet.setDir( getLocalRepository().getPath() );
+        FileSet javadocsFileSet = createFileSet();
 
         Set versions = new HashSet();
         
@@ -241,6 +237,14 @@ public class DependenciesTask
             getProject().setNewProperty( versionsId, versionsValue );
         }
     }
+    
+    private FileSet createFileSet()
+    {
+        FileSet fileSet = new FileSet();
+        fileSet.setProject( getProject() );
+        fileSet.setDir( getLocalRepository().getPath() );
+        return fileSet;
+    }
 
     private void defineFilesetReference( String id, FileSet fileSet )
     {
@@ -278,7 +282,7 @@ public class DependenciesTask
         
         if ( isAddArtifactFileSetRefs() )
         {
-            FileSet artifactFileSet = new FileSet();
+            FileSet artifactFileSet = createFileSet();
             artifactFileSet.setFile( artifact.getFile() );
             getProject().addReference( artifact.getDependencyConflictId(), artifactFileSet );
         }
