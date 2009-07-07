@@ -70,8 +70,8 @@ import org.codehaus.plexus.embed.Embedder;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.interpolation.EnvarBasedValueSource;
-import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
+import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
+import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
