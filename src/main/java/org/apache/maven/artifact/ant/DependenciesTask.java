@@ -186,7 +186,7 @@ public class DependenciesTask
         FileList fileList = new FileList();
         fileList.setDir( getLocalRepository().getPath() );
 
-        FileSet fileSet = createFileSet();
+        FileSet dependencyFileSet = createFileSet();
 
         FileSet sourcesFileSet = createFileSet();
 
@@ -198,7 +198,7 @@ public class DependenciesTask
         {
             Artifact artifact = (Artifact) i.next();
 
-            addArtifactToResult( localRepo, artifact, fileSet, fileList );
+            addArtifactToResult( localRepo, artifact, dependencyFileSet, fileList  );
 
             versions.add( artifact.getVersion() );
 
@@ -225,7 +225,7 @@ public class DependenciesTask
             getProject().addReference( pathId, path );
         }
 
-        defineFilesetReference( filesetId, fileSet );
+        defineFilesetReference( filesetId, dependencyFileSet );
 
         defineFilesetReference( sourcesFilesetId, sourcesFileSet );
         
