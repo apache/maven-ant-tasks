@@ -20,6 +20,9 @@ package org.apache.maven.artifact.ant;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ant.util.AntBuildWriter;
+import org.apache.maven.artifact.ant.util.AntTaskModified;
+import org.apache.maven.artifact.ant.util.AntUtil;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -45,7 +48,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +67,9 @@ import java.util.Set;
 public class DependenciesTask
     extends AbstractArtifactWithRepositoryTask
 {
+    
+    public static final String DEFAULT_ANT_BUILD_FILE = "target/build-dependencies.xml";
+    
     private List dependencies = new ArrayList();
 
     private String pathId;
@@ -83,6 +91,10 @@ public class DependenciesTask
     private boolean verbose;
     
     private boolean addArtifactFileSetRefs;
+    
+    private String cacheBuildFile;
+    
+    private boolean cacheDependencyRefs;
 
     protected void doExecute()
     {
@@ -91,6 +103,20 @@ public class DependenciesTask
         if ( useScope != null && scopes != null )
         {
             throw new BuildException( "You cannot specify both useScope and scopes in the dependencies task." );
+        }
+        
+        // Try to load dependency refs from Ant
+        if ( isCacheDependencyRefs() )
+        {
+            if ( getCacheBuildFile() == null )
+            {
+                setCacheBuildFile( DEFAULT_ANT_BUILD_FILE );
+            }
+            if ( checkCachedDependencies() )
+            {
+                log( "Dependency refs loaded from file: " + getCacheBuildFile(), Project.MSG_VERBOSE );
+                return;
+            }
         }
         
         ArtifactRepository localRepo = createLocalArtifactRepository();
@@ -236,8 +262,103 @@ public class DependenciesTask
             String versionsValue = StringUtils.join( versions.iterator(), File.pathSeparator );
             getProject().setNewProperty( versionsId, versionsValue );
         }
+        
+        // Write the dependency references out to a file.
+        if ( getCacheBuildFile() != null || this.isCacheDependencyRefs() )
+        {
+            if ( getCacheBuildFile() == null || getCacheBuildFile().equals( "default" ) )
+            {
+                setCacheBuildFile( DEFAULT_ANT_BUILD_FILE );
+            }
+            log( "Building ant file: " + getCacheBuildFile());
+            AntBuildWriter antBuildWriter = new AntBuildWriter();
+            File antBuildFile = new File( getProject().getBaseDir(), getCacheBuildFile() );
+            try 
+            {
+                antBuildWriter.openAntBuild( antBuildFile, "maven-dependencies", "init-dependencies" );
+                antBuildWriter.openTarget( "init-dependencies" );
+                
+                Iterator i = result.getArtifacts().iterator();
+                while (  i.hasNext() )
+                {
+                    Artifact artifact = (Artifact) i.next();
+                    String conflictId = artifact.getDependencyConflictId();
+                    antBuildWriter.writeProperty( conflictId, artifact.getFile().getAbsolutePath() );
+                    if ( this.isAddArtifactFileSetRefs() )
+                    {
+                        FileSet singleArtifactFileSet = (FileSet)getProject().getReference( conflictId );
+                        antBuildWriter.writeFileSet( singleArtifactFileSet, conflictId );
+                    }
+                }
+                
+                if ( pathId != null )
+                {
+                    Path thePath = (Path)getProject().getReference( pathId );
+                    antBuildWriter.writePath( thePath, pathId );
+                }
+                
+                if ( filesetId != null )
+                {
+                    antBuildWriter.writeFileSet( dependencyFileSet, filesetId );
+                }
+                if ( sourcesFilesetId != null )
+                {
+                    antBuildWriter.writeFileSet( sourcesFileSet, sourcesFilesetId );
+                }
+                if ( javadocFilesetId != null )
+                {
+                    antBuildWriter.writeFileSet( sourcesFileSet, javadocFilesetId );
+                }
+                
+                antBuildWriter.closeTarget();
+                antBuildWriter.closeAntBuild();
+            }
+            catch ( IOException e )
+            {
+                throw new BuildException ( "Unable to write ant build: " + e);
+            }
+        }
     }
     
+    private boolean checkCachedDependencies()
+    {
+        File cacheBuildFile = new File( getProject().getBaseDir(), getCacheBuildFile() );
+        if ( ! cacheBuildFile.exists() )
+        {
+            return false;
+        }
+        File antBuildFile = new File( getProject().getProperty( "ant.file" ) );
+        if ( antBuildFile.lastModified() > cacheBuildFile.lastModified() )
+        {
+            return false;
+        }
+        
+        return loadDependenciesFromAntBuildFile();
+    }
+    
+    /**
+     * Load the dependency references from the generated ant build file.
+     * 
+     * @return True if the dependency refs were successfully loaded.
+     */
+    private boolean loadDependenciesFromAntBuildFile()
+    {
+        Project currentAntProject = getProject();
+        
+        // Run the ant build with the dependency refs
+        AntTaskModified dependenciesAntBuild = new AntTaskModified();
+        dependenciesAntBuild.setAntfile( getCacheBuildFile() );
+        dependenciesAntBuild.setProject( currentAntProject );
+        dependenciesAntBuild.execute();
+        
+        // Copy the properties and refs to the current project
+        Project cachedDepsProject = dependenciesAntBuild.getSavedNewProject();
+        AntUtil.copyProperties( cachedDepsProject, currentAntProject );
+        AntUtil.copyReferences( cachedDepsProject, currentAntProject );
+        
+        return true;
+    }
+        
     private FileSet createFileSet()
     {
         FileSet fileSet = new FileSet();
@@ -434,5 +555,25 @@ public class DependenciesTask
     public void setAddArtifactFileSetRefs( boolean addArtifactFileSetRefs )
     {
         this.addArtifactFileSetRefs = addArtifactFileSetRefs;
+    }
+
+    public String getCacheBuildFile()
+    {
+        return cacheBuildFile;
+    }
+
+    public void setCacheBuildFile( String cacheBuildFile )
+    {
+        this.cacheBuildFile = cacheBuildFile;
+    }
+
+    public boolean isCacheDependencyRefs()
+    {
+        return cacheDependencyRefs;
+    }
+
+    public void setCacheDependencyRefs( boolean cacheDependencyRefs )
+    {
+        this.cacheDependencyRefs = cacheDependencyRefs;
     }
 }
