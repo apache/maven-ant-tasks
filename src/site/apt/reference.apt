@@ -66,6 +66,10 @@
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<addArtifactFileSetRefs>>> | If set to true, will add a fileset for each resolved dependency.  The fileset has an id of <<<groupId:artifactId:type[:classifier]>>>.  Default is <false>.  | No | 2.0.10 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
+| <<<cacheDependencyRefs>>> | If set to true, will generate an Ant build file that contains properties and fileset references for the dependencies.  Then try to load information from this file in subsequent builds.  Default is <false>.  | No | 2.1.0 |
+*-------------------------+---------------------------------------------------------------------------+--------------+-------------+
+| <<<addArtifactFileSetRefs>>> | Defines the name of the file in which to store properties and references to the paths of dependency artifacts.  Default is <false>.  | No | 2.1.0 |
+*-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 
   The task can include the <<<dependency>>> nested type, in addition to the other shared types
   {{{reference.html#localRepository} <<<localRepository>>>}}, {{{reference.html#pom} <<<pom>>>}} and

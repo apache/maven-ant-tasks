@@ -43,7 +43,7 @@ public class InstallTask
     {
         ArtifactRepository localRepo = createLocalArtifactRepository();
 
-        Pom pom = buildPom( localRepo );
+        Pom pom = initializePom( localRepo );
 
         if ( pom == null )
         {

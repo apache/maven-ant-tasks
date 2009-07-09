@@ -48,9 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -92,8 +90,14 @@ public class DependenciesTask
     
     private boolean addArtifactFileSetRefs;
     
-    private String cacheBuildFile;
-    
+    /**
+     * The file name to use for the generated Ant build that contains dependency properties and references.
+     */
+    private String dependencyRefsBuildFile;
+
+    /**
+     * Whether to use a generated Ant build file to cache the list of dependency properties and references.
+     */
     private boolean cacheDependencyRefs;
 
     protected void doExecute()
@@ -108,13 +112,13 @@ public class DependenciesTask
         // Try to load dependency refs from Ant
         if ( isCacheDependencyRefs() )
         {
-            if ( getCacheBuildFile() == null )
+            if ( getDependencyRefsBuildFile() == null )
             {
-                setCacheBuildFile( DEFAULT_ANT_BUILD_FILE );
+                setDependencyRefsBuildFile( DEFAULT_ANT_BUILD_FILE );
             }
             if ( checkCachedDependencies() )
             {
-                log( "Dependency refs loaded from file: " + getCacheBuildFile(), Project.MSG_VERBOSE );
+                log( "Dependency refs loaded from file: " + getDependencyRefsBuildFile(), Project.MSG_VERBOSE );
                 return;
             }
         }
@@ -128,7 +132,7 @@ public class DependenciesTask
 
         List dependencies = this.dependencies;
 
-        Pom pom = buildPom( localRepo );
+        Pom pom = initializePom( localRepo );
         if ( pom != null )
         {
             if ( !dependencies.isEmpty() )
@@ -264,15 +268,15 @@ public class DependenciesTask
         }
         
         // Write the dependency references out to a file.
-        if ( getCacheBuildFile() != null || this.isCacheDependencyRefs() )
+        if ( getDependencyRefsBuildFile() != null || this.isCacheDependencyRefs() )
         {
-            if ( getCacheBuildFile() == null || getCacheBuildFile().equals( "default" ) )
+            if ( getDependencyRefsBuildFile() == null || getDependencyRefsBuildFile().equals( "default" ) )
             {
-                setCacheBuildFile( DEFAULT_ANT_BUILD_FILE );
+                setDependencyRefsBuildFile( DEFAULT_ANT_BUILD_FILE );
             }
-            log( "Building ant file: " + getCacheBuildFile());
+            log( "Building ant file: " + getDependencyRefsBuildFile());
             AntBuildWriter antBuildWriter = new AntBuildWriter();
-            File antBuildFile = new File( getProject().getBaseDir(), getCacheBuildFile() );
+            File antBuildFile = new File( getProject().getBaseDir(), getDependencyRefsBuildFile() );
             try 
             {
                 antBuildWriter.openAntBuild( antBuildFile, "maven-dependencies", "init-dependencies" );
@@ -320,17 +324,33 @@ public class DependenciesTask
         }
     }
     
+    /**
+     * Check if the cache needs to be updated.
+     * 
+     * @return true if the dependency refs were successfully loaded, false otherwise
+     */
     private boolean checkCachedDependencies()
     {
-        File cacheBuildFile = new File( getProject().getBaseDir(), getCacheBuildFile() );
+        File cacheBuildFile = new File( getProject().getBaseDir(), getDependencyRefsBuildFile() );
         if ( ! cacheBuildFile.exists() )
         {
             return false;
         }
+        
         File antBuildFile = new File( getProject().getProperty( "ant.file" ) );
         if ( antBuildFile.lastModified() > cacheBuildFile.lastModified() )
         {
             return false;
+        }
+        
+        Pom pom = getPom();
+        if ( pom != null )
+        {
+            File pomFile = pom.getFile();
+            if ( pomFile == null || ( pomFile.lastModified() > cacheBuildFile.lastModified() ) )
+            {
+                return false;
+            }
         }
         
         return loadDependenciesFromAntBuildFile();
@@ -347,7 +367,7 @@ public class DependenciesTask
         
         // Run the ant build with the dependency refs
         AntTaskModified dependenciesAntBuild = new AntTaskModified();
-        dependenciesAntBuild.setAntfile( getCacheBuildFile() );
+        dependenciesAntBuild.setAntfile( getDependencyRefsBuildFile() );
         dependenciesAntBuild.setProject( currentAntProject );
         dependenciesAntBuild.execute();
         
@@ -557,14 +577,14 @@ public class DependenciesTask
         this.addArtifactFileSetRefs = addArtifactFileSetRefs;
     }
 
-    public String getCacheBuildFile()
+    public String getDependencyRefsBuildFile()
     {
-        return cacheBuildFile;
+        return dependencyRefsBuildFile;
     }
 
-    public void setCacheBuildFile( String cacheBuildFile )
+    public void setDependencyRefsBuildFile( String dependencyRefsBuildFile )
     {
-        this.cacheBuildFile = cacheBuildFile;
+        this.dependencyRefsBuildFile = dependencyRefsBuildFile;
     }
 
     public boolean isCacheDependencyRefs()

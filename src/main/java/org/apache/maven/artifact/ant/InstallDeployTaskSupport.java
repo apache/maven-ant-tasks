@@ -49,9 +49,9 @@ public abstract class InstallDeployTaskSupport
         this.file = file;
     }
     
-    public Pom buildPom( ArtifactRepository localArtifactRepository )
+    public Pom initializePom( ArtifactRepository localArtifactRepository )
     {
-        Pom pom = super.buildPom( localArtifactRepository );
+        Pom pom = super.initializePom( localArtifactRepository );
 
         // attach artifacts
         if ( attachedArtifacts != null )

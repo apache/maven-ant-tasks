@@ -533,28 +533,22 @@ public abstract class AbstractArtifactTask
         return container;
     }
 
-    public Pom buildPom( ArtifactRepository localArtifactRepository )
+    /**
+     * Tries to initialize the pom.  If no pom has been configured, returns null.
+     * 
+     * @param localArtifactRepository
+     * @return An initialized pom or null.
+     */
+    public Pom initializePom( ArtifactRepository localArtifactRepository )
     {
-        if ( pomRefId != null && this.pom != null )
-        {
-            throw new BuildException( "You cannot specify both a POM element and a pomrefid element" );
-        }
 
-        Pom pom = this.pom;
-        if ( pomRefId != null )
-        {
-            pom = (Pom) getProject().getReference( pomRefId );
-            if ( pom == null )
-            {
-                throw new BuildException( "Reference '" + pomRefId + "' was not found." );
-            }
-        }
-
+        Pom pom = getPom();
         if ( pom != null )
         {
             MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
             pom.initialise( projectBuilder, localArtifactRepository );
         }
+        
         return pom;
     }
 
@@ -636,6 +630,34 @@ public abstract class AbstractArtifactTask
     public void addPom( Pom pom )
     {
         this.pom = pom;
+    }
+    
+    /**
+     * Try to get the POM from the nested pom element or a pomRefId
+     * 
+     * @return The pom object
+     */
+    public Pom getPom()
+    {
+        if ( pom != null && getPomRefId() != null )
+        {
+            throw new BuildException( "You cannot specify both a POM element and a pomrefid element" );
+        }
+
+        if ( getPomRefId() != null )
+        {
+            Object pomRefObj = getProject().getReference( getPomRefId() );
+            if ( pomRefObj instanceof Pom )
+            {
+                pom = (Pom) pomRefObj;
+            }
+            else
+            {
+                throw new BuildException( "Reference '" + pomRefId + "' was not found." );
+            }
+        }
+        
+        return pom;
     }
 
     public String getPomRefId()
@@ -905,5 +927,5 @@ public abstract class AbstractArtifactTask
             return false;
         }
     }
-        
+
 }
