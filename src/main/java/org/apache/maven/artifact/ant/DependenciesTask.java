@@ -281,6 +281,7 @@ public class DependenciesTask
             {
                 antBuildWriter.openAntBuild( antBuildFile, "maven-dependencies", "init-dependencies" );
                 antBuildWriter.openTarget( "init-dependencies" );
+                antBuildWriter.writeEcho( "Loading dependency paths from file: " + antBuildFile.getAbsolutePath() );
                 
                 Iterator i = result.getArtifacts().iterator();
                 while (  i.hasNext() )

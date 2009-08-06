@@ -95,6 +95,12 @@ public class AntBuildWriter
 
     }
 
+    /**
+     * Open a target tag
+     * 
+     * @param targetName
+     * @throws IOException
+     */
     public void openTarget( String targetName )
         throws IOException
     {
@@ -102,12 +108,23 @@ public class AntBuildWriter
         writer.addAttribute( "name", targetName );
     }
 
+    /**
+     * Close a tag.
+     * 
+     * @throws IOException
+     */
     public void closeTarget()
         throws IOException
     {
         writer.endElement();
     }
 
+    /**
+     * Write an Ant fileset
+     * 
+     * @param fileSet
+     * @param id
+     */
     public void writeFileSet( FileSet fileSet, String id )
     {
         writer.startElement( "fileset" );
@@ -134,6 +151,12 @@ public class AntBuildWriter
         writer.endElement();
     }
 
+    /**
+     * Write an ant property
+     * 
+     * @param name
+     * @param value
+     */
     public void writeProperty( String name, String value )
     {
         writer.startElement( "property" );
@@ -144,6 +167,26 @@ public class AntBuildWriter
         writer.endElement();
     }
 
+    /**
+     * Write an Ant echo task 
+     * 
+     * @param message
+     */
+    public void writeEcho( String message )
+    {
+        writer.startElement( "echo" );
+
+        writer.addAttribute( "message", message );
+
+        writer.endElement();
+    }
+
+    /**
+     * Write an Ant file list
+     * 
+     * @param fileList
+     * @param id
+     */
     public void writeFileList( FileList fileList, String id )
     {
         writer.startElement( "filelist" );
@@ -161,6 +204,12 @@ public class AntBuildWriter
         writer.endElement();
     }
 
+    /**
+     * Write a path.
+     * 
+     * @param path
+     * @param pathId
+     */
     public void writePath( Path path, String pathId )
     {
         writer.startElement( "path" );
