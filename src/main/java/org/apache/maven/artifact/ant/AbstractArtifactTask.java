@@ -27,12 +27,9 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -87,12 +84,8 @@ public abstract class AbstractArtifactTask
 
     private static final String EXTERNAL_WILDCARD = "external:*";
 
-    private static int anonymousMirrorIdSeed = 0;
-    
     private static ClassLoader plexusClassLoader;
 
-    private Map/*<String, ArtifactRepository>*/ mirrors = new LinkedHashMap/*<String, ArtifactRepository>*/();
-    
     private File userSettingsFile;
 
     private File globalSettingsFile;
@@ -425,7 +418,6 @@ public abstract class AbstractArtifactTask
         r.setUrl( pomRepository.getUrl() );
         r.setLayout( pomRepository.getLayout() );
 
-        updateRepositoryWithSettings( r );
         return r;
     }
 
@@ -453,25 +445,13 @@ public abstract class AbstractArtifactTask
             }
         }
 
-        if ( getSettings().getMirrors() != null )
+        Mirror mirror = getMirror( getSettings().getMirrors(), repository );
+        if ( mirror != null )
         {
-            for ( Iterator i = getSettings().getMirrors().iterator(); i.hasNext(); )
-            {
-                Mirror mirror = (Mirror) i.next();
-
-                addMirror( mirror.getId(), mirror.getMirrorOf(), mirror.getUrl() );
-            }
-
-            ArtifactRepository mirrorRepository = (ArtifactRepository) getMirrors(
-               Arrays.asList( new ArtifactRepository[] { new DefaultArtifactRepository( repository.getId(), repository.getUrl(),                                                                                                                                                            null ) } ) ).get( 0 );
-
-            if ( mirrorRepository != null )
-            {
-                repository.setUrl( mirrorRepository.getUrl() );
-            }
+            repository.setUrl( mirror.getUrl() );
         }
     }
-         
+
     protected Object lookup( String role )
     {
         try
@@ -737,116 +717,46 @@ public abstract class AbstractArtifactTask
      * The main entry point for the task.
      */
     protected abstract void doExecute();
-    
-    //
-    // Code taken from 3.x to deal with external:*
-    //
-    
-    public void addMirror( String id, String mirrorOf, String url )
-    {        
-        if ( id == null )
-        {
-            id = "mirror-" + anonymousMirrorIdSeed++;
-        }
 
-        ArtifactRepository mirror = new DefaultArtifactRepository( id, url, null );
-
-        if ( !mirrors.containsKey( mirrorOf ) )
-        {
-            mirrors.put( mirrorOf, mirror );
-        }
-    }
-            
     /**
      * This method finds a matching mirror for the selected repository. If there is an exact match,
      * this will be used. If there is no exact match, then the list of mirrors is examined to see if
      * a pattern applies.
      * 
-     * @param originalRepository See if there is a mirror for this repository.
-     * @return the selected mirror or null if none are found.
+     * @param mirrors The available mirrors.
+     * @param repository See if there is a mirror for this repository.
+     * @return the selected mirror or null if none is found.
      */
-    public ArtifactRepository getMirror( ArtifactRepository originalRepository )
+    private Mirror getMirror( List mirrors, RemoteRepository repository )
     {
-        ArtifactRepository selectedMirror = (ArtifactRepository) mirrors.get( originalRepository.getId() );
-        if ( null == selectedMirror )
+        String repositoryId = repository.getId();
+
+        if ( repositoryId != null )
         {
-            // Process the patterns in order. First one that matches wins.
-            Set/*<String>*/ keySet = mirrors.keySet();
-            if ( keySet != null )
+            for ( Iterator it = mirrors.iterator(); it.hasNext(); )
             {
-                for ( Iterator i = keySet.iterator(); i.hasNext(); )
+                Mirror mirror = (Mirror) it.next();
+
+                if ( repositoryId.equals( mirror.getMirrorOf() ) )
                 {
-                    String pattern = (String) i.next();
-                    
-                    if ( matchPattern( originalRepository, pattern ) )
-                    {
-                        selectedMirror = (ArtifactRepository) mirrors.get( pattern );
-                        //stop on the first match.
-                        break;
-                    }
+                    return mirror;
                 }
             }
-        }
-        
-        return selectedMirror;
-    }
 
-    public void clearMirrors()
-    {
-        mirrors.clear();    
-        anonymousMirrorIdSeed = 0;
-    }       
-    
-    public List/*<ArtifactRepository>*/ getMirrors( List/*<ArtifactRepository>*/ remoteRepositories )
-    {
-        if ( remoteRepositories != null )
-        {            
-            for ( Iterator i = remoteRepositories.iterator(); i.hasNext(); )
-            {                
-                ArtifactRepository repository = (ArtifactRepository) i.next();
-                                                
-                // Check to see if we have a valid mirror for this repository
-                ArtifactRepository mirror = getMirror( repository );
-                                        
-                if ( mirror != null )
-                {                         
-                    // We basically just want to take the URL
-                    ((org.apache.maven.wagon.repository.Repository)repository).setUrl( mirror.getUrl() );
-                    
-                    // I would like a mirrored repository to be visually different but we'll put another field
-                    // in the repository as changing the ID hoses up authentication.
-                    ((org.apache.maven.wagon.repository.Repository)repository).setId( mirror.getId() );
-                }
-            }
-        }
-        
-        return remoteRepositories;
-    }
-    
-    // Make these available to tests
-    
-    ArtifactRepository getMirrorRepository( ArtifactRepository repository )
-    {
-        ArtifactRepository mirror = getMirror( repository );
-        if ( mirror != null )
-        {
-            String id = mirror.getId();
-            if ( id == null )
+            for ( Iterator it = mirrors.iterator(); it.hasNext(); )
             {
-                // TODO: this should be illegal in settings.xml
-                id = repository.getId();
-            }
+                Mirror mirror = (Mirror) it.next();
 
-            repository = getArtifactRepositoryFactory().createArtifactRepository( id, mirror.getUrl(), repository.getLayout(), repository.getSnapshots(), repository.getReleases() );
+                if ( matchPattern( repository, mirror.getMirrorOf() ) )
+                {
+                    return mirror;
+                }
+            }
         }
-        return repository;
-    }    
-        
-    private ArtifactRepositoryFactory getArtifactRepositoryFactory()
-    {
-        return (ArtifactRepositoryFactory) lookup( ArtifactRepositoryFactory.ROLE );
+
+        return null;
     }
-    
+
     /**
      * This method checks if the pattern matches the originalRepository. Valid patterns: * =
      * everything external:* = everything not on the localhost and not file based. repo,repo1 = repo
@@ -856,7 +766,7 @@ public abstract class AbstractArtifactTask
      * @param pattern used for match. Currently only '*' is supported.
      * @return true if the repository is a match to this pattern.
      */
-    boolean matchPattern( ArtifactRepository originalRepository, String pattern )
+    boolean matchPattern( RemoteRepository originalRepository, String pattern )
     {
         boolean result = false;
         String originalId = originalRepository.getId();
@@ -906,15 +816,14 @@ public abstract class AbstractArtifactTask
         }
         return result;
     }
-    
-    
+
     /**
      * Checks the URL to see if this repository refers to an external repository
      * 
      * @param originalRepository
      * @return true if external.
      */
-    boolean isExternalRepo( ArtifactRepository originalRepository )
+    boolean isExternalRepo( RemoteRepository originalRepository )
     {
         try
         {
