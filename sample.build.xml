@@ -271,6 +271,22 @@
       <localRepository path="${basedir}/target/tmp"/>
       <remoteRepository url="file://${basedir}/target/fake/repository" id="any" />
     </artifact:dependencies>
+
+    <!-- MANTTASKS-141 -->
+    <delete dir="${basedir}/target/tmp"/>
+    <artifact:dependencies settingsFile="${basedir}/src/test/settings-mirror-complex.xml">
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
+      <localRepository path="${basedir}/target/tmp"/>
+      <remoteRepository url="file://${basedir}/target/fake/repository" id="test" />
+    </artifact:dependencies>
+
+    <!-- MANTTASKS-141 -->
+    <delete dir="${basedir}/target/tmp"/>
+    <artifact:dependencies settingsFile="${basedir}/src/test/settings-mirror-complex.xml">
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
+      <localRepository path="${basedir}/target/tmp"/>
+      <remoteRepository url="file://${basedir}/target/fake/repository" id="yat" />
+    </artifact:dependencies>
   </target>
 
   <target name="test-deps-two-repos" depends="initTaskDefs">
