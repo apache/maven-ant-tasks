@@ -449,6 +449,7 @@ public abstract class AbstractArtifactTask
         if ( mirror != null )
         {
             repository.setUrl( mirror.getUrl() );
+            repository.setId( mirror.getId() );
         }
     }
 
