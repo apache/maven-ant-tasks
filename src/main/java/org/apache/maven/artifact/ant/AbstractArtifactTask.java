@@ -427,6 +427,13 @@ public abstract class AbstractArtifactTask
         // manager at the start like m2 does, and then match up by repository id
         // As is, this could potentially cause a problem with 2 remote repositories with different authentication info
 
+        Mirror mirror = getMirror( getSettings().getMirrors(), repository );
+        if ( mirror != null )
+        {
+            repository.setUrl( mirror.getUrl() );
+            repository.setId( mirror.getId() );
+        }
+
         if ( repository.getAuthentication() == null )
         {
             Server server = getSettings().getServer( repository.getId() );
@@ -443,13 +450,6 @@ public abstract class AbstractArtifactTask
             {
                 repository.addProxy( new Proxy( proxy ) );
             }
-        }
-
-        Mirror mirror = getMirror( getSettings().getMirrors(), repository );
-        if ( mirror != null )
-        {
-            repository.setUrl( mirror.getUrl() );
-            repository.setId( mirror.getId() );
         }
     }
 
