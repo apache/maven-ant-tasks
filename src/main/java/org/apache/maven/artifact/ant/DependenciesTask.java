@@ -267,7 +267,7 @@ public class DependenciesTask
             getProject().setNewProperty( versionsId, versionsValue );
         }
         
-        // Write the dependency references out to a file.
+        // Write the dependency information to an Ant build file.
         if ( getDependencyRefsBuildFile() != null || this.isCacheDependencyRefs() )
         {
             if ( getDependencyRefsBuildFile() == null || getDependencyRefsBuildFile().equals( "default" ) )
@@ -314,6 +314,9 @@ public class DependenciesTask
                 {
                     antBuildWriter.writeFileSet( sourcesFileSet, javadocFilesetId );
                 }
+                
+                String versionsList = getProject().getProperty( versionsId );
+                antBuildWriter.writeProperty( versionsId, versionsList );
                 
                 antBuildWriter.closeTarget();
                 antBuildWriter.closeAntBuild();
