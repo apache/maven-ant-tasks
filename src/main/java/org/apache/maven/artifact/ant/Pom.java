@@ -85,11 +85,21 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         return refid;
     }
 
+    /**
+     * The ID used to retrieve this pom object from the Ant project.
+     * 
+     * @param refid
+     */
     public void setRefid( String refid )
     {
         this.refid = refid;
     }
 
+    /**
+     * The ID used to store this pom object in the Ant project.
+     * 
+     * @param id
+     */
     public void setId( String id )
     {
         this.antId = id;
@@ -194,127 +204,127 @@ public class Pom extends AbstractArtifactWithRepositoryTask
     public String getArtifactId()
     {
         return getMavenProject().getArtifactId();
-    } // -- String getArtifactId()
+    }
 
     public Build getBuild()
     {
         return getMavenProject().getBuild();
-    } // -- Build getBuild()
+    }
 
     public CiManagement getCiManagement()
     {
         return getMavenProject().getCiManagement();
-    } // -- CiManagement getCiManagement()
+    }
 
     public List getContributors()
     {
         return getMavenProject().getContributors();
-    } // -- List getContributors()
+    }
 
     public List getDependencies()
     {
         return getMavenProject().getDependencies();
-    } // -- List getDependencies()
+    }
 
     public DependencyManagement getDependencyManagement()
     {
         return getMavenProject().getDependencyManagement();
-    } // -- DependencyManagement getDependencyManagement()
+    }
 
     public String getDescription()
     {
         return getMavenProject().getDescription();
-    } // -- String getDescription()
+    }
 
     public List getDevelopers()
     {
         return getMavenProject().getDevelopers();
-    } // -- List getDevelopers()
+    }
 
     public DistributionManagement getDistributionManagement()
     {
         return getMavenProject().getDistributionManagement();
-    } // -- DistributionManagement getDistributionManagement()
+    }
 
     public String getGroupId()
     {
         return getMavenProject().getGroupId();
-    } // -- String getGroupId()
+    }
 
     public String getInceptionYear()
     {
         return getMavenProject().getInceptionYear();
-    } // -- String getInceptionYear()
+    }
 
     public IssueManagement getIssueManagement()
     {
         return getMavenProject().getIssueManagement();
-    } // -- IssueManagement getIssueManagement()
+    }
 
     public List getLicenses()
     {
         return getMavenProject().getLicenses();
-    } // -- List getLicenses()
+    }
 
     public List getMailingLists()
     {
         return getMavenProject().getMailingLists();
-    } // -- List getMailingLists()
+    }
 
     public String getModelVersion()
     {
         return getMavenProject().getModelVersion();
-    } // -- String getModelVersion()
+    }
 
     public List getModules()
     {
         return getMavenProject().getModules();
-    } // -- List getModules()
+    }
 
     public String getName()
     {
         return getMavenProject().getName();
-    } // -- String getName()
+    }
 
     public Organization getOrganization()
     {
         return getMavenProject().getOrganization();
-    } // -- Organization getOrganization()
+    }
 
     public String getPackaging()
     {
         return getMavenProject().getPackaging();
-    } // -- String getPackaging()
+    }
 
     public List getPluginRepositories()
     {
         return getMavenProject().getPluginRepositories();
-    } // -- List getPluginRepositories()
+    }
 
     public Reporting getReporting()
     {
         return getMavenProject().getReporting();
-    } // -- Reports getReports()
+    }
 
     public List getRepositories()
     {
         return getMavenProject().getRepositories();
-    } // -- List getRepositories()
+    }
 
     public Scm getScm()
     {
         return getMavenProject().getScm();
-    } // -- Scm getScm()
+    }
 
     public String getUrl()
     {
         return getMavenProject().getUrl();
-    } // -- String getUrl()
+    }
 
     public String getVersion()
     {
         return getMavenProject().getVersion();
-    } // -- String getVersion()
+    }
 
     public String getId()
     {

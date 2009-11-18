@@ -521,6 +521,11 @@ public class DependenciesTask
         this.verbose = verbose;
     }
 
+    /**
+     * Use the maven artifact filtering for a particular scope.
+     * 
+     * @param useScope
+     */
     public void setUseScope( String useScope )
     {
         this.useScope = useScope;
@@ -536,6 +541,11 @@ public class DependenciesTask
         return scopes;
     }
 
+    /**
+     * Only include artifacts that fall under one of the specified scopes.
+     * 
+     * @return
+     */
     public void setScopes( String scopes )
     {
         this.scopes = scopes;
