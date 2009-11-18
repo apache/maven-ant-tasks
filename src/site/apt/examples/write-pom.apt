@@ -1,0 +1,93 @@
+ ------
+ WritePom
+ ------
+ Paul Gier
+ ------
+ 2009-11-18
+ ------
+
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ ~~ NOTE: For help with the syntax of this file, see:
+ ~~ http://maven.apache.org/doxia/references/apt-format.html
+
+The WritePom Task
+
+  <<Note: This task is available since version 2.1.0>>
+
+  The WritePom task can be used to generate a POM file based on information defined in 
+  the Ant build.  For example, this could be used to generate a POM used when 
+  deploying build artifacts to a Maven repository.
+
+  The first step is to define a pom using the pom task.
+
+-----
+  <artifact:pom id="mypom1" groupId="org.acme" artifactId="project1" version="1.0" name="My awesome project">
+    <license name="apache" url="http://www.apache.org"/>
+    <dependency groupId="junit" artifactId="junit" version="4.1" scope="test"/>
+    <dependency groupId="org.codehaus.plexus" artifactId="plexus-utils" version="1.5.5"/>
+  </artifact:pom>
+----
+
+  The next step is to call the writePom task using the pom id created above.
+  
+----
+  <artifact:writepom pomRefId="mypom1" file="target/mypom1.xml"/>
+----
+
+  This will generate a pom in the location specified.
+  
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.acme</groupId>
+  <artifactId>project1</artifactId>
+  <version>1.0</version>
+  <name>My awesome project</name>
+  <licenses>
+    <license>
+      <name>apache</name>
+      <url>http://www.apache.org/</url>
+    </license>
+  </licenses>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <version>1.5.5</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>
+----  
+  
+  By default the <<<writePom>>> task will not include unnecessary information such as build configuration, 
+  repositories, and profiles.  If this information is needed in the pom, the "trim" option can be set to false.
+
+----
+  <artifact:writepom pomRefId="mypom1" file="target/mypom1.xml" trim="false"/>
+----
+  

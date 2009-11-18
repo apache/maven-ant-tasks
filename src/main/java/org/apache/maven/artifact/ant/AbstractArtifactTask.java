@@ -41,8 +41,10 @@ import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.profiles.DefaultProfileManager;
 import org.apache.maven.profiles.ProfileManager;
+import org.apache.maven.project.DefaultProjectBuilderConfiguration;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilderConfiguration;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.RuntimeInfo;
@@ -104,15 +106,10 @@ public abstract class AbstractArtifactTask
 
     protected ArtifactRepository createLocalArtifactRepository()
     {
-        if ( localRepository == null )
-        {
-            localRepository = getDefaultLocalRepository();
-        }
-
         ArtifactRepositoryLayout repositoryLayout =
-            (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, localRepository.getLayout() );
+            (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, getLocalRepository().getLayout() );
 
-        return new DefaultArtifactRepository( "local", "file://" + localRepository.getPath(), repositoryLayout );
+        return new DefaultArtifactRepository( "local", "file://" + getLocalRepository().getPath(), repositoryLayout );
     }
 
     /**
@@ -533,25 +530,37 @@ public abstract class AbstractArtifactTask
         return pom;
     }
 
-    protected Pom createDummyPom( ArtifactRepository localArtifactRepository )
+    protected Pom createDummyPom( ArtifactRepository localRepository )
+    {
+        Pom pom = new Pom();
+
+        pom.setMavenProject( createMinimalProject( localRepository ) );
+
+        return pom;
+    }
+    
+    /**
+     * Create a minimal project when no POM is available.
+     * 
+     * @param localRepository
+     * @return
+     */
+    protected MavenProject createMinimalProject( ArtifactRepository localRepository )
     {
         MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
+        DefaultProjectBuilderConfiguration builderConfig = new DefaultProjectBuilderConfiguration( );
+        builderConfig.setLocalRepository( localRepository );
+        builderConfig.setGlobalProfileManager( getProfileManager() );
 
-        MavenProject mavenProject;
         try
         {
-            mavenProject = projectBuilder.buildStandaloneSuperProject( localArtifactRepository, getProfileManager() );
+            return projectBuilder.buildStandaloneSuperProject( builderConfig );
         }
         catch ( ProjectBuildingException e )
         {
             throw new BuildException( "Unable to create dummy Pom", e );
         }
-
-        Pom pom = new Pom();
-
-        pom.setMavenProject( mavenProject );
-
-        return pom;
+        
     }
     
     protected Artifact createDummyArtifact()
@@ -653,6 +662,10 @@ public abstract class AbstractArtifactTask
 
     public LocalRepository getLocalRepository()
     {
+        if ( localRepository == null )
+        {
+            localRepository = getDefaultLocalRepository();
+        }
         return localRepository;
     }
 

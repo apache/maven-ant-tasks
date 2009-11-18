@@ -6,6 +6,7 @@
   <taskdef name="deploy" classname="org.apache.maven.artifact.ant.DeployTask"/>
   <taskdef name="install-provider" classname="org.apache.maven.artifact.ant.InstallWagonProviderTask"/>
   <taskdef name="mvn" classname="org.apache.maven.artifact.ant.Mvn"/>
+  <taskdef name="writePom" classname="org.apache.maven.artifact.ant.WritePomTask"/>
 
   <!-- Types -->
   <typedef name="localRepository" classname="org.apache.maven.artifact.ant.LocalRepository"/>
