@@ -170,6 +170,21 @@
 | <<<version>>>    | The version of the provider to install.                                  | Yes          |             |
 *------------------+--------------------------------------------------------------------------+--------------+-------------+
 
+* <<<{writePom}>>> <(since 2.1.0)>
+
+  This task will write a POM object to a file.
+
+*------------------+--------------------------------------------------------------------------+--------------+
+| <<Attribute>>    | <<Description>>                                                          | <<Required>> |
+*------------------+--------------------------------------------------------------------------+--------------+
+| <<<pomRefId>>>   | The ID of the POM to write.                                              | Yes          |
+*------------------+--------------------------------------------------------------------------+--------------+
+| <<<file>>>       | The name of the file to write the POM                                    | Yes          |
+*------------------+--------------------------------------------------------------------------+--------------+
+| <<<trim>>>       | A boolean value to determine whether unnecessary information should be removed from the POM.  Defaults to <<<true>>>.   | No           |
+*------------------+--------------------------------------------------------------------------+--------------+
+
+
 
 {Type} Reference
 
@@ -239,6 +254,8 @@
 | <<<file>>>       | The file of the POM to load.                           | Yes          |
 *------------------+--------------------------------------------------------+--------------+
 | <<<id>>>         | The reference ID of this POM.                          | No           |
+*------------------+--------------------------------------------------------+--------------+
+| <<<refid>>>      | The reference ID to use a previously defined POM.      | No           |
 *------------------+--------------------------------------------------------+--------------+
 | <<<inheritAllProperties>>>  | If set to true, all Ant properties will be passed to the Maven POM.  If set to false, only user (command-line) properties will be passed.  Defaults to true.   | No    | 2.1.0 |
 *------------------+--------------------------------------------------------+--------------+

@@ -28,7 +28,7 @@
 
 The WritePom Task
 
-  <<Note: This task is available since version 2.1.0>>
+  <<Note: This task is available since version 2.1.0 of the maven ant tasks>>
 
   The WritePom task can be used to generate a POM file based on information defined in 
   the Ant build.  For example, this could be used to generate a POM used when 
