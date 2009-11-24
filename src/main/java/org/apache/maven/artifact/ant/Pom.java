@@ -200,6 +200,10 @@ public class Pom
         {
             this.getPomFromAntProject( refid );
         }
+        else
+        {
+            throw new BuildException( "POM type requires configuration of either 'file' or 'refid'." );
+        }
     }
 
     protected MavenProject getMavenProject()
