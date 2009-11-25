@@ -46,7 +46,6 @@ import org.apache.maven.profiles.ProfileManager;
 import org.apache.maven.project.DefaultProjectBuilderConfiguration;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuilderConfiguration;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.RuntimeInfo;
@@ -58,6 +57,7 @@ import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
 import org.apache.maven.usability.diagnostics.ErrorDiagnostics;
 import org.apache.maven.wagon.Wagon;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Execute;
@@ -68,11 +68,11 @@ import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.embed.Embedder;
+import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
+import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
-import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -526,7 +526,7 @@ public abstract class AbstractArtifactTask
         if ( pom != null )
         {
             MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
-            pom.initialise( projectBuilder, localArtifactRepository );
+            pom.initialiseMavenProject( projectBuilder, localArtifactRepository );
         }
         
         return pom;
@@ -631,9 +631,11 @@ public abstract class AbstractArtifactTask
      */
     public Pom getPom()
     {
-        if ( pom != null && getPomRefId() != null )
+        Pom thePom = this.pom;
+        
+        if ( thePom != null && getPomRefId() != null )
         {
-            throw new BuildException( "You cannot specify both a POM element and a pomrefid element" );
+            throw new BuildException( "You cannot specify both a nested \"pom\" element and a \"pomrefid\" attribute" );
         }
 
         if ( getPomRefId() != null )
@@ -641,7 +643,7 @@ public abstract class AbstractArtifactTask
             Object pomRefObj = getProject().getReference( getPomRefId() );
             if ( pomRefObj instanceof Pom )
             {
-                pom = (Pom) pomRefObj;
+                thePom = (Pom) pomRefObj;
             }
             else
             {
@@ -649,9 +651,9 @@ public abstract class AbstractArtifactTask
             }
         }
         
-        return pom;
+        return thePom;
     }
-
+    
     public String getPomRefId()
     {
         return pomRefId;
@@ -706,6 +708,9 @@ public abstract class AbstractArtifactTask
     /** @noinspection RefusedBequest */
     public void execute()
     {
+        // Display the version if the log level is verbose
+        showVersion();
+        
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
@@ -853,14 +858,18 @@ public abstract class AbstractArtifactTask
         }
     }
 
+    /**
+     * Log the current version of the ant-tasks to the verbose output.
+     */
     protected void showVersion()
     {
-        InputStream resourceAsStream;
+        
+        Properties properties = new Properties();
+        final String antTasksPropertiesPath = "META-INF/maven/org.apache.maven/maven-ant-tasks/pom.properties";
+        InputStream resourceAsStream = AbstractArtifactTask.class.getClassLoader().getResourceAsStream( antTasksPropertiesPath );
+        
         try
         {
-            Properties properties = new Properties();
-            resourceAsStream = AbstractArtifactTask.class.getClassLoader().getResourceAsStream(
-                "META-INF/maven/org.apache.maven/maven-ant-tasks/pom.properties" );
             if ( resourceAsStream != null )
             {
                 properties.load( resourceAsStream );

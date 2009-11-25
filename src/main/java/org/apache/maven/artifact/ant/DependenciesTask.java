@@ -132,14 +132,18 @@ public class DependenciesTask
      */
     protected void doExecute()
     {
-        showVersion();
         
         if ( useScope != null && scopes != null )
         {
             throw new BuildException( "You cannot specify both useScope and scopes in the dependencies task." );
         }
+                
+        if ( getPom() != null && !this.dependencies.isEmpty() )
+        {
+            throw new BuildException( "You cannot specify both dependencies and a pom in the dependencies task" );
+        }
         
-        // Try to load dependency refs from Ant
+        // Try to load dependency refs from an exsiting Ant cache file
         if ( isCacheDependencyRefs() )
         {
             if ( getDependencyRefsBuildFile() == null )
@@ -156,20 +160,14 @@ public class DependenciesTask
         ArtifactRepository localRepo = createLocalArtifactRepository();
         log( "Using local repository: " + localRepo.getBasedir(), Project.MSG_VERBOSE );
 
+        // Look up required resources from the plexus container
         ArtifactResolver resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
         ArtifactFactory artifactFactory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
         MavenMetadataSource metadataSource = (MavenMetadataSource) lookup( ArtifactMetadataSource.ROLE );
 
-        List dependencies = this.dependencies;
-
         Pom pom = initializePom( localRepo );
         if ( pom != null )
         {
-            if ( !dependencies.isEmpty() )
-            {
-                throw new BuildException( "You cannot specify both dependencies and a pom in the dependencies task" );
-            }
-
             dependencies = pom.getDependencies();
         }
         else

@@ -67,20 +67,35 @@ import java.util.Properties;
 public class Pom
     extends AbstractArtifactWithRepositoryTask
 {
+    /**
+     * The id refering to an existing pom object in the current Ant project.
+     */
     private String refid;
 
+    /**
+     * The id of this pom object to be stored in the current Ant project.
+     */
     private String antId;
 
+    /**
+     * The maven project represented by this pom
+     */
     private MavenProject mavenProject;
 
+    /**
+     * The file from which the pom was loaded.
+     */
     private File file;
 
+    /**
+     * The list of profiles to either activate or deactivate for this pom.
+     */
     private List profiles = new ArrayList();
 
     private boolean inheritAllProperties = true;
 
     /**
-     * The property interceptor.
+     * The property intercepter.
      */
     private final POMPropertyHelper helper = new POMPropertyHelper();
 
@@ -181,7 +196,7 @@ public class Pom
         return getMavenProject().getAttachedArtifacts();
     }
 
-    void initialise( MavenProjectBuilder builder, ArtifactRepository localRepository )
+    public void initialiseMavenProject( MavenProjectBuilder builder, ArtifactRepository localRepository )
     {
         if ( file != null )
         {
@@ -199,10 +214,6 @@ public class Pom
         else if ( refid != null )
         {
             this.getPomFromAntProject( refid );
-        }
-        else
-        {
-            throw new BuildException( "POM type requires configuration of either 'file' or 'refid'." );
         }
     }
 
@@ -356,7 +367,7 @@ public class Pom
         }
         ArtifactRepository localRepo = createLocalArtifactRepository();
         MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
-        initialise( projectBuilder, localRepo );
+        initialiseMavenProject( projectBuilder, localRepo );
 
         Project antProject = getProject();
 
