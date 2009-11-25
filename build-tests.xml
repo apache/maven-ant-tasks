@@ -447,7 +447,7 @@
   </target>
 
   <target name="test-deploy" depends="initTaskDefs,installSshProvider">
-    <property name="outJar" value="${basedir}/sample.build.xml"/>
+    <property name="outJar" value="${basedir}/build-tests.xml"/>
     <property name="targetDir" value="${deploy.repository.url}/org/apache/maven/test/sample-build-test/2.0-beta-4-SNAPSHOT"/>
     <delete dir="${deploy.repository.url}"/>
 
