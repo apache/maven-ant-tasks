@@ -57,7 +57,6 @@ import org.apache.maven.settings.io.xpp3.SettingsXpp3Reader;
 import org.apache.maven.usability.diagnostics.ErrorDiagnostics;
 import org.apache.maven.wagon.Wagon;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Execute;

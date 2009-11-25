@@ -38,7 +38,6 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
 import org.codehaus.plexus.util.StringUtils;
@@ -528,7 +527,7 @@ public class DependenciesTask
     public void setVerbose( boolean verbose )
     {
         getProject().log( "Option \"verbose\" is deprecated.  Please use the standard Ant -v option.",
-                          getProject().MSG_WARN );
+                          Project.MSG_WARN );
     }
 
     /**
@@ -569,7 +568,7 @@ public class DependenciesTask
     public void setAddArtifactFileSetRefs( boolean addArtifactFileSetRefs )
     {
         this.log( "Parameter addArtifactFileSetRefs is deprecated.  A fileset ref is always created" +
-        		"for each dependency.", getProject().MSG_WARN );
+        		"for each dependency.", Project.MSG_WARN );
     }
 
     public String getDependencyRefsBuildFile()
