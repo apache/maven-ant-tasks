@@ -452,12 +452,12 @@
     <delete dir="${deploy.repository.url}"/>
 
     <artifact:install file="${outJar}">
-      <pom file="sample-build-test.pom"/>
+      <pom file="src/test/simple-pom.xml"/>
     </artifact:install>
 
     <artifact:deploy file="${outJar}">
       <remoteSnapshotRepository refid="deploy.repository"/>
-      <pom file="sample-build-test.pom"/>
+      <pom file="src/test/simple-pom.xml"/>
     </artifact:deploy>
     <!-- deployment in ${deploy.repository.url} should have created a directory -->
     <check.file.exists file="${targetDir}" type="dir"/>
@@ -466,7 +466,7 @@
 
     <artifact:deploy file="${outJar}" uniqueVersion="false">
       <remoteSnapshotRepository refid="deploy.repository"/>
-      <pom file="sample-build-test.pom"/>
+      <pom file="src/test/simple-pom.xml"/>
     </artifact:deploy>
     <!-- when uniqueVersion="false", file -SNAPSHOT.jar should be created -->
     <check.file.exists file="${targetDir}/sample-build-test-2.0-beta-4-SNAPSHOT.jar"/>
@@ -476,7 +476,7 @@
       <remoteRepository url="scp://localhost/tmp/deployment-repo" id="scp.localhost.repo">
         <authentication username="${user.name}" privateKey="${user.home}/.ssh/id_dsa"/>
       </remoteRepository>
-      <pom file="sample-build-test.pom"/>
+      <pom file="src/test/simple-pom.xml"/>
     </artifact:deploy>
   </target>
 
@@ -544,8 +544,8 @@
   </target>
 
   <target name="test-no-dist-mgmt" depends="initTaskDefs">
-    <artifact:deploy file="sample-build-test.pom">
-      <pom file="sample-build-test.pom" />
+    <artifact:deploy file="src/test/simple-pom.xml">
+      <pom file="src/test/simple-pom.xml" />
       <remoteRepository refid="deploy.repository" />
     </artifact:deploy>
   </target>
@@ -553,8 +553,8 @@
   <target name="test-deploy-attached" depends="initTaskDefs">
     <echo message="test" file="${basedir}/target/sample-build-test.pom.asc"/>
 
-    <artifact:deploy file="sample-build-test.pom">
-      <pom file="sample-build-test.pom" />
+    <artifact:deploy file="src/test/simple-pom.xml">
+      <pom file="src/test/simple-pom.xml" />
       <remoteRepository refid="deploy.repository" />
       <attach file="${basedir}/target/sample-build-test.pom.asc" type="pom.asc"/>
     </artifact:deploy>
@@ -563,8 +563,8 @@
   <target name="test-install-attached" depends="initTaskDefs">
     <echo message="test" file="${basedir}/target/sample-build-test.pom.asc"/>
 
-    <artifact:install file="sample-build-test.pom">
-      <pom file="sample-build-test.pom" />
+    <artifact:install file="src/test/simple-pom.xml">
+      <pom file="src/test/simple-pom.xml" />
       <localRepository refid="local.repository"/>
       <attach file="${basedir}/target/sample-build-test.pom.asc" type="pom.asc"/>
     </artifact:install>
