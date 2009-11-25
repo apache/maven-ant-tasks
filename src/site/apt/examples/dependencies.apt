@@ -137,7 +137,7 @@ Filtering Dependencies by Scope
   attribute, and the <<<scopes>>> attribute.  One or the other of these attributes should be used
   but not both.
 
-  The <<<useScopes>>> follows the Maven conventions for scoping behaviour.  This means the attribute
+  The <<<useScope>>> attribute follows the Maven conventions for scoping behaviour.  This means the attribute
   can be set to one of three possible scopes: compile, runtime, or test.  These scopes will
   behave as follows.
 
