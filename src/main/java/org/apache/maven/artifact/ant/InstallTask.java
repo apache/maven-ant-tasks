@@ -41,6 +41,12 @@ public class InstallTask
 {
     protected void doExecute()
     {
+        if ( file == null && ( attachedArtifacts.size() == 0 ) )
+        {
+            throw new BuildException( "You must specify a file and/or an attached artifact "
+                + "to install to the local repository." );
+        }
+        
         ArtifactRepository localRepo = createLocalArtifactRepository();
 
         Pom pom = initializePom( localRepo );
@@ -62,18 +68,16 @@ public class InstallTask
         ArtifactInstaller installer = (ArtifactInstaller) lookup( ArtifactInstaller.ROLE );
         try
         {
-            if ( !isPomArtifact )
+            if ( file != null )
             {
-                if ( file == null )
+                if ( !isPomArtifact )
                 {
-                    throw new BuildException( "You must specify a file to install to the local repository." );
+                    installer.install( file, artifact, localRepo );
                 }
-
-                installer.install( file, artifact, localRepo );
-            }
-            else
-            {
-                installer.install( pom.getFile(), artifact, localRepo );
+                else
+                {
+                    installer.install( pom.getFile(), artifact, localRepo );
+                }
             }
 
             // Install any attached artifacts

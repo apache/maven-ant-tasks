@@ -127,9 +127,9 @@
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
 | <<Attribute>>       | <<Description>>                                                          | <<Required>>                                    | << Since >> |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
-| <<<file>>>          | The file to install in the repository.                                   | Yes, except if packaging is <<<pom>>>           |             |
+| <<<file>>>          | The file to install in the repository.                                   | Yes, unless an attached artifact is specified   |             |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
-| <<<pomRefId>>>      | The reference ID from a POM datatype defined earlier in the build file.  | No, if a <<<pom>>> nested element is provided instead |       |
+| <<<pomRefId>>>      | The reference ID from a POM datatype defined earlier in the build file.  | Yes, unless a <<<pom>>> nested element is provided instead |       |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
 | <<<settingsFile>>>  | The settings file to use. Defaults to <<<$\{user.home\}/.ant/settings.xml>>> or if that doesn't exist <<<$\{user.home\}/.m2/settings.xml>>>. | No | 2.0.6 |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
