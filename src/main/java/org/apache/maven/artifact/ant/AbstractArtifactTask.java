@@ -21,6 +21,7 @@ package org.apache.maven.artifact.ant;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -848,6 +850,36 @@ public abstract class AbstractArtifactTask
         {
             // bad url just skip it here. It should have been validated already, but the wagon lookup will deal with it
             return false;
+        }
+    }
+
+    protected void showVersion()
+    {
+        InputStream resourceAsStream;
+        try
+        {
+            Properties properties = new Properties();
+            resourceAsStream = AbstractArtifactTask.class.getClassLoader().getResourceAsStream(
+                "META-INF/maven/org.apache.maven/maven-ant-tasks/pom.properties" );
+            if ( resourceAsStream != null )
+            {
+                properties.load( resourceAsStream );
+            }
+
+            String version = properties.getProperty( "version", "unknown" );
+            String builtOn = properties.getProperty( "builtOn" );
+            if ( builtOn != null )
+            {
+                log( "Maven Ant Tasks version: " + version + " built on " + builtOn, Project.MSG_VERBOSE );
+            }
+            else
+            {
+                log( "Maven Ant Tasks version: " + version, Project.MSG_VERBOSE );
+            }
+        }
+        catch ( IOException e )
+        {
+            log( "Unable to determine version from Maven Ant Tasks JAR file: " + e.getMessage(), Project.MSG_WARN );
         }
     }
 

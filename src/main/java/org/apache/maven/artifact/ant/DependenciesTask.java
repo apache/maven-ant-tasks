@@ -45,7 +45,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -70,24 +69,52 @@ public class DependenciesTask
     
     private List dependencies = new ArrayList();
 
+    /**
+     * The id of the path object containing a list of all dependencies.
+     */
     private String pathId;
 
+    /**
+     * The id of the fileset object containing a list of all dependencies.
+     */
     private String filesetId;
 
+    /**
+     * The id of the fileset object containing all resolved source jars for the list of dependencies.
+     */
     private String sourcesFilesetId;
     
+    /**
+     * The id of the fileset object containing all resolved javadoc jars for the list of dependencies.
+     */
     private String javadocFilesetId;
     
+    /**
+     * The id of the object containing a list of all artifact versions.
+     * This is used for things like removing the version from the dependency filenames.
+     */
     private String versionsId;
 
+    /**
+     * A specific maven scope used to determine which dependencies are resolved.
+     * This takes only a single scope and uses the standard maven ScopeArtifactFilter.
+     */
     private String useScope;
 
+    /**
+     * A comma separated list of dependency scopes to include, in the resulting path and fileset.
+     */
     private String scopes;
 
+    /**
+     * A comma separated list of dependency types to include in the resulting set of artifacts.
+     */
     private String type;
 
-    private boolean verbose;
-    
+    /**
+     * Add a fileset reference for each resolved dependency.  The id of each fileset will follow
+     * the pattern groupId:artifactId:classifier:type.
+     */
     private boolean addArtifactFileSetRefs;
     
     /**
@@ -100,6 +127,9 @@ public class DependenciesTask
      */
     private boolean cacheDependencyRefs;
 
+    /**
+     * Main task execution.  Called by parent execute().
+     */
     protected void doExecute()
     {
         showVersion();
@@ -168,7 +198,7 @@ public class DependenciesTask
             Artifact pomArtifact = artifactFactory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(), pom
                 .getVersion(), pom.getPackaging() );
 
-            List listeners = Collections.singletonList( new AntResolutionListener( getProject(), verbose ) );
+            List listeners = Collections.singletonList( new AntResolutionListener( getProject() ) );
 
             Map managedDependencies = pom.getMavenProject().getManagedVersionMap();
 
@@ -518,11 +548,13 @@ public class DependenciesTask
 
     public void setVerbose( boolean verbose )
     {
-        this.verbose = verbose;
+        getProject().log( "Option \"verbose\" is deprecated.  Please use the standard Ant -v option.",
+                          getProject().MSG_WARN );
     }
 
     /**
-     * Use the maven artifact filtering for a particular scope.
+     * Use the maven artifact filtering for a particular scope.  This
+     * uses the standard maven ScopeArtifactFilter.
      * 
      * @param useScope
      */
@@ -549,36 +581,6 @@ public class DependenciesTask
     public void setScopes( String scopes )
     {
         this.scopes = scopes;
-    }
-
-    private void showVersion()
-    {
-        InputStream resourceAsStream;
-        try
-        {
-            Properties properties = new Properties();
-            resourceAsStream = DependenciesTask.class.getClassLoader().getResourceAsStream(
-                "META-INF/maven/org.apache.maven/maven-ant-tasks/pom.properties" );
-            if ( resourceAsStream != null )
-            {
-                properties.load( resourceAsStream );
-            }
-
-            String version = properties.getProperty( "version", "unknown" );
-            String builtOn = properties.getProperty( "builtOn" );
-            if ( builtOn != null )
-            {
-                log( "Maven Ant Tasks version: " + version + " built on " + builtOn, Project.MSG_VERBOSE );
-            }
-            else
-            {
-                log( "Maven Ant Tasks version: " + version, Project.MSG_VERBOSE );
-            }
-        }
-        catch ( IOException e )
-        {
-            log( "Unable to determine version from Maven Ant Tasks JAR file: " + e.getMessage(), Project.MSG_WARN );
-        }
     }
 
     public boolean isAddArtifactFileSetRefs()
