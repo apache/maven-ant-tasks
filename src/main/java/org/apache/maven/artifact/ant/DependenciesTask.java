@@ -51,7 +51,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -111,12 +110,6 @@ public class DependenciesTask
      */
     private String type;
 
-    /**
-     * Add a fileset reference for each resolved dependency.  The id of each fileset will follow
-     * the pattern groupId:artifactId:classifier:type.
-     */
-    private boolean addArtifactFileSetRefs;
-    
     /**
      * The file name to use for the generated Ant build that contains dependency properties and references.
      */
@@ -193,8 +186,8 @@ public class DependenciesTask
         {
             artifacts = MavenMetadataSource.createArtifacts( artifactFactory, dependencies, null, null, null );
 
-            Artifact pomArtifact = artifactFactory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(), pom
-                .getVersion(), pom.getPackaging() );
+            Artifact pomArtifact = artifactFactory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(), 
+                pom.getVersion(), pom.getPackaging() );
 
             List listeners = Collections.singletonList( new AntResolutionListener( getProject() ) );
 
@@ -238,11 +231,8 @@ public class DependenciesTask
         }
         catch ( InvalidDependencyVersionException e )
         {
-            throw new BuildException( e.getMessage(), e );
+            throw new BuildException( "Invalid dependency version: " + e.getMessage(), e );
         }
-
-        FileList fileList = new FileList();
-        fileList.setDir( getLocalRepository().getPath() );
 
         FileSet dependencyFileSet = createFileSet();
 
@@ -250,13 +240,15 @@ public class DependenciesTask
 
         FileSet javadocsFileSet = createFileSet();
 
+        Path dependencyPath = new Path( getProject() );
+        
         Set versions = new HashSet();
         
         for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
 
-            addArtifactToResult( localRepo, artifact, dependencyFileSet, fileList  );
+            addArtifactToResult( localRepo, artifact, dependencyFileSet, dependencyPath );
 
             versions.add( artifact.getVersion() );
 
@@ -271,16 +263,7 @@ public class DependenciesTask
                 resolveSource( artifactFactory, resolver, remoteArtifactRepositories, localRepo,
                                artifact, "javadoc", javadocsFileSet );
             }
-        }
 
-        if ( pathId != null )
-        {
-            Path path = new Path( getProject() );
-            if ( versions.size() > 0 )
-            {
-                path.addFilelist( fileList );
-            }
-            getProject().addReference( pathId, path );
         }
 
         defineFilesetReference( filesetId, dependencyFileSet );
@@ -288,6 +271,11 @@ public class DependenciesTask
         defineFilesetReference( sourcesFilesetId, sourcesFileSet );
         
         defineFilesetReference( javadocFilesetId, javadocsFileSet );
+        
+        if ( pathId != null )
+        {
+            getProject().addReference( pathId, dependencyPath );
+        }
         
         if ( versionsId != null )
         {
@@ -317,11 +305,8 @@ public class DependenciesTask
                     Artifact artifact = (Artifact) i.next();
                     String conflictId = artifact.getDependencyConflictId();
                     antBuildWriter.writeProperty( conflictId, artifact.getFile().getAbsolutePath() );
-                    if ( this.isAddArtifactFileSetRefs() )
-                    {
-                        FileSet singleArtifactFileSet = (FileSet)getProject().getReference( conflictId );
-                        antBuildWriter.writeFileSet( singleArtifactFileSet, conflictId );
-                    }
+                    FileSet singleArtifactFileSet = (FileSet)getProject().getReference( conflictId );
+                    antBuildWriter.writeFileSet( singleArtifactFileSet, conflictId );
                 }
                 
                 if ( pathId != null )
@@ -431,33 +416,29 @@ public class DependenciesTask
         }
     }
 
-    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact, FileSet toFileSet )
+    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact, 
+                                      FileSet toFileSet )
     {
         addArtifactToResult( localRepo, artifact, toFileSet, null );
     }
-
-    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact, FileSet toFileSet,
-                                      FileList toFileList )
+    
+    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact, 
+                                      FileSet toFileSet, Path path )
     {
         String filename = localRepo.pathOf( artifact );
 
         toFileSet.createInclude().setName( filename );
 
-        if ( toFileList != null )
-        {
-            FileList.FileName file = new FileList.FileName();
-            file.setName( filename );
-
-            toFileList.addConfiguredFile( file );
-        }
-
         getProject().setProperty( artifact.getDependencyConflictId(), artifact.getFile().getAbsolutePath() );
         
-        if ( isAddArtifactFileSetRefs() )
+        FileSet artifactFileSet = new FileSet();
+        artifactFileSet.setProject( getProject() );
+        artifactFileSet.setFile( artifact.getFile() );
+        getProject().addReference( artifact.getDependencyConflictId(), artifactFileSet );
+        
+        if ( path != null )
         {
-            FileSet artifactFileSet = createFileSet();
-            artifactFileSet.setFile( artifact.getFile() );
-            getProject().addReference( artifact.getDependencyConflictId(), artifactFileSet );
+            path.addFileset( artifactFileSet );
         }
     }
 
@@ -581,14 +562,14 @@ public class DependenciesTask
         this.scopes = scopes;
     }
 
-    public boolean isAddArtifactFileSetRefs()
-    {
-        return addArtifactFileSetRefs;
-    }
-
+    /**
+     * @deprecated
+     * @param addArtifactFileSetRefs
+     */
     public void setAddArtifactFileSetRefs( boolean addArtifactFileSetRefs )
     {
-        this.addArtifactFileSetRefs = addArtifactFileSetRefs;
+        this.log( "Parameter addArtifactFileSetRefs is deprecated.  A fileset ref is always created" +
+        		"for each dependency.", getProject().MSG_WARN );
     }
 
     public String getDependencyRefsBuildFile()

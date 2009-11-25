@@ -63,7 +63,9 @@
   </target>
 
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom, test-pom-profiles, test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty,test-deps-profile,test-deps-scopes">
+    depends="test-pom, test-pom-profiles, test-pom-with-parent,test-no-deps,test-pom-deps,
+             test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,
+             test-deps-sources,test-deps-sources-empty,test-deps-profile,test-deps-scopes,test-system-scope">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -618,6 +620,32 @@
     <check.file.exists file="target/files/scopes-test/commons-collections/commons-collections" type="dir"/>
     <check.file.not.exists file="target/files/scopes-test/org/apache/commons/commons-io" type="dir"/>
     <check.file.not.exists file="target/files/scopes-test/commons-logging/commons-logging" type="dir"/>
+  </target>
+
+  <target name="test-system-scope" depends="initTaskDefs">
+    <artifact:dependencies pathId="system.scope.classpath" filesetId="system.scope.fileset" useScope="compile">
+      <pom file="src/test/pom-with-system-scope.xml" />
+      <localRepository refid="local.repository"/>
+    </artifact:dependencies>
+
+    <pathconvert property="system.scope.classpath.property" targetos="unix" refid="system.scope.classpath"/>
+    <path id="local.repository.path" path="${basedir}/target/local-repo" />
+    <pathconvert property="local.repository.property" targetos="unix" refid="local.repository.path"/>
+
+    <echo message="${sun.jdk:tools:jar}"/>
+    <echo>
+      classpath: ${system.scope.classpath.property}
+    </echo>
+    
+    <condition property="test.fail">
+      <length string="${system.scope.classpath.property}" trim="true" length="0" />
+    </condition>
+    <fail if="test.fail">Artifact with system scope should be added to classpath.</fail>
+    
+    <condition property="test.fail">
+      <contains string="${system.scope.classpath.property}" substring="${local.repository.property}"/>
+    </condition>
+    <fail if="test.fail">For system scope path should not come from local repository.</fail>
   </target>
 
   <macrodef name="check.file.exists">

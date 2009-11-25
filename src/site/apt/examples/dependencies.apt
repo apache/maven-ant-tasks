@@ -131,6 +131,13 @@ Using Properties to Access Dependencies
 <echo message="JUnit jar file downloaded to ${junit:junit:jar}"/>
 -----
 
+Note about system scope
+
+  Dependencies that use the <<<system>>> scope specify a path on the local system that may be outside
+  of the local maven repository.  An Ant fileset only allows a single base directory, so these 
+  dependencies will not be included in the generated fileset object.  The will, however, be included
+  in the path object.
+
 Filtering Dependencies by Scope
 
   There are two options available for filtering POM dependencies by scope: the <<<useScope>>>
