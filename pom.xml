@@ -35,9 +35,9 @@
   <url>http://maven.apache.org/ant-tasks/</url>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/ant-tasks/branches/maven-ant-tasks-2.0.x</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/ant-tasks/branches/maven-ant-tasks-2.0.x</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/ant-tasks/branches/maven-ant-tasks-2.0.x</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/ant-tasks/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/ant-tasks/trunk</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/ant-tasks/trunk</url>
   </scm>
   <issueManagement>
     <system>jira</system>
