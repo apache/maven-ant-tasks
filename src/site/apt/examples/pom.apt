@@ -28,9 +28,15 @@
  ~~ NOTE: For help with the syntax of this file, see:
  ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-The Pom Task
+Introduction
 
-  In order to use the pom task, you will first need to define a pom (typically pom.xml).
+  The pom task can be used in one of two ways, either to read an existing pom file
+  (typically pom.xml), or to define an in memory pom object.  Either technique
+  can be used to resolve build dependencies, build the project classpath, and/or
+  define project properties.
+
+Reading an exising POM file
+
   An example pom is provided here:
 
 -----
@@ -80,6 +86,26 @@ The Pom Task
 
   This is all that is required for most projects. However, it is also possible to use other fields available in
   Maven to describe your project, and reference them from your build script.
+
+  Once the pom file is created, it can be read by the pom task.
+
+-----
+  <artifact:pom id="mypom" file="pom.xml" />
+-----
+
+Defining a POM in Ant
+
+  If a POM file is not available, the ant task can also be used to define an in-memory pom.
+  
+----
+  <artifact:pom id="mypom" groupId="org.acme" artifactId="project1" version="1.0">
+    <dependency groupId="junit" artifactId="junit" version="4.1"/>
+    <dependency groupId="org.codehaus.plexus" artifactId="plexus-utils" version="1.5.5"/>
+    <license name="apache" url="http://www.apache.org"/>
+  </artifact:pom>
+----
+
+Accessing POM information
 
   To access a part of the POM as an Ant property, you must define it as a reference. For example, to access the version from a POM,
   you can use the following:

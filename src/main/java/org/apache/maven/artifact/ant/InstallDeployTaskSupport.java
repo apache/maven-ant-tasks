@@ -20,9 +20,9 @@ package org.apache.maven.artifact.ant;
  */
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 
@@ -35,9 +35,15 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 public abstract class InstallDeployTaskSupport
     extends AbstractArtifactTask
 {
+    /**
+     * The file to install/deploy.
+     */
     protected File file;
 
-    protected List attachedArtifacts;
+    /**
+     * Additional attached artifacts to install/deploy
+     */
+    protected List attachedArtifacts = new ArrayList();
 
     public File getFile()
     {
@@ -49,9 +55,9 @@ public abstract class InstallDeployTaskSupport
         this.file = file;
     }
     
-    public Pom buildPom( ArtifactRepository localArtifactRepository )
+    public Pom initializePom( ArtifactRepository localArtifactRepository )
     {
-        Pom pom = super.buildPom( localArtifactRepository );
+        Pom pom = super.initializePom( localArtifactRepository );
 
         // attach artifacts
         if ( attachedArtifacts != null )
@@ -70,11 +76,6 @@ public abstract class InstallDeployTaskSupport
 
     public AttachedArtifact createAttach()
     {
-        if ( attachedArtifacts == null )
-        {
-            attachedArtifacts = new ArrayList();
-        }
-
         AttachedArtifact attach = new AttachedArtifact();
         attachedArtifacts.add( attach );
 

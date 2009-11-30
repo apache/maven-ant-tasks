@@ -25,7 +25,7 @@
     on your local system.  This allows the deploy taks to scp artifacts to a local
     test repository.
 
-    How you start sshd will depend on your system.  For example on Fedora,
+    How you start sshd will depend on your system.  For example on Fedora Linux,
     you can start the ssh deamon using "service sshd start"
 
   -->
@@ -63,7 +63,9 @@
   </target>
 
   <target name="test-all-deps" description="All dependencies tests"
-    depends="test-pom, test-pom-profiles, test-pom-with-parent,test-no-deps,test-pom-deps,test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,test-deps-sources,test-deps-sources-empty,test-deps-profile,test-deps-scopes">
+    depends="test-pom, test-pom-profiles, test-pom-with-parent,test-no-deps,test-pom-deps,
+             test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,
+             test-deps-sources,test-deps-sources-empty,test-deps-profile,test-deps-scopes,test-system-scope">
     <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
   </target>
 
@@ -271,6 +273,24 @@
       <localRepository path="${basedir}/target/tmp"/>
       <remoteRepository url="file://${basedir}/target/fake/repository" id="any" />
     </artifact:dependencies>
+
+    <!-- MANTTASKS-141 -->
+    <delete dir="${basedir}/target/tmp"/>
+    <artifact:dependencies settingsFile="${basedir}/src/test/settings-mirror-complex.xml">
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueTrue" version="2.0.8-SNAPSHOT"/>
+      <localRepository path="${basedir}/target/tmp"/>
+      <remoteRepository url="file://${basedir}/target/fake/repository" id="test" />
+    </artifact:dependencies>
+    <check.file.not.exists file="target/tmp/it/ant-tasks/snapshotUniqueTrue/2.0.8-SNAPSHOT/maven-metadata-test.xml" type="file"/>
+    <check.file.exists file="target/tmp/it/ant-tasks/snapshotUniqueTrue/2.0.8-SNAPSHOT/maven-metadata-mirror-cd.xml" type="file"/>
+
+    <!-- MANTTASKS-141 -->
+    <delete dir="${basedir}/target/tmp"/>
+    <artifact:dependencies settingsFile="${basedir}/src/test/settings-mirror-complex.xml">
+      <dependency groupId="it.ant-tasks" artifactId="snapshotUniqueFalse" version="2.0.7-SNAPSHOT"/>
+      <localRepository path="${basedir}/target/tmp"/>
+      <remoteRepository url="file://${basedir}/target/fake/repository" id="yat" />
+    </artifact:dependencies>
   </target>
 
   <target name="test-deps-two-repos" depends="initTaskDefs">
@@ -427,17 +447,17 @@
   </target>
 
   <target name="test-deploy" depends="initTaskDefs,installSshProvider">
-    <property name="outJar" value="${basedir}/sample.build.xml"/>
+    <property name="outJar" value="${basedir}/build-tests.xml"/>
     <property name="targetDir" value="${deploy.repository.url}/org/apache/maven/test/sample-build-test/2.0-beta-4-SNAPSHOT"/>
     <delete dir="${deploy.repository.url}"/>
 
     <artifact:install file="${outJar}">
-      <pom file="sample-build-test.pom"/>
+      <pom file="src/test/simple-pom.xml"/>
     </artifact:install>
 
     <artifact:deploy file="${outJar}">
       <remoteSnapshotRepository refid="deploy.repository"/>
-      <pom file="sample-build-test.pom"/>
+      <pom file="src/test/simple-pom.xml"/>
     </artifact:deploy>
     <!-- deployment in ${deploy.repository.url} should have created a directory -->
     <check.file.exists file="${targetDir}" type="dir"/>
@@ -446,7 +466,7 @@
 
     <artifact:deploy file="${outJar}" uniqueVersion="false">
       <remoteSnapshotRepository refid="deploy.repository"/>
-      <pom file="sample-build-test.pom"/>
+      <pom file="src/test/simple-pom.xml"/>
     </artifact:deploy>
     <!-- when uniqueVersion="false", file -SNAPSHOT.jar should be created -->
     <check.file.exists file="${targetDir}/sample-build-test-2.0-beta-4-SNAPSHOT.jar"/>
@@ -456,7 +476,7 @@
       <remoteRepository url="scp://localhost/tmp/deployment-repo" id="scp.localhost.repo">
         <authentication username="${user.name}" privateKey="${user.home}/.ssh/id_dsa"/>
       </remoteRepository>
-      <pom file="sample-build-test.pom"/>
+      <pom file="src/test/simple-pom.xml"/>
     </artifact:deploy>
   </target>
 
@@ -524,8 +544,8 @@
   </target>
 
   <target name="test-no-dist-mgmt" depends="initTaskDefs">
-    <artifact:deploy file="sample-build-test.pom">
-      <pom file="sample-build-test.pom" />
+    <artifact:deploy file="src/test/simple-pom.xml">
+      <pom file="src/test/simple-pom.xml" />
       <remoteRepository refid="deploy.repository" />
     </artifact:deploy>
   </target>
@@ -533,8 +553,8 @@
   <target name="test-deploy-attached" depends="initTaskDefs">
     <echo message="test" file="${basedir}/target/sample-build-test.pom.asc"/>
 
-    <artifact:deploy file="sample-build-test.pom">
-      <pom file="sample-build-test.pom" />
+    <artifact:deploy file="src/test/simple-pom.xml">
+      <pom file="src/test/simple-pom.xml" />
       <remoteRepository refid="deploy.repository" />
       <attach file="${basedir}/target/sample-build-test.pom.asc" type="pom.asc"/>
     </artifact:deploy>
@@ -543,8 +563,8 @@
   <target name="test-install-attached" depends="initTaskDefs">
     <echo message="test" file="${basedir}/target/sample-build-test.pom.asc"/>
 
-    <artifact:install file="sample-build-test.pom">
-      <pom file="sample-build-test.pom" />
+    <artifact:install file="src/test/simple-pom.xml">
+      <pom file="src/test/simple-pom.xml" />
       <localRepository refid="local.repository"/>
       <attach file="${basedir}/target/sample-build-test.pom.asc" type="pom.asc"/>
     </artifact:install>
@@ -600,6 +620,32 @@
     <check.file.exists file="target/files/scopes-test/commons-collections/commons-collections" type="dir"/>
     <check.file.not.exists file="target/files/scopes-test/org/apache/commons/commons-io" type="dir"/>
     <check.file.not.exists file="target/files/scopes-test/commons-logging/commons-logging" type="dir"/>
+  </target>
+
+  <target name="test-system-scope" depends="initTaskDefs">
+    <artifact:dependencies pathId="system.scope.classpath" filesetId="system.scope.fileset" useScope="compile">
+      <pom file="src/test/pom-with-system-scope.xml" />
+      <localRepository refid="local.repository"/>
+    </artifact:dependencies>
+
+    <pathconvert property="system.scope.classpath.property" targetos="unix" refid="system.scope.classpath"/>
+    <path id="local.repository.path" path="${basedir}/target/local-repo" />
+    <pathconvert property="local.repository.property" targetos="unix" refid="local.repository.path"/>
+
+    <echo message="${sun.jdk:tools:jar}"/>
+    <echo>
+      classpath: ${system.scope.classpath.property}
+    </echo>
+    
+    <condition property="test.fail">
+      <length string="${system.scope.classpath.property}" trim="true" length="0" />
+    </condition>
+    <fail if="test.fail">Artifact with system scope should be added to classpath.</fail>
+    
+    <condition property="test.fail">
+      <contains string="${system.scope.classpath.property}" substring="${local.repository.property}"/>
+    </condition>
+    <fail if="test.fail">For system scope path should not come from local repository.</fail>
   </target>
 
   <macrodef name="check.file.exists">

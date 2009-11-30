@@ -28,7 +28,7 @@
 
 The Mvn Task
 
-  <<Note: This task is only available since version 2.0.10>>
+  <<Note: This task is available since version 2.0.10 of the maven ant tasks>>
 
   The Maven Ant Tasks have some limited support for calling a full Maven build from Ant.
   The <<<mvn>>> task is a subclass of the Ant {{{http://ant.apache.org/manual/CoreTasks/java.html}java}}
@@ -69,7 +69,7 @@ Running the Mvn Task without a Maven Installation
   </artifact:mvn>
 -----
 
-  <<Note: this will use version 2.0.10 of the core Maven jar files>>
+  <<Note: this will use version ${mavenVersion} of the core Maven libraries contained in the ant tasks jar>>
 
 Using the Java Task
 

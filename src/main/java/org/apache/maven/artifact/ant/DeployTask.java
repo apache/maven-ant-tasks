@@ -29,6 +29,7 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 
 import java.util.Iterator;
 
@@ -88,9 +89,15 @@ public class DeployTask
 
     protected void doExecute()
     {
+        if ( file == null && ( attachedArtifacts.size() == 0 ) )
+        {
+            throw new BuildException( "You must specify a file and/or an attached artifact "
+                + "to deploy to the repository." );
+        }
+        
         ArtifactRepository localRepo = createLocalArtifactRepository();
 
-        Pom pom = buildPom( localRepo );
+        Pom pom = initializePom( localRepo );
 
         if ( pom == null )
         {
@@ -109,22 +116,20 @@ public class DeployTask
 
         ArtifactRepository deploymentRepository = getDeploymentRepository( pom, artifact );
 
-        log( "Deploying to " + deploymentRepository.getUrl() );
+        log( "Deploying to " + deploymentRepository.getUrl(), Project.MSG_INFO );
         ArtifactDeployer deployer = (ArtifactDeployer) lookup( ArtifactDeployer.ROLE );
         try
         {
-            if ( !isPomArtifact )
+            if ( file != null )
             {
-                if ( file == null )
+                if ( !isPomArtifact )
                 {
-                    throw new BuildException( "You must specify a file to deploy to the repository." );
+                    deployer.deploy( file, artifact, deploymentRepository, localRepo );
                 }
-
-                deployer.deploy( file, artifact, deploymentRepository, localRepo );
-            }
-            else
-            {
-                deployer.deploy( pom.getFile(), artifact, deploymentRepository, localRepo );
+                else
+                {
+                    deployer.deploy( pom.getFile(), artifact, deploymentRepository, localRepo );
+                }
             }
 
             // Deploy any attached artifacts

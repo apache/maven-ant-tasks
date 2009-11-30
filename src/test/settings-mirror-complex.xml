@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <mirrors>
+    <mirror>
+      <id>mirror-ca</id>
+      <url>file:./target/null-repo</url>
+      <mirrorOf>*,!test</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>mirror-cb</id>
+      <url>file:./target/null-repo</url>
+      <mirrorOf>foo,yat</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>mirror-cc</id>
+      <url>file:./src/test/repo</url>
+      <mirrorOf>yat</mirrorOf>
+    </mirror>
+    <mirror>
+      <id>mirror-cd</id>
+      <url>file:./src/test/repo</url>
+      <mirrorOf>dummy,test</mirrorOf>
+    </mirror>
+  </mirrors>
+</settings>

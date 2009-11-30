@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
   <mirrors>
     <mirror>
-      <id>wildcard</id>
+      <id>mirror-b</id>
       <url>file:./src/test/repo</url>
       <mirrorOf>*</mirrorOf>
     </mirror>

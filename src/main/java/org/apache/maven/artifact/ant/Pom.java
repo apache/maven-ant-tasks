@@ -23,17 +23,25 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.CiManagement;
+import org.apache.maven.model.Contributor;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Developer;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.IssueManagement;
+import org.apache.maven.model.License;
+import org.apache.maven.model.MailingList;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.Organization;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.Scm;
 import org.apache.maven.profiles.ProfileManager;
+import org.apache.maven.project.DefaultProjectBuilderConfiguration;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.ProjectBuilderConfiguration;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -42,35 +50,52 @@ import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 /**
- * A POM typedef.
- *
- * Also an Ant Task that registers a handler called POMPropertyHelper that intercepts all calls to property value
- * resolution and replies instead of Ant to properties that start with the id of the pom.
- *
- * Example: ${maven.project.artifactId}
- *
+ * A POM typedef. Also an Ant Task that registers a handler called POMPropertyHelper that intercepts all calls to
+ * property value resolution and replies instead of Ant to properties that start with the id of the pom. Example:
+ * ${maven.project.artifactId}
+ * 
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:nicolaken@apache.org">Nicola Ken Barozzi</a>
  * @version $Id$
  */
-public class Pom extends AbstractArtifactWithRepositoryTask
+public class Pom
+    extends AbstractArtifactWithRepositoryTask
 {
+    /**
+     * The id refering to an existing pom object in the current Ant project.
+     */
     private String refid;
 
+    /**
+     * The id of this pom object to be stored in the current Ant project.
+     */
     private String antId;
 
+    /**
+     * The maven project represented by this pom
+     */
     private MavenProject mavenProject;
 
+    /**
+     * The file from which the pom was loaded.
+     */
     private File file;
 
+    /**
+     * The list of profiles to either activate or deactivate for this pom.
+     */
     private List profiles = new ArrayList();
 
+    private boolean inheritAllProperties = true;
+
     /**
-     * The property interceptor.
+     * The property intercepter.
      */
     private final POMPropertyHelper helper = new POMPropertyHelper();
 
@@ -79,38 +104,57 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         return refid;
     }
 
+    /**
+     * The ID used to retrieve this pom object from the Ant project.
+     * 
+     * @param refid
+     */
     public void setRefid( String refid )
     {
         this.refid = refid;
     }
 
+    /**
+     * The ID used to store this pom object in the Ant project.
+     * 
+     * @param id
+     */
     public void setId( String id )
     {
         this.antId = id;
     }
 
-    protected Pom getInstance()
+    /**
+     * Retrieve the pom object from the current Ant project using the configured refid.
+     * 
+     * @param refid
+     * @return
+     */
+    protected void getPomFromAntProject( String refid )
     {
-        Pom instance = this;
-        if ( refid != null )
+        if ( refid == null )
         {
-            instance = (Pom) getProject().getReference( refid );
-            if ( instance == null )
-            {
-                throw new BuildException( "Invalid reference: '" + refid + "'" );
-            }
+            throw new BuildException( "POM refid is null." );
         }
-        return instance;
+
+        if ( getProject().getReference( refid ) == null )
+        {
+            throw new BuildException( "Unable to locate POM reference: '" + refid + "'" );
+        }
+
+        Pom thePom = (Pom) getProject().getReference( refid );
+        mavenProject = thePom.getMavenProject();
+        file = thePom.getFile();
     }
 
     public void setMavenProject( MavenProject mavenProject )
     {
-        getInstance().mavenProject = mavenProject;
+        this.mavenProject = mavenProject;
     }
 
     public File getFile()
     {
-        return getInstance().file;
+        return file;
     }
 
     public void setFile( File file )
@@ -120,12 +164,12 @@ public class Pom extends AbstractArtifactWithRepositoryTask
 
     public List getProfiles()
     {
-    	return profiles;
+        return profiles;
     }
 
-    public void addProfile(Profile activeProfile)
+    public void addProfile( Profile activeProfile )
     {
-    	this.profiles.add(activeProfile);
+        this.profiles.add( activeProfile );
     }
 
     public Artifact getArtifact()
@@ -152,23 +196,15 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         return getMavenProject().getAttachedArtifacts();
     }
 
-    void initialise( MavenProjectBuilder builder, ArtifactRepository localRepository )
+    public void initialiseMavenProject( MavenProjectBuilder builder, ArtifactRepository localRepository )
     {
-        if ( mavenProject != null )
-        {
-            log( "POM is already initialized for: " + mavenProject.getId(), Project.MSG_DEBUG );
-
-            return;
-        }
-        // TODO: should this be in execute() too? Would that work when it is used as a type?
         if ( file != null )
         {
             addAntRepositoriesToProfileManager();
-
+            ProjectBuilderConfiguration builderConfig = this.createProjectBuilderConfig( localRepository );
             try
             {
-
-                mavenProject = builder.build( file, localRepository, getActivatedProfiles() );
+                mavenProject = builder.build( file, builderConfig );
             }
             catch ( ProjectBuildingException e )
             {
@@ -177,139 +213,143 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         }
         else if ( refid != null )
         {
-            getInstance().initialise( builder, localRepository );
+            this.getPomFromAntProject( refid );
         }
     }
 
     protected MavenProject getMavenProject()
     {
-        return getInstance().mavenProject;
+        if ( mavenProject == null )
+        {
+            mavenProject = createMinimalProject( createLocalArtifactRepository() );
+        }
+        return mavenProject;
     }
 
     public String getArtifactId()
     {
         return getMavenProject().getArtifactId();
-    } // -- String getArtifactId()
+    }
 
     public Build getBuild()
     {
         return getMavenProject().getBuild();
-    } // -- Build getBuild()
+    }
 
     public CiManagement getCiManagement()
     {
         return getMavenProject().getCiManagement();
-    } // -- CiManagement getCiManagement()
+    }
 
     public List getContributors()
     {
         return getMavenProject().getContributors();
-    } // -- List getContributors()
+    }
 
     public List getDependencies()
     {
         return getMavenProject().getDependencies();
-    } // -- List getDependencies()
+    }
 
     public DependencyManagement getDependencyManagement()
     {
         return getMavenProject().getDependencyManagement();
-    } // -- DependencyManagement getDependencyManagement()
+    }
 
     public String getDescription()
     {
         return getMavenProject().getDescription();
-    } // -- String getDescription()
+    }
 
     public List getDevelopers()
     {
         return getMavenProject().getDevelopers();
-    } // -- List getDevelopers()
+    }
 
     public DistributionManagement getDistributionManagement()
     {
         return getMavenProject().getDistributionManagement();
-    } // -- DistributionManagement getDistributionManagement()
+    }
 
     public String getGroupId()
     {
         return getMavenProject().getGroupId();
-    } // -- String getGroupId()
+    }
 
     public String getInceptionYear()
     {
         return getMavenProject().getInceptionYear();
-    } // -- String getInceptionYear()
+    }
 
     public IssueManagement getIssueManagement()
     {
         return getMavenProject().getIssueManagement();
-    } // -- IssueManagement getIssueManagement()
+    }
 
     public List getLicenses()
     {
         return getMavenProject().getLicenses();
-    } // -- List getLicenses()
+    }
 
     public List getMailingLists()
     {
         return getMavenProject().getMailingLists();
-    } // -- List getMailingLists()
+    }
 
     public String getModelVersion()
     {
         return getMavenProject().getModelVersion();
-    } // -- String getModelVersion()
+    }
 
     public List getModules()
     {
         return getMavenProject().getModules();
-    } // -- List getModules()
+    }
 
     public String getName()
     {
         return getMavenProject().getName();
-    } // -- String getName()
+    }
 
     public Organization getOrganization()
     {
         return getMavenProject().getOrganization();
-    } // -- Organization getOrganization()
+    }
 
     public String getPackaging()
     {
         return getMavenProject().getPackaging();
-    } // -- String getPackaging()
+    }
 
     public List getPluginRepositories()
     {
         return getMavenProject().getPluginRepositories();
-    } // -- List getPluginRepositories()
+    }
 
     public Reporting getReporting()
     {
         return getMavenProject().getReporting();
-    } // -- Reports getReports()
+    }
 
     public List getRepositories()
     {
         return getMavenProject().getRepositories();
-    } // -- List getRepositories()
+    }
 
     public Scm getScm()
     {
         return getMavenProject().getScm();
-    } // -- Scm getScm()
+    }
 
     public String getUrl()
     {
         return getMavenProject().getUrl();
-    } // -- String getUrl()
+    }
 
     public String getVersion()
     {
         return getMavenProject().getVersion();
-    } // -- String getVersion()
+    }
 
     public String getId()
     {
@@ -321,26 +361,31 @@ public class Pom extends AbstractArtifactWithRepositoryTask
      */
     protected void doExecute()
     {
+        if ( getId() == null )
+        {
+            throw new BuildException( "id required for pom task" );
+        }
         ArtifactRepository localRepo = createLocalArtifactRepository();
         MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
-        initialise( projectBuilder, localRepo );
+        initialiseMavenProject( projectBuilder, localRepo );
 
-        Project project = getProject();
+        Project antProject = getProject();
 
         // Add a reference to this task/type
-        project.addReference( antId, this );
+        antProject.addReference( antId, this );
 
-        // Register the property interceptor
-        PropertyHelper phelper = PropertyHelper.getPropertyHelper( project );
+        // Register the property intercepter
+        PropertyHelper phelper = PropertyHelper.getPropertyHelper( antProject );
         helper.setNext( phelper.getNext() );
-        helper.setProject( project );
+        helper.setProject( antProject );
         phelper.setNext( helper );
     }
 
     /**
-     * The property interceptor that handles the calls for "pom." properties
+     * The property intercepter that handles the calls for "pom." properties
      */
-    private class POMPropertyHelper extends PropertyHelper
+    private class POMPropertyHelper
+        extends PropertyHelper
     {
         /**
          * The method that gets called by Ant with every request of property
@@ -423,7 +468,7 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         getProfileManager().addProfile( repositoriesProfile );
         getProfileManager().explicitlyActivate( repositoriesProfile.getId() );
     }
-    
+
     private ProfileManager getActivatedProfiles()
     {
         ProfileManager profileManager = getProfileManager();
@@ -450,4 +495,161 @@ public class Pom extends AbstractArtifactWithRepositoryTask
         }
         return profileManager;
     }
+
+    /**
+     * Create a project builder configuration to be used when initializing the maven project.
+     * 
+     * @return
+     */
+    private ProjectBuilderConfiguration createProjectBuilderConfig( ArtifactRepository localArtifactRepository )
+    {
+        ProjectBuilderConfiguration builderConfig = new DefaultProjectBuilderConfiguration();
+        builderConfig.setLocalRepository( localArtifactRepository );
+        builderConfig.setGlobalProfileManager( this.getActivatedProfiles() );
+        builderConfig.setUserProperties( getAntProjectProperties() );
+        builderConfig.setExecutionProperties( getAntProjectProperties() );
+
+        return builderConfig;
+    }
+
+    /**
+     * Convert the Hashtable of Ant project properties to a Properties object
+     * 
+     * @return The Ant project properties
+     */
+    public Properties getAntProjectProperties()
+    {
+        Properties properties = new Properties();
+        Hashtable propsTable = null;
+        if ( this.isInheritAllProperties() )
+        {
+            propsTable = getProject().getProperties();
+        }
+        else
+        {
+            propsTable = getProject().getUserProperties();
+        }
+        Iterator propsIter = propsTable.keySet().iterator();
+
+        while ( propsIter.hasNext() )
+        {
+            String key = (String) propsIter.next();
+            String value = (String) propsTable.get( key );
+            properties.setProperty( key, value );
+        }
+
+        return properties;
+    }
+
+    /**
+     * If set to true, all properties are passed to the maven pom. If set to false, only user properties are passed to
+     * the pom.
+     * 
+     * @param inheritAllProperties
+     */
+    public void setInheritAllProperties( boolean inheritAllProperties )
+    {
+        this.inheritAllProperties = inheritAllProperties;
+    }
+
+    public boolean isInheritAllProperties()
+    {
+        return inheritAllProperties;
+    }
+
+    public Model getModel()
+    {
+        return getMavenProject().getModel();
+    }
+
+    public void setGroupId( String groupId )
+    {
+        getMavenProject().setGroupId( groupId );
+    }
+
+    public void setArtifactId( String artifactId )
+    {
+        getMavenProject().setArtifactId( artifactId );
+    }
+
+    public void setVersion( String version )
+    {
+        getMavenProject().setVersion( version );
+    }
+
+    public void addConfiguredCiManagement( CiManagement ciManagement )
+    {
+        getMavenProject().setCiManagement( ciManagement );
+    }
+
+    public void addConfiguredContributor ( Contributor contributor )
+    {
+        getMavenProject().addContributor( contributor );
+    }
+
+    public void addConfiguredDependency( Dependency dependency )
+    {
+        getMavenProject().getDependencies().add( dependency );
+    }
+
+    public void addConfiguredDependencyManagement( DependencyManagement dependencyManagement )
+    {
+        getMavenProject().getDependencyManagement().setDependencies( dependencyManagement.getDependencies() );
+    }
+
+    public void setDescription( String description )
+    {
+        getMavenProject().setDescription( description );
+    }
+
+    public void addConfiguredDeveloper( Developer developer )
+    {
+        getMavenProject().addDeveloper( developer );
+    }
+
+    public void setInceptionYear( String inceptionYear )
+    {
+        getMavenProject().setInceptionYear( inceptionYear );
+    }
+
+    public void addConfiguredIssueManagement( IssueManagement issueManagement )
+    {
+        getMavenProject().setIssueManagement( issueManagement );
+    }
+    
+    public void addConfiguredLicense ( License license )
+    {
+        getMavenProject().addLicense( license );
+    }
+    
+    public void addConfiguredMailingLists( MailingList mailingList )
+    {
+        getMavenProject().addMailingList( mailingList );
+    }
+
+    public void setName( String name )
+    {
+        getMavenProject().setName( name );
+    }
+
+    public void addConfiguredOrganization( Organization organization )
+    {
+        getMavenProject().setOrganization( organization );
+    }
+
+    public void setPackaging( String packaging )
+    {
+        getMavenProject().setPackaging( packaging );
+    }
+
+    public void addConfiguredScm( Scm scm )
+    {
+        getMavenProject().setScm( scm );
+    }
+
+    public void setUrl( String url )
+    {
+        getMavenProject().setUrl( url );
+    }
+
 }

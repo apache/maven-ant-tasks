@@ -60,11 +60,15 @@
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<scopes>>>            | A comma separated list of specific scopes to be retrieved.  If no value is provided, all scopes will be included.  | No   |  2.0.10  |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<verbose>>>           | If <<<true>>> this displays the results of each dependency resolution and their relationships. Default is <false>. | No | |
-*-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<versionsId>>>        | The property ID to store the versions of the resolved dependencies, for use by a {{{reference.html#VersionMapper} <<<VersionMapper>>>}}. | No | 2.0.7 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<addArtifactFileSetRefs>>> | If set to true, will add a fileset for each resolved dependency.  The fileset has an id of <<<groupId:artifactId:type[:classifier]>>>.  Default is <false>.  | No | 2.0.10 |
+| <<<cacheDependencyRefs>>> | If set to true, will generate an Ant build file that contains properties and fileset references for the dependencies.  Then try to load information from this file in subsequent builds.  Default is <false>.  | No | 2.1.0 |
+*-------------------------+---------------------------------------------------------------------------+--------------+-------------+
+| <<<addArtifactFileSetRefs>>> | Defines the name of the file in which to store properties and references to the paths of dependency artifacts.  Default is <false>.  | No | 2.1.0 |
+*-------------------------+---------------------------------------------------------------------------+--------------+-------------+
+| <<<addArtifactFileSetRefs>>> | <<Deprecated>> in version 2.1.0.  The dependencies task will always add a fileset with id of <<<groupId:artifactId:type[:classifier]>>>.  Default is <true>.  |   | 2.0.10 |
+*-------------------------+---------------------------------------------------------------------------+--------------+-------------+
+| <<<verbose>>>           | <<Deprecated>> in version 2.1.0.  Use the Ant command line -v option for verbose output.     | No | |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 
   The task can include the <<<dependency>>> nested type, in addition to the other shared types
@@ -96,6 +100,8 @@
 *------------------+--------------------------------------------------------+--------------+
 | <<<type>>>       | The type of the dependency. The default is <<<jar>>>.  | No           |
 *------------------+--------------------------------------------------------+--------------+
+| <<<classifier>>> | The classifier of the dependency.                      | No           |
+*------------------+--------------------------------------------------------+--------------+
 | <<<scope>>>      | The scope of the usage of the dependency, which affects which of that dependency's own dependencies are also retrieved. This can be <<<compile>>>, <<<runtime>>>, <<<test>>>, <<<provided>>>. | No |
 *------------------+--------------------------------------------------------+--------------+
 
@@ -121,9 +127,9 @@
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
 | <<Attribute>>       | <<Description>>                                                          | <<Required>>                                    | << Since >> |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
-| <<<file>>>          | The file to install in the repository.                                   | Yes, except if packaging is <<<pom>>>           |             |
+| <<<file>>>          | The file to install in the repository.                                   | Yes, unless an attached artifact is specified   |             |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
-| <<<pomRefId>>>      | The reference ID from a POM datatype defined earlier in the build file.  | No, if a <<<pom>>> nested element is provided instead |       |
+| <<<pomRefId>>>      | The reference ID from a POM datatype defined earlier in the build file.  | Yes, unless a <<<pom>>> nested element is provided instead |       |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
 | <<<settingsFile>>>  | The settings file to use. Defaults to <<<$\{user.home\}/.ant/settings.xml>>> or if that doesn't exist <<<$\{user.home\}/.m2/settings.xml>>>. | No | 2.0.6 |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
@@ -163,6 +169,21 @@
 *------------------+--------------------------------------------------------------------------+--------------+-------------+
 | <<<version>>>    | The version of the provider to install.                                  | Yes          |             |
 *------------------+--------------------------------------------------------------------------+--------------+-------------+
+
+* <<<{writepom}>>> <(since 2.1.0)>
+
+  This task will write a POM object to a file.
+
+*------------------+--------------------------------------------------------------------------+--------------+
+| <<Attribute>>    | <<Description>>                                                          | <<Required>> |
+*------------------+--------------------------------------------------------------------------+--------------+
+| <<<pomRefId>>>   | The ID of the POM to write.                                              | Yes          |
+*------------------+--------------------------------------------------------------------------+--------------+
+| <<<file>>>       | The name of the file to write the POM                                    | Yes          |
+*------------------+--------------------------------------------------------------------------+--------------+
+| <<<trim>>>       | A boolean value to determine whether unnecessary information should be removed from the POM.  Defaults to <<<true>>>.   | No           |
+*------------------+--------------------------------------------------------------------------+--------------+
+
 
 
 {Type} Reference
@@ -227,12 +248,16 @@
 
   The POM element will load a POM file and make it available as a reference for the other tasks or as properties.
 
-*------------------+--------------------------------------------------------+--------------+
-| <<Attribute>>    | <<Description>>                                        | <<Required>> |
-*------------------+--------------------------------------------------------+--------------+
+*------------------+--------------------------------------------------------+--------------+-------------+
+| <<Attribute>>    | <<Description>>                                        | <<Required>> | << Since >> |
+*------------------+--------------------------------------------------------+--------------+-------------+
 | <<<file>>>       | The file of the POM to load.                           | Yes          |
 *------------------+--------------------------------------------------------+--------------+
 | <<<id>>>         | The reference ID of this POM.                          | No           |
+*------------------+--------------------------------------------------------+--------------+
+| <<<refid>>>      | The reference ID to use a previously defined POM.      | No           |
+*------------------+--------------------------------------------------------+--------------+
+| <<<inheritAllProperties>>>  | If set to true, all Ant properties will be passed to the Maven POM.  If set to false, only user (command-line) properties will be passed.  Defaults to true.   | No    | 2.1.0 |
 *------------------+--------------------------------------------------------+--------------+
 | <<<settingsFile>>>  | The settings file to use. Defaults to <<<$\{user.home\}/.ant/settings.xml>>> or if that doesn't exist <<<$\{user.home\}/.m2/settings.xml>>>. | No | 2.0.6 |
 *---------------------+--------------------------------------------------------------------------+-------------------------------------------------+-------------+
@@ -269,3 +294,4 @@
 *------------------+--------------------------------------------------------+--------------+
 
   You can see a full working example in the {{{examples/dependencies.html} examples}}.
+

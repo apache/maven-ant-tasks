@@ -19,6 +19,20 @@ package org.apache.maven.artifact.ant;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.manager.WagonManager;
@@ -29,6 +43,7 @@ import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.profiles.DefaultProfileManager;
 import org.apache.maven.profiles.ProfileManager;
+import org.apache.maven.project.DefaultProjectBuilderConfiguration;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
@@ -52,22 +67,12 @@ import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.embed.Embedder;
+import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
+import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.interpolation.EnvarBasedValueSource;
-import org.codehaus.plexus.util.interpolation.RegexBasedInterpolator;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Base class for artifact tasks.
@@ -78,6 +83,10 @@ import java.util.Map;
 public abstract class AbstractArtifactTask
     extends Task
 {
+    private static final String WILDCARD = "*";
+
+    private static final String EXTERNAL_WILDCARD = "external:*";
+
     private static ClassLoader plexusClassLoader;
 
     private File userSettingsFile;
@@ -98,15 +107,10 @@ public abstract class AbstractArtifactTask
 
     protected ArtifactRepository createLocalArtifactRepository()
     {
-        if ( localRepository == null )
-        {
-            localRepository = getDefaultLocalRepository();
-        }
-
         ArtifactRepositoryLayout repositoryLayout =
-            (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, localRepository.getLayout() );
+            (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, getLocalRepository().getLayout() );
 
-        return new DefaultArtifactRepository( "local", "file://" + localRepository.getPath(), repositoryLayout );
+        return new DefaultArtifactRepository( "local", "file://" + getLocalRepository().getPath(), repositoryLayout );
     }
 
     /**
@@ -412,7 +416,6 @@ public abstract class AbstractArtifactTask
         r.setUrl( pomRepository.getUrl() );
         r.setLayout( pomRepository.getLayout() );
 
-        updateRepositoryWithSettings( r );
         return r;
     }
 
@@ -421,6 +424,13 @@ public abstract class AbstractArtifactTask
         // TODO: actually, we need to not funnel this through the ant repository - we should pump settings into wagon
         // manager at the start like m2 does, and then match up by repository id
         // As is, this could potentially cause a problem with 2 remote repositories with different authentication info
+
+        Mirror mirror = getMirror( getSettings().getMirrors(), repository );
+        if ( mirror != null )
+        {
+            repository.setUrl( mirror.getUrl() );
+            repository.setId( mirror.getId() );
+        }
 
         if ( repository.getAuthentication() == null )
         {
@@ -439,18 +449,8 @@ public abstract class AbstractArtifactTask
                 repository.addProxy( new Proxy( proxy ) );
             }
         }
-         
-        Mirror mirror = getSettings().getMirrorOf( repository.getId() );
-        if ( mirror == null )
-        {
-            mirror = getSettings().getMirrorOf( "*" );
-        }
-        if ( mirror != null )
-        {
-            repository.setUrl( mirror.getUrl() );
-        }
     }
-         
+
     protected Object lookup( String role )
     {
         try
@@ -512,50 +512,56 @@ public abstract class AbstractArtifactTask
         return container;
     }
 
-    public Pom buildPom( ArtifactRepository localArtifactRepository )
+    /**
+     * Tries to initialize the pom.  If no pom has been configured, returns null.
+     * 
+     * @param localArtifactRepository
+     * @return An initialized pom or null.
+     */
+    public Pom initializePom( ArtifactRepository localArtifactRepository )
     {
-        if ( pomRefId != null && pom != null )
-        {
-            throw new BuildException( "You cannot specify both a POM element and a pomrefid element" );
-        }
 
-        Pom pom = this.pom;
-        if ( pomRefId != null )
-        {
-            pom = (Pom) getProject().getReference( pomRefId );
-            if ( pom == null )
-            {
-                throw new BuildException( "Reference '" + pomRefId + "' was not found." );
-            }
-        }
-
+        Pom pom = getPom();
         if ( pom != null )
         {
             MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
-            pom.initialise( projectBuilder, localArtifactRepository );
+            pom.initialiseMavenProject( projectBuilder, localArtifactRepository );
         }
+        
         return pom;
     }
 
-    protected Pom createDummyPom( ArtifactRepository localArtifactRepository )
+    protected Pom createDummyPom( ArtifactRepository localRepository )
+    {
+        Pom pom = new Pom();
+
+        pom.setMavenProject( createMinimalProject( localRepository ) );
+
+        return pom;
+    }
+    
+    /**
+     * Create a minimal project when no POM is available.
+     * 
+     * @param localRepository
+     * @return
+     */
+    protected MavenProject createMinimalProject( ArtifactRepository localRepository )
     {
         MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
+        DefaultProjectBuilderConfiguration builderConfig = new DefaultProjectBuilderConfiguration( );
+        builderConfig.setLocalRepository( localRepository );
+        builderConfig.setGlobalProfileManager( getProfileManager() );
 
-        MavenProject mavenProject;
         try
         {
-            mavenProject = projectBuilder.buildStandaloneSuperProject( localArtifactRepository, getProfileManager() );
+            return projectBuilder.buildStandaloneSuperProject( builderConfig );
         }
         catch ( ProjectBuildingException e )
         {
             throw new BuildException( "Unable to create dummy Pom", e );
         }
-
-        Pom pom = new Pom();
-
-        pom.setMavenProject( mavenProject );
-
-        return pom;
+        
     }
     
     protected Artifact createDummyArtifact()
@@ -616,7 +622,37 @@ public abstract class AbstractArtifactTask
     {
         this.pom = pom;
     }
+    
+    /**
+     * Try to get the POM from the nested pom element or a pomRefId
+     * 
+     * @return The pom object
+     */
+    public Pom getPom()
+    {
+        Pom thePom = this.pom;
+        
+        if ( thePom != null && getPomRefId() != null )
+        {
+            throw new BuildException( "You cannot specify both a nested \"pom\" element and a \"pomrefid\" attribute" );
+        }
 
+        if ( getPomRefId() != null )
+        {
+            Object pomRefObj = getProject().getReference( getPomRefId() );
+            if ( pomRefObj instanceof Pom )
+            {
+                thePom = (Pom) pomRefObj;
+            }
+            else
+            {
+                throw new BuildException( "Reference '" + pomRefId + "' was not found." );
+            }
+        }
+        
+        return thePom;
+    }
+    
     public String getPomRefId()
     {
         return pomRefId;
@@ -629,6 +665,10 @@ public abstract class AbstractArtifactTask
 
     public LocalRepository getLocalRepository()
     {
+        if ( localRepository == null )
+        {
+            localRepository = getDefaultLocalRepository();
+        }
         return localRepository;
     }
 
@@ -667,6 +707,9 @@ public abstract class AbstractArtifactTask
     /** @noinspection RefusedBequest */
     public void execute()
     {
+        // Display the version if the log level is verbose
+        showVersion();
+        
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
@@ -689,6 +732,163 @@ public abstract class AbstractArtifactTask
             Thread.currentThread().setContextClassLoader( originalClassLoader );
         }
     }
-
+    
+    /**
+     * The main entry point for the task.
+     */
     protected abstract void doExecute();
+
+    /**
+     * This method finds a matching mirror for the selected repository. If there is an exact match,
+     * this will be used. If there is no exact match, then the list of mirrors is examined to see if
+     * a pattern applies.
+     * 
+     * @param mirrors The available mirrors.
+     * @param repository See if there is a mirror for this repository.
+     * @return the selected mirror or null if none is found.
+     */
+    private Mirror getMirror( List mirrors, RemoteRepository repository )
+    {
+        String repositoryId = repository.getId();
+
+        if ( repositoryId != null )
+        {
+            for ( Iterator it = mirrors.iterator(); it.hasNext(); )
+            {
+                Mirror mirror = (Mirror) it.next();
+
+                if ( repositoryId.equals( mirror.getMirrorOf() ) )
+                {
+                    return mirror;
+                }
+            }
+
+            for ( Iterator it = mirrors.iterator(); it.hasNext(); )
+            {
+                Mirror mirror = (Mirror) it.next();
+
+                if ( matchPattern( repository, mirror.getMirrorOf() ) )
+                {
+                    return mirror;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * This method checks if the pattern matches the originalRepository. Valid patterns: * =
+     * everything external:* = everything not on the localhost and not file based. repo,repo1 = repo
+     * or repo1 *,!repo1 = everything except repo1
+     * 
+     * @param originalRepository to compare for a match.
+     * @param pattern used for match. Currently only '*' is supported.
+     * @return true if the repository is a match to this pattern.
+     */
+    boolean matchPattern( RemoteRepository originalRepository, String pattern )
+    {
+        boolean result = false;
+        String originalId = originalRepository.getId();
+
+        // simple checks first to short circuit processing below.
+        if ( WILDCARD.equals( pattern ) || pattern.equals( originalId ) )
+        {
+            result = true;
+        }
+        else
+        {
+            // process the list
+            String[] repos = pattern.split( "," );
+            
+            for ( int i = 0; i < repos.length; i++ )
+            {
+                String repo = repos[i];
+                
+                // see if this is a negative match
+                if ( repo.length() > 1 && repo.startsWith( "!" ) )
+                {
+                    if ( originalId.equals( repo.substring( 1 ) ) )
+                    {
+                        // explicitly exclude. Set result and stop processing.
+                        result = false;
+                        break;
+                    }
+                }
+                // check for exact match
+                else if ( originalId.equals( repo ) )
+                {
+                    result = true;
+                    break;
+                }
+                // check for external:*
+                else if ( EXTERNAL_WILDCARD.equals( repo ) && isExternalRepo( originalRepository ) )
+                {
+                    result = true;
+                    // don't stop processing in case a future segment explicitly excludes this repo
+                }
+                else if ( WILDCARD.equals( repo ) )
+                {
+                    result = true;
+                    // don't stop processing in case a future segment explicitly excludes this repo
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Checks the URL to see if this repository refers to an external repository
+     * 
+     * @param originalRepository
+     * @return true if external.
+     */
+    boolean isExternalRepo( RemoteRepository originalRepository )
+    {
+        try
+        {
+            URL url = new URL( originalRepository.getUrl() );
+            return !( url.getHost().equals( "localhost" ) || url.getHost().equals( "127.0.0.1" ) || url.getProtocol().equals( "file" ) );
+        }
+        catch ( MalformedURLException e )
+        {
+            // bad url just skip it here. It should have been validated already, but the wagon lookup will deal with it
+            return false;
+        }
+    }
+
+    /**
+     * Log the current version of the ant-tasks to the verbose output.
+     */
+    protected void showVersion()
+    {
+        
+        Properties properties = new Properties();
+        final String antTasksPropertiesPath = "META-INF/maven/org.apache.maven/maven-ant-tasks/pom.properties";
+        InputStream resourceAsStream = AbstractArtifactTask.class.getClassLoader().getResourceAsStream( antTasksPropertiesPath );
+        
+        try
+        {
+            if ( resourceAsStream != null )
+            {
+                properties.load( resourceAsStream );
+            }
+
+            String version = properties.getProperty( "version", "unknown" );
+            String builtOn = properties.getProperty( "builtOn" );
+            if ( builtOn != null )
+            {
+                log( "Maven Ant Tasks version: " + version + " built on " + builtOn, Project.MSG_VERBOSE );
+            }
+            else
+            {
+                log( "Maven Ant Tasks version: " + version, Project.MSG_VERBOSE );
+            }
+        }
+        catch ( IOException e )
+        {
+            log( "Unable to determine version from Maven Ant Tasks JAR file: " + e.getMessage(), Project.MSG_WARN );
+        }
+    }
+
 }

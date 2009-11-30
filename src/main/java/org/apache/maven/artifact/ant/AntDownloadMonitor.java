@@ -60,7 +60,8 @@ public class AntDownloadMonitor
         String message = event.getRequestType() == TransferEvent.REQUEST_PUT ? "Uploading" : "Downloading";
         String dest = event.getRequestType() == TransferEvent.REQUEST_PUT ? " to " : " from ";
 
-        log( message + ": " + event.getResource().getName() + dest + event.getWagon().getRepository().getId() );
+        log( message + ": " + event.getResource().getName() + dest + "repository "
+            + event.getWagon().getRepository().getId() + " at " + event.getWagon().getRepository().getUrl() );
     }
 
     public void transferProgress( TransferEvent event, byte[] bytes, int i )
