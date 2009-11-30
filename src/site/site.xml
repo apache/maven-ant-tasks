@@ -23,6 +23,7 @@
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
+      <item name="Download" href="download.html"/>
       <item name="Installation" href="installation.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="Release Notes" href="release-notes.html"/>
@@ -32,6 +33,7 @@
       <item name="dependencies" href="examples/dependencies.html"/>
       <item name="install, deploy" href="examples/install-deploy.html"/>
       <item name="pom" href="examples/pom.html"/>
+      <item name="writepom" href="examples/write-pom.html"/>
       <item name="mvn" href="examples/mvn.html"/>
     </menu>
     <menu name="Reference">
@@ -41,6 +43,7 @@
       <item name="localRepository" href="reference.html#localRepository"/>
       <item name="remoteRepository" href="reference.html#remoteRepository"/>
       <item name="pom" href="reference.html#pom"/>
+      <item name="writepom" href="reference.html#writepom"/>
       <item name="versionMapper" href="reference.html#versionMapper"/>
     </menu>
   </body>

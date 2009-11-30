@@ -30,6 +30,7 @@
 Installing Maven Ant Tasks
 
   For convenience, Maven Ant Tasks and all its dependencies are packaged together as a single JAR file.
+  This can be downloaded from the {{{download.html} download page}}.
 
   There are two ways to use the tasks from your scripts.
 

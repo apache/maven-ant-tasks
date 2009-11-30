@@ -170,7 +170,7 @@
 | <<<version>>>    | The version of the provider to install.                                  | Yes          |             |
 *------------------+--------------------------------------------------------------------------+--------------+-------------+
 
-* <<<{writePom}>>> <(since 2.1.0)>
+* <<<{writepom}>>> <(since 2.1.0)>
 
   This task will write a POM object to a file.
 
