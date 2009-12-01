@@ -28,6 +28,41 @@
 
 Maven Ant Tasks
 
+* 2.1.0 Release Notes
+
+  The full list of changes can be found in our {{{http://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=11533&version=13522}issue management system}}, and is reproduced below.
+
+** Bug
+
+    * [MANTTASKS-4] - System scope not working properly in Maven Antlib
+    
+    * [MANTTASKS-152] - Mvn task omit localRepository param
+    
+    * [MANTTASKS-153] - Properties defined in Ant are not passed to Maven
+    
+    * [MANTTASKS-155] - Dependency fileset should set the current ant project
+    
+    * [MANTTASKS-159] - Wrong credentials used for mirrored repositories
+    
+    * [MANTTASKS-160] - Wrong metadata files created for mirrored remote repositories
+    
+    * [MANTTASKS-167] - Generated ant build file should save version list for version mapper
+
+** Improvement
+
+    * [MANTTASKS-117] - Setting Maven user-properties not possible
+    
+    * [MANTTASKS-169] - Dependencies "verbose" option should be deprecated in favor of standard ant verbose option
+
+** New Feature
+
+    * [MANTTASKS-151] - Support for artfacts that are 'classified' from birth
+    
+    * [MANTTASKS-156] - Add feature to dependencies task to write file paths to a file.
+    
+    * [MANTTASKS-168] - New task to write a pom file
+
+
 * 2.0.10 Release Notes
 
   The full list of changes can be found in our {{{http://jira.codehaus.org/secure/IssueNavigator.jspa?reset=true&pid=11533&fixfor=14199}issue management system}}, and is reproduced below.
