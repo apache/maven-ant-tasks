@@ -46,7 +46,6 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
-import org.codehaus.plexus.util.introspection.ReflectionValueExtractor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ public class Pom
     /**
      * The id of this pom object to be stored in the current Ant project.
      */
-    private String antId;
+    String antId;
 
     /**
      * The maven project represented by this pom
@@ -97,7 +96,7 @@ public class Pom
     /**
      * The property intercepter.
      */
-    private final POMPropertyHelper helper = new POMPropertyHelper();
+    private final POMPropertyHelper helper = new POMPropertyHelper( this );
 
     public String getRefid()
     {
@@ -379,105 +378,14 @@ public class Pom
         try
         {
             // Ant 1.8.0 delegate
-            phelper.add( new POMPropertyEvaluator() );
+            POMPropertyEvaluator.register( this, phelper );
         }
-        catch ( NoSuchMethodError nsme )
+        catch ( LinkageError e )
         {
             // fallback to 1.6 - 1.7.1 intercepter chaining
             helper.setNext( phelper.getNext() );
             helper.setProject( antProject );
             phelper.setNext( helper );
-        }
-    }
-
-    /**
-     * The property intercepter that handles the calls for "pom." properties in Ant 1.6 - 1.7.1
-     */
-    private class POMPropertyHelper
-        extends PropertyHelper
-    {
-        /**
-         * The method that gets called by Ant 1.6 - 1.7.1 with every request of property
-         */
-        public Object getPropertyHook( String ns, String name, boolean user )
-        {
-            String prefix = antId + ".";
-
-            if ( !name.startsWith( prefix ) )
-            {
-                // pass on to next interceptor
-                return super.getPropertyHook( ns, name, user );
-            }
-            try
-            {
-                // else handle the property resolution
-                String expression = name.substring( prefix.length() );
-                return getPOMValue( "project." + expression );
-            }
-            catch ( Exception ex )
-            {
-                ex.printStackTrace();
-                return null;
-            }
-        }
-
-        private static final String PROPERTIES_PREFIX = "project.properties.";
-
-        protected Object getPOMValue( String expression )
-        {
-            Object value = null;
-
-            try
-            {
-                if ( expression.startsWith( PROPERTIES_PREFIX ) )
-                {
-                    expression = expression.substring( PROPERTIES_PREFIX.length() );
-                    value = getMavenProject().getProperties().get( expression );
-                }
-                else
-                {
-                    value = ReflectionValueExtractor.evaluate( expression, getMavenProject() );
-                }
-            }
-            catch ( Exception e )
-            {
-                throw new BuildException( "Error extracting expression from POM", e );
-            }
-
-            return value;
-        }
-
-    }
-
-    /**
-     * POM Property Delegate, for Ant 1.8.0.
-     *
-     * @since maven-ant-tasks 2.1.1
-     */
-    private class POMPropertyEvaluator
-        extends POMPropertyHelper
-        implements PropertyHelper.PropertyEvaluator
-    {
-        public Object evaluate( String property, PropertyHelper propertyHelper )
-        {
-            String prefix = antId + ".";
-
-            if ( !property.startsWith( prefix ) )
-            {
-                return null;
-            }
-
-            try
-            {
-                // else handle the property resolution
-                String expression = property.substring( prefix.length() );
-                return getPOMValue( "project." + expression );
-            }
-            catch ( Exception ex )
-            {
-                ex.printStackTrace();
-                return null;
-            }
         }
     }
 

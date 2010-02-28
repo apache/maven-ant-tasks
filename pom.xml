@@ -254,7 +254,8 @@
                   <exclude>junit:junit</exclude>
                   <exclude>jtidy:jtidy</exclude>
                   <exclude>xml-apis:xml-apis</exclude>
-                  <exclude>ant:ant</exclude>
+                  <exclude>org.apache.ant:ant</exclude>
+                  <exclude>org.apache.ant:ant-launcher</exclude>
                 </excludes>
               </artifactSet>
               <relocations>
