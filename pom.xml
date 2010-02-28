@@ -114,12 +114,12 @@
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/ant-tasks/trunk</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/ant-tasks/trunk</url>
   </scm>
-  
+
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MANTTASKS</url>
   </issueManagement>
-  
+
   <distributionManagement>
     <site>
       <id>apache.website</id>
@@ -134,9 +134,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>ant</groupId>
+      <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
-      <version>1.6.5</version>
+      <version>1.8.0</version>
     </dependency>
     <dependency>
       <groupId>classworlds</groupId>
@@ -331,5 +331,5 @@
       </build>
     </profile>
   </profiles>
-  
+
 </project>

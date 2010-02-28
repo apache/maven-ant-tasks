@@ -59,7 +59,7 @@ import java.util.Properties;
  * A POM typedef. Also an Ant Task that registers a handler called POMPropertyHelper that intercepts all calls to
  * property value resolution and replies instead of Ant to properties that start with the id of the pom. Example:
  * ${maven.project.artifactId}
- * 
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:nicolaken@apache.org">Nicola Ken Barozzi</a>
  * @version $Id$
@@ -106,7 +106,7 @@ public class Pom
 
     /**
      * The ID used to retrieve this pom object from the Ant project.
-     * 
+     *
      * @param refid
      */
     public void setRefid( String refid )
@@ -116,7 +116,7 @@ public class Pom
 
     /**
      * The ID used to store this pom object in the Ant project.
-     * 
+     *
      * @param id
      */
     public void setId( String id )
@@ -126,7 +126,7 @@ public class Pom
 
     /**
      * Retrieve the pom object from the current Ant project using the configured refid.
-     * 
+     *
      * @param refid
      * @return
      */
@@ -357,7 +357,7 @@ public class Pom
     }
 
     /**
-     * Registers POMPropertyHelper as a property interceptor
+     * Registers POMPropertyHelper as a property interceptor in Ant 1.6 - 1.7.1, or property delegate in Ant 1.8.0
      */
     protected void doExecute()
     {
@@ -374,21 +374,30 @@ public class Pom
         // Add a reference to this task/type
         antProject.addReference( antId, this );
 
-        // Register the property intercepter
+        // Register the property intercepter or delegate
         PropertyHelper phelper = PropertyHelper.getPropertyHelper( antProject );
-        helper.setNext( phelper.getNext() );
-        helper.setProject( antProject );
-        phelper.setNext( helper );
+        try
+        {
+        	// Ant 1.8.0 delegate
+            phelper.add( new POMPropertyEvaluator() );
+        }
+        catch ( NoSuchMethodError nsme )
+        {
+        	// fallback to 1.6 - 1.7.1 intercepter chaining
+	        helper.setNext( phelper.getNext() );
+	        helper.setProject( antProject );
+	        phelper.setNext( helper );
+        }
     }
 
     /**
-     * The property intercepter that handles the calls for "pom." properties
+     * The property intercepter that handles the calls for "pom." properties in Ant 1.6 - 1.7.1
      */
     private class POMPropertyHelper
         extends PropertyHelper
     {
         /**
-         * The method that gets called by Ant with every request of property
+         * The method that gets called by Ant 1.6 - 1.7.1 with every request of property
          */
         public Object getPropertyHook( String ns, String name, boolean user )
         {
@@ -414,7 +423,7 @@ public class Pom
 
         private static final String PROPERTIES_PREFIX = "project.properties.";
 
-        private Object getPOMValue( String expression )
+        protected Object getPOMValue( String expression )
         {
             Object value = null;
 
@@ -439,6 +448,37 @@ public class Pom
         }
 
     }
+
+    /**
+     * POM Property Delegate, for Ant 1.8.0.
+     *
+     * @since maven-ant-tasks 2.1.1
+     */
+    private class POMPropertyEvaluator
+    	extends POMPropertyHelper
+    	implements PropertyHelper.PropertyEvaluator
+	{
+		public Object evaluate(String property, PropertyHelper propertyHelper) {
+            String prefix = antId + ".";
+
+            if ( !property.startsWith( prefix ) )
+            {
+            	return null;
+            }
+
+            try
+            {
+                // else handle the property resolution
+                String expression = property.substring( prefix.length() );
+                return getPOMValue( "project." + expression );
+            }
+            catch ( Exception ex )
+            {
+                ex.printStackTrace();
+                return null;
+            }
+		}
+	}
 
     /**
      * The repositories defined in the ant "pom" task need to be added manually to the profile manager. Otherwise they
@@ -498,7 +538,7 @@ public class Pom
 
     /**
      * Create a project builder configuration to be used when initializing the maven project.
-     * 
+     *
      * @return
      */
     private ProjectBuilderConfiguration createProjectBuilderConfig( ArtifactRepository localArtifactRepository )
@@ -514,7 +554,7 @@ public class Pom
 
     /**
      * Convert the Hashtable of Ant project properties to a Properties object
-     * 
+     *
      * @return The Ant project properties
      */
     public Properties getAntProjectProperties()
@@ -544,7 +584,7 @@ public class Pom
     /**
      * If set to true, all properties are passed to the maven pom. If set to false, only user properties are passed to
      * the pom.
-     * 
+     *
      * @param inheritAllProperties
      */
     public void setInheritAllProperties( boolean inheritAllProperties )
@@ -616,12 +656,12 @@ public class Pom
     {
         getMavenProject().setIssueManagement( issueManagement );
     }
-    
+
     public void addConfiguredLicense ( License license )
     {
         getMavenProject().addLicense( license );
     }
-    
+
     public void addConfiguredMailingLists( MailingList mailingList )
     {
         getMavenProject().addMailingList( mailingList );
