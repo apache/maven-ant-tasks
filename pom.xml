@@ -256,6 +256,7 @@
                   <exclude>xml-apis:xml-apis</exclude>
                   <exclude>org.apache.ant:ant</exclude>
                   <exclude>org.apache.ant:ant-launcher</exclude>
+                  <exclude>backport-util-concurrent:backport-util-concurrent</exclude>
                 </excludes>
               </artifactSet>
               <relocations>
@@ -266,6 +267,10 @@
                     <exclude>org.codehaus.plexus.util.xml.Xpp3Dom</exclude>
                     <exclude>org.codehaus.plexus.util.xml.pull.*</exclude>
                   </excludes>
+                </relocation>
+                <relocation>
+                  <pattern>edu.emory.mathcs.backport.java.util.concurrent</pattern>
+                  <shadedPattern>java.util.concurrent</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
