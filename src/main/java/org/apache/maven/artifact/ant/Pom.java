@@ -458,12 +458,13 @@ public class Pom
     	extends POMPropertyHelper
     	implements PropertyHelper.PropertyEvaluator
 	{
-		public Object evaluate(String property, PropertyHelper propertyHelper) {
+        public Object evaluate( String property, PropertyHelper propertyHelper )
+        {
             String prefix = antId + ".";
 
             if ( !property.startsWith( prefix ) )
             {
-            	return null;
+                return null;
             }
 
             try
@@ -477,7 +478,7 @@ public class Pom
                 ex.printStackTrace();
                 return null;
             }
-		}
+        }
 	}
 
     /**
