@@ -378,15 +378,15 @@ public class Pom
         PropertyHelper phelper = PropertyHelper.getPropertyHelper( antProject );
         try
         {
-        	// Ant 1.8.0 delegate
+            // Ant 1.8.0 delegate
             phelper.add( new POMPropertyEvaluator() );
         }
         catch ( NoSuchMethodError nsme )
         {
-        	// fallback to 1.6 - 1.7.1 intercepter chaining
-	        helper.setNext( phelper.getNext() );
-	        helper.setProject( antProject );
-	        phelper.setNext( helper );
+            // fallback to 1.6 - 1.7.1 intercepter chaining
+            helper.setNext( phelper.getNext() );
+            helper.setProject( antProject );
+            phelper.setNext( helper );
         }
     }
 
@@ -455,9 +455,9 @@ public class Pom
      * @since maven-ant-tasks 2.1.1
      */
     private class POMPropertyEvaluator
-    	extends POMPropertyHelper
-    	implements PropertyHelper.PropertyEvaluator
-	{
+        extends POMPropertyHelper
+        implements PropertyHelper.PropertyEvaluator
+    {
         public Object evaluate( String property, PropertyHelper propertyHelper )
         {
             String prefix = antId + ".";
@@ -479,7 +479,7 @@ public class Pom
                 return null;
             }
         }
-	}
+    }
 
     /**
      * The repositories defined in the ant "pom" task need to be added manually to the profile manager. Otherwise they
