@@ -118,6 +118,14 @@
         <not><equals arg1="${my.maven.project.properties.mavenVersion}" arg2="${pom.xml.project.properties.mavenVersion}"/></not>
       </condition>
     </fail>
+
+    <echo>project.build.directory = ${my.maven.project.build.directory}</echo>
+
+  	<!-- MANTTASKS-179 fail message="failed to get basedir">
+      <condition>
+        <contains string="${my.maven.project.build.directory}" substring="{"/>
+      </condition>
+    </fail-->
   </target>
 
   <target name="test-pom-profiles" depends="initTaskDefs">
@@ -596,7 +604,7 @@
     </artifact:pom>
     <check.file.exists file="${basedir}/target/tmp/it/ant-tasks/pom/1.1/pom-1.1.pom" type="file"/>
   </target>
-  
+
   <target name="test-mvn" depends="initTaskDefs">
     <artifact:mvn pom="src/test/pom.xml" mavenVersion="2.1.0" fork="true">
       <arg value="test"/>
@@ -608,13 +616,13 @@
     <artifact:dependencies filesetId="dependency.scopes.fileset" scopes=" provided , test ">
       <pom file="src/test/pom-with-scopes.xml"/>
     </artifact:dependencies>
-    
+
     <delete dir="target/files/scopes-test"/>
     <mkdir dir="target/files/scopes-test"/>
     <copy todir="target/files/scopes-test">
       <fileset refid="dependency.scopes.fileset"/>
     </copy>
-    
+
     <!-- excluded dependency junit:junit -->
     <check.file.exists file="target/files/scopes-test/commons-lang/commons-lang" type="dir"/>
     <check.file.exists file="target/files/scopes-test/commons-collections/commons-collections" type="dir"/>
@@ -636,12 +644,12 @@
     <echo>
       classpath: ${system.scope.classpath.property}
     </echo>
-    
+
     <condition property="test.fail">
       <length string="${system.scope.classpath.property}" trim="true" length="0" />
     </condition>
     <fail if="test.fail">Artifact with system scope should be added to classpath.</fail>
-    
+
     <condition property="test.fail">
       <contains string="${system.scope.classpath.property}" substring="${local.repository.property}"/>
     </condition>
