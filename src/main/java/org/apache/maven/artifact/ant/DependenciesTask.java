@@ -142,6 +142,7 @@ public class DependenciesTask
             {
                 setDependencyRefsBuildFile( DEFAULT_ANT_BUILD_FILE );
             }
+
             if ( checkCachedDependencies() )
             {
                 log( "Dependency refs loaded from file: " + getDependencyRefsBuildFile(), Project.MSG_VERBOSE );
@@ -149,6 +150,11 @@ public class DependenciesTask
             }
         }
 
+        doExecuteResolution();
+    }
+
+    protected ArtifactResolutionResult doExecuteResolution()
+    {
         ArtifactRepository localRepo = createLocalArtifactRepository();
         log( "Using local repository: " + localRepo.getBasedir(), Project.MSG_VERBOSE );
 
@@ -337,6 +343,8 @@ public class DependenciesTask
                 throw new BuildException ( "Unable to write ant build: " + e);
             }
         }
+
+        return result;
     }
 
     /**
