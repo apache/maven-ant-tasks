@@ -33,7 +33,7 @@ public class AntUtil
     /**
      * Copies all properties from the given project to the new project - omitting those that have already been set in the
      * new project as well as properties named basedir or ant.file.
-     * 
+     *
      * @param fromProject copy from
      * @param toProject copy to
      */
@@ -41,11 +41,11 @@ public class AntUtil
     {
         copyProperties( fromProject.getProperties(), toProject );
     }
-    
+
     /**
      * Copies all properties from the given table to the new project - omitting those that have already been set in the
      * new project as well as properties named basedir or ant.file.
-     * 
+     *
      * @param props properties <code>Hashtable</code> to copy to the new project.
      * @param project the project where the properties are added
      */
@@ -73,7 +73,7 @@ public class AntUtil
 
     /**
      * Copy references from one project to another.
-     * 
+     *
      * @param fromProject
      * @param toProject
      */
@@ -81,11 +81,11 @@ public class AntUtil
     {
         copyReferences( fromProject.getReferences(), toProject );
     }
-    
+
     /**
      * Copy references from a hashtable to a project.  Will not
      * overwrite existing references.
-     * 
+     *
      * @param refs
      * @param project
      */

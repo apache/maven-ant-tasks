@@ -28,32 +28,32 @@ import org.apache.tools.ant.taskdefs.Ant;
 /**
  * A modified version of the Ant task that allows access to the
  * new sub project.
- * 
+ *
  * @author pgier
  *
  */
 public class AntTaskModified extends Ant
 {
-    
+
     /**
-     * The Ant tasks sets newProject to null at the end of execute(), so 
+     * The Ant tasks sets newProject to null at the end of execute(), so
      * we need to save this object to a different place.
      */
     private Project savedNewProject;
-    
+
     public void init()
     {
         super.init();
         savedNewProject = saveNewProject();
     }
-    
+
     /**
      * This is a hack to get access to the private variable "newProject" in the Ant task. This should not be used.
      * Note: This may not work with later versions of Ant
-     * 
+     *
      * @return
      */
-    private Project saveNewProject( )
+    private Project saveNewProject()
     {
         try
         {
@@ -64,18 +64,18 @@ public class AntTaskModified extends Ant
         }
         catch ( Exception e )
         {
-            throw new BuildException( "Unable to load cache: " + e );
+            throw new BuildException( "Unable to load cache: " + e, e );
         }
     }
-    
+
     /**
      * Get the new Ant project created by this task.
-     * 
+     *
      * @return
      */
     public Project getSavedNewProject()
     {
         return savedNewProject;
     }
-    
+
 }

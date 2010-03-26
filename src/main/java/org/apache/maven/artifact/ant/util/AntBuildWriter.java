@@ -52,7 +52,7 @@ public class AntBuildWriter
 
     /**
      * Open an Ant build file for writing. Opens the file and prints the opening project tag.
-     * 
+     *
      * @param buildFile
      * @param name
      * @param defaultTarget
@@ -81,7 +81,7 @@ public class AntBuildWriter
 
     /**
      * Close the ant build writer
-     * 
+     *
      * @throws IOException
      */
     public void closeAntBuild()
@@ -97,7 +97,7 @@ public class AntBuildWriter
 
     /**
      * Open a target tag
-     * 
+     *
      * @param targetName
      * @throws IOException
      */
@@ -110,7 +110,7 @@ public class AntBuildWriter
 
     /**
      * Close a tag.
-     * 
+     *
      * @throws IOException
      */
     public void closeTarget()
@@ -121,7 +121,7 @@ public class AntBuildWriter
 
     /**
      * Write an Ant fileset
-     * 
+     *
      * @param fileSet
      * @param id
      */
@@ -153,7 +153,7 @@ public class AntBuildWriter
 
     /**
      * Write an ant property
-     * 
+     *
      * @param name
      * @param value
      */
@@ -168,8 +168,8 @@ public class AntBuildWriter
     }
 
     /**
-     * Write an Ant echo task 
-     * 
+     * Write an Ant echo task
+     *
      * @param message
      */
     public void writeEcho( String message )
@@ -183,7 +183,7 @@ public class AntBuildWriter
 
     /**
      * Write an Ant file list
-     * 
+     *
      * @param fileList
      * @param id
      */
@@ -206,7 +206,7 @@ public class AntBuildWriter
 
     /**
      * Write a path.
-     * 
+     *
      * @param path
      * @param pathId
      */

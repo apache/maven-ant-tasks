@@ -32,7 +32,7 @@ import org.codehaus.plexus.util.WriterFactory;
 
 /**
  * Write a POM to a file.
- * 
+ *
  * @since 2.1.0
  */
 public class WritePomTask
@@ -41,7 +41,7 @@ public class WritePomTask
     private String pomRefId;
 
     private File file;
-    
+
     private boolean trim = true;
 
     public void execute()
@@ -51,11 +51,11 @@ public class WritePomTask
         Model model = pom.getModel();
         if ( trim )
         {
-            trimModel ( model );            
+            trimModel ( model );
         }
-        writeModel ( model, file );
+        writeModel( model, file );
     }
-    
+
     /**
      * Removes a lot of unnecessary information from the POM.
      * This includes the build section, reporting, repositories, etc.
@@ -74,7 +74,7 @@ public class WritePomTask
 
     /**
      * Write a POM model to a file
-     * 
+     *
      * @param model
      * @return
      * @throws MojoExecutionException

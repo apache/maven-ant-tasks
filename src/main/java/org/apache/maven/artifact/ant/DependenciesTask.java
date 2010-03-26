@@ -62,9 +62,9 @@ import java.util.Set;
 public class DependenciesTask
     extends AbstractArtifactWithRepositoryTask
 {
-    
+
     public static final String DEFAULT_ANT_BUILD_FILE = "target/build-dependencies.xml";
-    
+
     private List dependencies = new ArrayList();
 
     /**
@@ -81,12 +81,12 @@ public class DependenciesTask
      * The id of the fileset object containing all resolved source jars for the list of dependencies.
      */
     private String sourcesFilesetId;
-    
+
     /**
      * The id of the fileset object containing all resolved javadoc jars for the list of dependencies.
      */
     private String javadocFilesetId;
-    
+
     /**
      * The id of the object containing a list of all artifact versions.
      * This is used for things like removing the version from the dependency filenames.
@@ -124,18 +124,18 @@ public class DependenciesTask
      */
     protected void doExecute()
     {
-        
+
         if ( useScope != null && scopes != null )
         {
             throw new BuildException( "You cannot specify both useScope and scopes in the dependencies task." );
         }
-                
+
         if ( getPom() != null && !this.dependencies.isEmpty() )
         {
             throw new BuildException( "You cannot specify both dependencies and a pom in the dependencies task" );
         }
-        
-        // Try to load dependency refs from an exsiting Ant cache file
+
+        // Try to load dependency refs from an existing Ant cache file
         if ( isCacheDependencyRefs() )
         {
             if ( getDependencyRefsBuildFile() == null )
@@ -148,7 +148,7 @@ public class DependenciesTask
                 return;
             }
         }
-        
+
         ArtifactRepository localRepo = createLocalArtifactRepository();
         log( "Using local repository: " + localRepo.getBasedir(), Project.MSG_VERBOSE );
 
@@ -177,15 +177,14 @@ public class DependenciesTask
         log( "Resolving dependencies...", Project.MSG_VERBOSE );
 
         ArtifactResolutionResult result;
-        Set artifacts;
 
         List remoteArtifactRepositories = createRemoteArtifactRepositories( pom.getRepositories() );
 
         try
         {
-            artifacts = MavenMetadataSource.createArtifacts( artifactFactory, dependencies, null, null, null );
+            Set artifacts = MavenMetadataSource.createArtifacts( artifactFactory, dependencies, null, null, null );
 
-            Artifact pomArtifact = artifactFactory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(), 
+            Artifact pomArtifact = artifactFactory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(),
                 pom.getVersion(), pom.getPackaging() );
 
             List listeners = Collections.singletonList( new AntResolutionListener( getProject() ) );
@@ -240,9 +239,9 @@ public class DependenciesTask
         FileSet javadocsFileSet = createFileSet();
 
         Path dependencyPath = new Path( getProject() );
-        
+
         Set versions = new HashSet();
-        
+
         for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
@@ -268,20 +267,20 @@ public class DependenciesTask
         defineFilesetReference( filesetId, dependencyFileSet );
 
         defineFilesetReference( sourcesFilesetId, sourcesFileSet );
-        
+
         defineFilesetReference( javadocFilesetId, javadocsFileSet );
-        
+
         if ( pathId != null )
         {
             getProject().addReference( pathId, dependencyPath );
         }
-        
+
         if ( versionsId != null )
         {
             String versionsValue = StringUtils.join( versions.iterator(), File.pathSeparator );
             getProject().setNewProperty( versionsId, versionsValue );
         }
-        
+
         // Write the dependency information to an Ant build file.
         if ( getDependencyRefsBuildFile() != null || this.isCacheDependencyRefs() )
         {
@@ -292,12 +291,12 @@ public class DependenciesTask
             log( "Building ant file: " + getDependencyRefsBuildFile());
             AntBuildWriter antBuildWriter = new AntBuildWriter();
             File antBuildFile = new File( getProject().getBaseDir(), getDependencyRefsBuildFile() );
-            try 
+            try
             {
                 antBuildWriter.openAntBuild( antBuildFile, "maven-dependencies", "init-dependencies" );
                 antBuildWriter.openTarget( "init-dependencies" );
                 antBuildWriter.writeEcho( "Loading dependency paths from file: " + antBuildFile.getAbsolutePath() );
-                
+
                 Iterator i = result.getArtifacts().iterator();
                 while (  i.hasNext() )
                 {
@@ -307,13 +306,13 @@ public class DependenciesTask
                     FileSet singleArtifactFileSet = (FileSet)getProject().getReference( conflictId );
                     antBuildWriter.writeFileSet( singleArtifactFileSet, conflictId );
                 }
-                
+
                 if ( pathId != null )
                 {
                     Path thePath = (Path)getProject().getReference( pathId );
                     antBuildWriter.writePath( thePath, pathId );
                 }
-                
+
                 if ( filesetId != null )
                 {
                     antBuildWriter.writeFileSet( dependencyFileSet, filesetId );
@@ -326,10 +325,10 @@ public class DependenciesTask
                 {
                     antBuildWriter.writeFileSet( sourcesFileSet, javadocFilesetId );
                 }
-                
+
                 String versionsList = getProject().getProperty( versionsId );
                 antBuildWriter.writeProperty( versionsId, versionsList );
-                
+
                 antBuildWriter.closeTarget();
                 antBuildWriter.closeAntBuild();
             }
@@ -339,10 +338,10 @@ public class DependenciesTask
             }
         }
     }
-    
+
     /**
      * Check if the cache needs to be updated.
-     * 
+     *
      * @return true if the dependency refs were successfully loaded, false otherwise
      */
     private boolean checkCachedDependencies()
@@ -352,13 +351,13 @@ public class DependenciesTask
         {
             return false;
         }
-        
+
         File antBuildFile = new File( getProject().getProperty( "ant.file" ) );
         if ( antBuildFile.lastModified() > cacheBuildFile.lastModified() )
         {
             return false;
         }
-        
+
         Pom pom = getPom();
         if ( pom != null )
         {
@@ -368,33 +367,33 @@ public class DependenciesTask
                 return false;
             }
         }
-        
+
         return loadDependenciesFromAntBuildFile();
     }
-    
+
     /**
      * Load the dependency references from the generated ant build file.
-     * 
+     *
      * @return True if the dependency refs were successfully loaded.
      */
     private boolean loadDependenciesFromAntBuildFile()
     {
         Project currentAntProject = getProject();
-        
+
         // Run the ant build with the dependency refs
         AntTaskModified dependenciesAntBuild = new AntTaskModified();
         dependenciesAntBuild.setAntfile( getDependencyRefsBuildFile() );
         dependenciesAntBuild.setProject( currentAntProject );
         dependenciesAntBuild.execute();
-        
+
         // Copy the properties and refs to the current project
         Project cachedDepsProject = dependenciesAntBuild.getSavedNewProject();
         AntUtil.copyProperties( cachedDepsProject, currentAntProject );
         AntUtil.copyReferences( cachedDepsProject, currentAntProject );
-        
+
         return true;
     }
-        
+
     private FileSet createFileSet()
     {
         FileSet fileSet = new FileSet();
@@ -415,13 +414,13 @@ public class DependenciesTask
         }
     }
 
-    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact, 
+    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact,
                                       FileSet toFileSet )
     {
         addArtifactToResult( localRepo, artifact, toFileSet, null );
     }
-    
-    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact, 
+
+    private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact,
                                       FileSet toFileSet, Path path )
     {
         String filename = localRepo.pathOf( artifact );
@@ -429,12 +428,12 @@ public class DependenciesTask
         toFileSet.createInclude().setName( filename );
 
         getProject().setProperty( artifact.getDependencyConflictId(), artifact.getFile().getAbsolutePath() );
-        
+
         FileSet artifactFileSet = new FileSet();
         artifactFileSet.setProject( getProject() );
         artifactFileSet.setFile( artifact.getFile() );
         getProject().addReference( artifact.getDependencyConflictId(), artifactFileSet );
-        
+
         if ( path != null )
         {
             path.addFileset( artifactFileSet );
@@ -533,7 +532,7 @@ public class DependenciesTask
     /**
      * Use the maven artifact filtering for a particular scope.  This
      * uses the standard maven ScopeArtifactFilter.
-     * 
+     *
      * @param useScope
      */
     public void setUseScope( String useScope )
@@ -553,7 +552,7 @@ public class DependenciesTask
 
     /**
      * Only include artifacts that fall under one of the specified scopes.
-     * 
+     *
      * @return
      */
     public void setScopes( String scopes )
