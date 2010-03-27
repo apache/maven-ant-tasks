@@ -22,7 +22,6 @@ package org.apache.maven.artifact.ant;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tools.ant.util.FileNameMapper;
@@ -34,18 +33,17 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:hboutemy@apache.org">Herve Boutemy</a>
  * @version $Id$
  */
-public class VersionMapper implements FileNameMapper, Comparator
+public class VersionMapper implements FileNameMapper, Comparator<String>
 {
-    private List versions;
+    private List<String> versions;
 
     private String to;
 
     public String[] mapFileName( String sourceFileName )
     {
         String originalFileName = new java.io.File( sourceFileName ).getName();
-        for ( Iterator iter = versions.iterator(); iter.hasNext(); )
+        for ( String version : versions )
         {
-            String version = (String) iter.next();
             int index = originalFileName.indexOf( version );
             if ( index >= 0 )
             {
@@ -84,10 +82,8 @@ public class VersionMapper implements FileNameMapper, Comparator
         this.to = to;
     }
 
-    public int compare( Object o1, Object o2 )
+    public int compare( String s1, String s2 )
     {
-        String s1 = (String) o1;
-        String s2 = (String) o2;
         int lengthDiff = s2.length() - s1.length();
         return ( lengthDiff != 0 ) ? lengthDiff : s1.compareTo( s2 );
     }

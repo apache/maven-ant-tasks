@@ -31,8 +31,6 @@ import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
-import java.util.Iterator;
-
 /**
  * Deploy task, using maven-artifact.
  *
@@ -57,7 +55,7 @@ public class DeployTask
     {
         if ( repository.getId().equals( repository.getUrl() ) )
         {
-            // MANTTASKS-103: avoid default id set to the url, since it is used for maven-metadata-<id>.xml  
+            // MANTTASKS-103: avoid default id set to the url, since it is used for maven-metadata-<id>.xml
             repository.setId( "remote" );
         }
 
@@ -94,7 +92,7 @@ public class DeployTask
             throw new BuildException( "You must specify a file and/or an attached artifact "
                 + "to deploy to the repository." );
         }
-        
+
         ArtifactRepository localRepo = createLocalArtifactRepository();
 
         Pom pom = initializePom( localRepo );
@@ -103,7 +101,7 @@ public class DeployTask
         {
             throw new BuildException( "A POM element is required to deploy to the repository" );
         }
-        
+
         Artifact artifact = pom.getArtifact();
 
         // Deploy the POM
@@ -135,11 +133,8 @@ public class DeployTask
             // Deploy any attached artifacts
             if ( attachedArtifacts != null )
             {
-                Iterator iter = pom.getAttachedArtifacts().iterator();
-
-                while ( iter.hasNext() )
+                for ( Artifact attachedArtifact : pom.getAttachedArtifacts() )
                 {
-                    Artifact attachedArtifact = (Artifact) iter.next();
                     deployer.deploy( attachedArtifact.getFile(), attachedArtifact, deploymentRepository, localRepo );
                 }
             }
@@ -150,7 +145,7 @@ public class DeployTask
                 "Error deploying artifact '" + artifact.getDependencyConflictId() + "': " + e.getMessage(), e );
         }
     }
-    
+
     private ArtifactRepository getDeploymentRepository( Pom pom, Artifact artifact )
     {
         DistributionManagement distributionManagement = pom.getDistributionManagement();

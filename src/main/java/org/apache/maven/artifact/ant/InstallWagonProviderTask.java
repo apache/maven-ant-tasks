@@ -23,6 +23,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
@@ -57,7 +58,7 @@ public class InstallWagonProviderTask
     {
         return groupId;
     }
-    
+
     public void setGroupId( String groupId )
     {
         this.groupId = groupId;
@@ -107,7 +108,7 @@ public class InstallWagonProviderTask
         {
             MavenMetadataSource metadataSource = (MavenMetadataSource) lookup( ArtifactMetadataSource.ROLE );
             ArtifactResolver resolver = (ArtifactResolver) lookup( ArtifactResolver.ROLE );
-            List remoteRepositories = createRemoteArtifactRepositories();
+            List<ArtifactRepository> remoteRepositories = createRemoteArtifactRepositories();
 
             result = resolver.resolveTransitively( Collections.singleton( providerArtifact ),
                                                    createDummyArtifact(), createLocalArtifactRepository(),
@@ -125,7 +126,7 @@ public class InstallWagonProviderTask
 
         try
         {
-            for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
+            for ( Iterator<Artifact> i = result.getArtifacts().iterator(); i.hasNext(); )
             {
                 Artifact a = (Artifact) i.next();
 
@@ -136,7 +137,7 @@ public class InstallWagonProviderTask
         {
             throw new BuildException( "Unable to locate wagon provider in remote repository", e );
         }
-        
+
         log( "Protocols now supported: " + getSupportedProtocolsAsString(), Project.MSG_VERBOSE );
     }
 

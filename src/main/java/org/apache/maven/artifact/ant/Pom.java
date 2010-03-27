@@ -190,7 +190,7 @@ public class Pom
         }
     }
 
-    public List getAttachedArtifacts()
+    public List<Artifact> getAttachedArtifacts()
     {
         return getMavenProject().getAttachedArtifacts();
     }
@@ -245,7 +245,7 @@ public class Pom
         return getMavenProject().getContributors();
     }
 
-    public List getDependencies()
+    public List<Dependency> getDependencies()
     {
         return getMavenProject().getDependencies();
     }
@@ -330,7 +330,7 @@ public class Pom
         return getMavenProject().getReporting();
     }
 
-    public List getRepositories()
+    public List<Repository> getRepositories()
     {
         return getMavenProject().getRepositories();
     }

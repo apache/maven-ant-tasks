@@ -27,8 +27,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.artifact.ProjectArtifactMetadata;
 import org.apache.tools.ant.BuildException;
 
-import java.util.Iterator;
-
 /**
  * Install task, using maven-artifact.
  *
@@ -46,7 +44,7 @@ public class InstallTask
             throw new BuildException( "You must specify a file and/or an attached artifact "
                 + "to install to the local repository." );
         }
-        
+
         ArtifactRepository localRepo = createLocalArtifactRepository();
 
         Pom pom = initializePom( localRepo );
@@ -55,7 +53,7 @@ public class InstallTask
         {
             throw new BuildException( "A POM element is required to install to the local repository" );
         }
-        
+
         Artifact artifact = pom.getArtifact();
 
         boolean isPomArtifact = "pom".equals( pom.getPackaging() );
@@ -83,11 +81,8 @@ public class InstallTask
             // Install any attached artifacts
             if ( attachedArtifacts != null )
             {
-                Iterator iter = pom.getAttachedArtifacts().iterator();
-
-                while ( iter.hasNext() )
+                for ( Artifact attachedArtifact : pom.getAttachedArtifacts() )
                 {
-                    Artifact attachedArtifact = (Artifact) iter.next();
                     installer.install( attachedArtifact.getFile(), attachedArtifact, localRepo );
                 }
             }

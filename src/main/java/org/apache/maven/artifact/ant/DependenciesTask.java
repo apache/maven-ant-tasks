@@ -65,7 +65,7 @@ public class DependenciesTask
 
     public static final String DEFAULT_ANT_BUILD_FILE = "target/build-dependencies.xml";
 
-    private List dependencies = new ArrayList();
+    private List<Dependency> dependencies = new ArrayList<Dependency>();
 
     /**
      * The id of the path object containing a list of all dependencies.
@@ -184,18 +184,18 @@ public class DependenciesTask
 
         ArtifactResolutionResult result;
 
-        List remoteArtifactRepositories = createRemoteArtifactRepositories( pom.getRepositories() );
+        List<ArtifactRepository> remoteArtifactRepositories = createRemoteArtifactRepositories( pom.getRepositories() );
 
         try
         {
-            Set artifacts = MavenMetadataSource.createArtifacts( artifactFactory, dependencies, null, null, null );
+            Set<Artifact> artifacts = MavenMetadataSource.createArtifacts( artifactFactory, dependencies, null, null, null );
 
             Artifact pomArtifact = artifactFactory.createBuildArtifact( pom.getGroupId(), pom.getArtifactId(),
                 pom.getVersion(), pom.getPackaging() );
 
-            List listeners = Collections.singletonList( new AntResolutionListener( getProject() ) );
+            List<AntResolutionListener> listeners = Collections.singletonList( new AntResolutionListener( getProject() ) );
 
-            Map managedDependencies = pom.getMavenProject().getManagedVersionMap();
+            Map<String,Artifact> managedDependencies = pom.getMavenProject().getManagedVersionMap();
 
             ArtifactFilter filter = null;
             if ( useScope != null )
@@ -246,9 +246,9 @@ public class DependenciesTask
 
         Path dependencyPath = new Path( getProject() );
 
-        Set versions = new HashSet();
+        Set<String> versions = new HashSet<String>();
 
-        for ( Iterator i = result.getArtifacts().iterator(); i.hasNext(); )
+        for ( Iterator<Artifact> i = result.getArtifacts().iterator(); i.hasNext(); )
         {
             Artifact artifact = (Artifact) i.next();
 
@@ -303,8 +303,7 @@ public class DependenciesTask
                 antBuildWriter.openTarget( "init-dependencies" );
                 antBuildWriter.writeEcho( "Loading dependency paths from file: " + antBuildFile.getAbsolutePath() );
 
-                Iterator i = result.getArtifacts().iterator();
-                while (  i.hasNext() )
+                for ( Iterator<Artifact> i = result.getArtifacts().iterator(); i.hasNext(); )
                 {
                     Artifact artifact = (Artifact) i.next();
                     String conflictId = artifact.getDependencyConflictId();
@@ -449,7 +448,7 @@ public class DependenciesTask
     }
 
     private void resolveSource( ArtifactFactory artifactFactory, ArtifactResolver resolver,
-                                List remoteArtifactRepositories, ArtifactRepository localRepo,
+                                List<ArtifactRepository> remoteArtifactRepositories, ArtifactRepository localRepo,
                                 Artifact artifact, String classifier, FileSet sourcesFileSet )
     {
         Artifact sourceArtifact =
@@ -471,7 +470,7 @@ public class DependenciesTask
         }
     }
 
-    public List getDependencies()
+    public List<Dependency> getDependencies()
     {
         return dependencies;
     }

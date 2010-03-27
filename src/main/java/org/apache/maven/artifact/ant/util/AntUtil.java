@@ -49,12 +49,11 @@ public class AntUtil
      * @param props properties <code>Hashtable</code> to copy to the new project.
      * @param project the project where the properties are added
      */
-    public static void copyProperties( Hashtable props, Project project )
+    public static void copyProperties( Hashtable<String,String> props, Project project )
     {
-        Enumeration e = props.keys();
-        while ( e.hasMoreElements() )
+        for ( Enumeration<String> e = props.keys(); e.hasMoreElements(); )
         {
-            String key = e.nextElement().toString();
+            String key = e.nextElement();
             if ( "basedir".equals( key ) || "ant.file".equals( key ) )
             {
                 // basedir and ant.file get special treatment in execute()
@@ -89,12 +88,11 @@ public class AntUtil
      * @param refs
      * @param project
      */
-    public static void copyReferences( Hashtable refs, Project project )
+    public static void copyReferences( Hashtable<String,String> refs, Project project )
     {
-        Enumeration e = refs.keys();
-        while ( e.hasMoreElements() )
+        for ( Enumeration<String> e = refs.keys(); e.hasMoreElements(); )
         {
-            String key = e.nextElement().toString();
+            String key = e.nextElement();
             // don't overwrite existing references
             if ( project.getReference( key ) == null )
             {

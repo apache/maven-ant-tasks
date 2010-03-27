@@ -10,12 +10,12 @@ public class PomTestCase
     {
         RemoteRepository repo = new RemoteRepository();
         repo.setUrl( "file:///home/test/stuff" );
-        
+
         Pom task = new Pom();
         String defaultId = task.generateDefaultRepositoryId( repo );
         if ( defaultId.equals( repo.getUrl() ) )
         {
-            this.fail( "MD5 digest not calculated" );
+            fail( "MD5 digest not calculated" );
         }
     }
 }

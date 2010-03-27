@@ -22,15 +22,15 @@ package org.apache.maven.artifact.ant;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Repository;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 /**
- * Base class for atifact tasks that are able to download artifact from repote repositories. 
+ * Base class for atifact tasks that are able to download artifact from repote repositories.
  * @version $Id$
  */
 public abstract class AbstractArtifactWithRepositoryTask
@@ -39,11 +39,11 @@ public abstract class AbstractArtifactWithRepositoryTask
     /**
      * List of Ant Tasks RemoteRepository-ies
      */
-    private List remoteRepositories = new ArrayList();
+    private List<RemoteRepository> remoteRepositories = new ArrayList<RemoteRepository>();
 
     /**
      * Get the default remote repository.
-     * @return central repository 
+     * @return central repository
      */
     private static RemoteRepository getDefaultRemoteRepository()
     {
@@ -62,7 +62,7 @@ public abstract class AbstractArtifactWithRepositoryTask
         return ( policy == null ) || policy.isEnabled() ? "enabled" : "disabled";
     }
 
-    protected List createRemoteArtifactRepositories()
+    protected List<ArtifactRepository> createRemoteArtifactRepositories()
     {
         return createRemoteArtifactRepositories( null );
     }
@@ -74,9 +74,9 @@ public abstract class AbstractArtifactWithRepositoryTask
      * @return the list of ArtifactRepository-ies
      * @see #createRemoteArtifactRepository(RemoteRepository)
      */
-    protected List createRemoteArtifactRepositories( List pomRepositories )
+    protected List<ArtifactRepository> createRemoteArtifactRepositories( List<Repository> pomRepositories )
     {
-        List remoteRepositories = new ArrayList();
+        List<RemoteRepository> remoteRepositories = new ArrayList<RemoteRepository>();
         remoteRepositories.addAll( getRemoteRepositories() );
 
         if ( getRemoteRepositories().isEmpty() )
@@ -86,21 +86,18 @@ public abstract class AbstractArtifactWithRepositoryTask
 
         if ( pomRepositories != null )
         {
-            for ( Iterator i = pomRepositories.iterator(); i.hasNext(); )
+            for ( Repository pomRepository : pomRepositories )
             {
-                Repository pomRepository = (Repository) i.next();
-            
                 remoteRepositories.add( createAntRemoteRepository( pomRepository ) );
             }
         }
 
         log( "Using remote repositories:", Project.MSG_VERBOSE );
-        List list = new ArrayList();
-        for ( Iterator i = remoteRepositories.iterator(); i.hasNext(); )
+        List<ArtifactRepository> list = new ArrayList<ArtifactRepository>();
+        for ( RemoteRepository remoteRepository : remoteRepositories )
         {
-            RemoteRepository remoteRepository = (RemoteRepository) i.next();
             updateRepositoryWithSettings( remoteRepository );
-    
+
             StringBuffer msg = new StringBuffer();
             msg.append( "  - id=" + remoteRepository.getId() );
             msg.append( ", url=" + remoteRepository.getUrl() );
@@ -115,22 +112,22 @@ public abstract class AbstractArtifactWithRepositoryTask
                 msg.append( ", proxy=" + remoteRepository.getProxy().getHost() );
             }
             getProject().log( msg.toString(), Project.MSG_VERBOSE );
-    
+
             list.add( createRemoteArtifactRepository( remoteRepository ) );
         }
         return list;
     }
 
-    public List getRemoteRepositories()
+    public List<RemoteRepository> getRemoteRepositories()
     {
         return remoteRepositories;
     }
 
     /**
      * This is called automatically by ant when the task is initialized.
-     * Need to use "addConfigured..." instead of "add..." because the 
+     * Need to use "addConfigured..." instead of "add..." because the
      * repository Id and URL need to be set before the method is called.
-     * 
+     *
      * @param remoteRepository
      */
     public void addConfiguredRemoteRepository( RemoteRepository remoteRepository )
@@ -149,16 +146,16 @@ public abstract class AbstractArtifactWithRepositoryTask
         }
         remoteRepositories.add( remoteRepository );
     }
-    
+
     public final String MD5_ALGO_NAME = "MD5";
-    
+
     public final String UTF_ENC_NAME = "UTF-8";
-    
+
     /**
      * Generates an MD5 digest based on the url of the repository.
-     * This is safer to use for the id than the url.  
+     * This is safer to use for the id than the url.
      * MANTTASKS-142
-     * 
+     *
      * @param repository
      * @return
      */

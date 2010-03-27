@@ -28,7 +28,6 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -258,10 +257,9 @@ public abstract class AbstractArtifactTask
             else
             {
                 // look in ${M2_HOME}/conf
-                List env = Execute.getProcEnvironment();
-                for ( Iterator iter = env.iterator(); iter.hasNext(); )
+                List<String> env = Execute.getProcEnvironment();
+                for ( String var: env )
                 {
-                    String var = (String) iter.next();
                     if ( var.startsWith( "M2_HOME=" ) )
                     {
                         String m2Home = var.substring( "M2_HOME=".length() );
@@ -440,7 +438,7 @@ public abstract class AbstractArtifactTask
                 repository.addAuthentication( new Authentication( server ) );
             }
         }
-         
+
         if ( repository.getProxy() == null )
         {
             org.apache.maven.settings.Proxy proxy = getSettings().getActiveProxy();
@@ -514,7 +512,7 @@ public abstract class AbstractArtifactTask
 
     /**
      * Tries to initialize the pom.  If no pom has been configured, returns null.
-     * 
+     *
      * @param localArtifactRepository
      * @return An initialized pom or null.
      */
@@ -527,7 +525,7 @@ public abstract class AbstractArtifactTask
             MavenProjectBuilder projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
             pom.initialiseMavenProject( projectBuilder, localArtifactRepository );
         }
-        
+
         return pom;
     }
 
@@ -539,10 +537,10 @@ public abstract class AbstractArtifactTask
 
         return pom;
     }
-    
+
     /**
      * Create a minimal project when no POM is available.
-     * 
+     *
      * @param localRepository
      * @return
      */
@@ -561,9 +559,9 @@ public abstract class AbstractArtifactTask
         {
             throw new BuildException( "Unable to create dummy Pom", e );
         }
-        
+
     }
-    
+
     protected Artifact createDummyArtifact()
     {
         ArtifactFactory factory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
@@ -575,11 +573,10 @@ public abstract class AbstractArtifactTask
     {
         try
         {
-            Map wagonMap = getContainer().lookupMap( Wagon.ROLE );
-            List protocols = new ArrayList();
-            for ( Iterator iter = wagonMap.entrySet().iterator(); iter.hasNext(); )
+            Map<String,Wagon> wagonMap = getContainer().lookupMap( Wagon.ROLE );
+            List<String> protocols = new ArrayList<String>();
+            for ( Map.Entry<String,Wagon> entry : wagonMap.entrySet() )
             {
-                Map.Entry entry = (Map.Entry) iter.next();
                 protocols.add( entry.getKey() );
             }
             return (String[]) protocols.toArray( new String[protocols.size()] );
@@ -594,7 +591,7 @@ public abstract class AbstractArtifactTask
     {
         return StringUtils.join( getSupportedProtocols(), ", " );
     }
-    
+
     public void diagnoseError( Throwable error )
     {
         try
@@ -622,16 +619,16 @@ public abstract class AbstractArtifactTask
     {
         this.pom = pom;
     }
-    
+
     /**
      * Try to get the POM from the nested pom element or a pomRefId
-     * 
+     *
      * @return The pom object
      */
     public Pom getPom()
     {
         Pom thePom = this.pom;
-        
+
         if ( thePom != null && getPomRefId() != null )
         {
             throw new BuildException( "You cannot specify both a nested \"pom\" element and a \"pomrefid\" attribute" );
@@ -649,10 +646,10 @@ public abstract class AbstractArtifactTask
                 throw new BuildException( "Reference '" + pomRefId + "' was not found." );
             }
         }
-        
+
         return thePom;
     }
-    
+
     public String getPomRefId()
     {
         return pomRefId;
@@ -709,7 +706,7 @@ public abstract class AbstractArtifactTask
     {
         // Display the version if the log level is verbose
         showVersion();
-        
+
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try
         {
@@ -732,7 +729,7 @@ public abstract class AbstractArtifactTask
             Thread.currentThread().setContextClassLoader( originalClassLoader );
         }
     }
-    
+
     /**
      * The main entry point for the task.
      */
@@ -742,31 +739,27 @@ public abstract class AbstractArtifactTask
      * This method finds a matching mirror for the selected repository. If there is an exact match,
      * this will be used. If there is no exact match, then the list of mirrors is examined to see if
      * a pattern applies.
-     * 
+     *
      * @param mirrors The available mirrors.
      * @param repository See if there is a mirror for this repository.
      * @return the selected mirror or null if none is found.
      */
-    private Mirror getMirror( List mirrors, RemoteRepository repository )
+    private Mirror getMirror( List<Mirror> mirrors, RemoteRepository repository )
     {
         String repositoryId = repository.getId();
 
         if ( repositoryId != null )
         {
-            for ( Iterator it = mirrors.iterator(); it.hasNext(); )
+            for ( Mirror mirror : mirrors )
             {
-                Mirror mirror = (Mirror) it.next();
-
                 if ( repositoryId.equals( mirror.getMirrorOf() ) )
                 {
                     return mirror;
                 }
             }
 
-            for ( Iterator it = mirrors.iterator(); it.hasNext(); )
+            for ( Mirror mirror : mirrors )
             {
-                Mirror mirror = (Mirror) it.next();
-
                 if ( matchPattern( repository, mirror.getMirrorOf() ) )
                 {
                     return mirror;
@@ -781,7 +774,7 @@ public abstract class AbstractArtifactTask
      * This method checks if the pattern matches the originalRepository. Valid patterns: * =
      * everything external:* = everything not on the localhost and not file based. repo,repo1 = repo
      * or repo1 *,!repo1 = everything except repo1
-     * 
+     *
      * @param originalRepository to compare for a match.
      * @param pattern used for match. Currently only '*' is supported.
      * @return true if the repository is a match to this pattern.
@@ -800,11 +793,11 @@ public abstract class AbstractArtifactTask
         {
             // process the list
             String[] repos = pattern.split( "," );
-            
+
             for ( int i = 0; i < repos.length; i++ )
             {
                 String repo = repos[i];
-                
+
                 // see if this is a negative match
                 if ( repo.length() > 1 && repo.startsWith( "!" ) )
                 {
@@ -839,7 +832,7 @@ public abstract class AbstractArtifactTask
 
     /**
      * Checks the URL to see if this repository refers to an external repository
-     * 
+     *
      * @param originalRepository
      * @return true if external.
      */
@@ -862,11 +855,11 @@ public abstract class AbstractArtifactTask
      */
     protected void showVersion()
     {
-        
+
         Properties properties = new Properties();
         final String antTasksPropertiesPath = "META-INF/maven/org.apache.maven/maven-ant-tasks/pom.properties";
         InputStream resourceAsStream = AbstractArtifactTask.class.getClassLoader().getResourceAsStream( antTasksPropertiesPath );
-        
+
         try
         {
             if ( resourceAsStream != null )
