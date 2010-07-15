@@ -43,6 +43,7 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.ProjectBuilderConfiguration;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.interpolation.ModelInterpolationException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
@@ -204,10 +205,16 @@ public class Pom
             try
             {
                 mavenProject = builder.build( file, builderConfig );
+
+                builder.calculateConcreteState( mavenProject, builderConfig, false );
             }
-            catch ( ProjectBuildingException e )
+            catch ( ProjectBuildingException pbe )
             {
-                throw new BuildException( "Unable to initialize POM " + file.getName() + ": " + e.getMessage(), e );
+                throw new BuildException( "Unable to initialize POM " + file.getName() + ": " + pbe.getMessage(), pbe );
+            }
+            catch ( ModelInterpolationException mie )
+            {
+                throw new BuildException( "Unable to interpolate POM " + file.getName() + ": " + mie.getMessage(), mie );
             }
         }
         else if ( refid != null )

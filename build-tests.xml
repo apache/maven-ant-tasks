@@ -121,11 +121,11 @@
 
     <echo>project.build.directory = ${my.maven.project.build.directory}</echo>
 
-  	<!-- MANTTASKS-179 fail message="failed to get basedir">
+  	<fail message="failed to get basedir">
       <condition>
         <contains string="${my.maven.project.build.directory}" substring="{"/>
       </condition>
-    </fail-->
+    </fail>
   </target>
 
   <target name="test-pom-profiles" depends="initTaskDefs">
