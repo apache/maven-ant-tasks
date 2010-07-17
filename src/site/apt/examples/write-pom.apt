@@ -28,10 +28,10 @@
 
 The WritePom Task
 
-  <<Note: This task is available since version 2.1.0 of the maven ant tasks>>
+  <<Note: This task is available since version 2.1.0 of the Maven Ant Tasks>>
 
-  The WritePom task can be used to generate a POM file based on information defined in 
-  the Ant build.  For example, this could be used to generate a POM used when 
+  The WritePom task can be used to generate a POM file based on information defined in
+  the Ant build.  For example, this could be used to generate a POM used when
   deploying build artifacts to a Maven repository.
 
   The first step is to define a pom using the pom task.
@@ -45,28 +45,32 @@ The WritePom Task
 ----
 
   The next step is to call the writePom task using the pom id created above.
-  
+
 ----
   <artifact:writepom pomRefId="mypom1" file="target/mypom1.xml"/>
 ----
 
   This will generate a pom in the location specified.
-  
+
 ----
 <?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.acme</groupId>
   <artifactId>project1</artifactId>
   <version>1.0</version>
+
   <name>My awesome project</name>
+
   <licenses>
     <license>
       <name>apache</name>
       <url>http://www.apache.org/</url>
     </license>
   </licenses>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -82,12 +86,11 @@ The WritePom Task
     </dependency>
   </dependencies>
 </project>
-----  
-  
-  By default the <<<writePom>>> task will not include unnecessary information such as build configuration, 
+----
+
+  By default the <<<writePom>>> task will not include unnecessary information such as build configuration,
   repositories, and profiles.  If this information is needed in the pom, the "trim" option can be set to false.
 
 ----
   <artifact:writepom pomRefId="mypom1" file="target/mypom1.xml" trim="false"/>
 ----
-  

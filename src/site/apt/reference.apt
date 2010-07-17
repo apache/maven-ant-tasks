@@ -237,12 +237,13 @@
 ** <<<authentication>>>
 
   The authentication element is used for passing a username, password and other credentials to the repository either
-  on upload or download. The content is the same as for <<<server>>> in the {{{http://maven.apache.org/maven-settings/settings.html#class_server} settings reference}}.
+  on upload or download. The content is the same as for <<<server>>> in the
+  {{{http://maven.apache.org/ref/current/maven-settings/settings.html#class_server} settings reference}}.
 
 ** <<<proxy>>>
 
   The proxy element is typically used for HTTP repositories. The content is the same as for <<<proxy>>> in the
-  {{{http://maven.apache.org/maven-settings/settings.html#class_proxy} settings reference}}.
+  {{{http://maven.apache.org/ref/current/maven-settings/settings.html#class_proxy} settings reference}}.
 
 * <<<{pom}>>>
 

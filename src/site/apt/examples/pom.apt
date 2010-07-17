@@ -35,13 +35,14 @@ Introduction
   can be used to resolve build dependencies, build the project classpath, and/or
   define project properties.
 
-Reading an exising POM file
+Reading an existing POM file
 
   An example pom is provided here:
 
 -----
 <project>
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>com.mycompany.project</groupId>
   <artifactId>project-model</artifactId>
   <version>1.0-SNAPSHOT</version>
@@ -82,7 +83,7 @@ Reading an exising POM file
 
     * <version> - the version of the artifact you are building.
 
-    * <dependencies> - the artifacts that this project is dependant on.
+    * <dependencies> - the artifacts that this project is dependent on.
 
   This is all that is required for most projects. However, it is also possible to use other fields available in
   Maven to describe your project, and reference them from your build script.
@@ -96,7 +97,7 @@ Reading an exising POM file
 Defining a POM in Ant
 
   If a POM file is not available, the ant task can also be used to define an in-memory pom.
-  
+
 ----
   <artifact:pom id="mypom" groupId="org.acme" artifactId="project1" version="1.0">
     <dependency groupId="junit" artifactId="junit" version="4.1"/>
@@ -125,7 +126,8 @@ Accessing POM information
   <echo>The build directory is ${mypom.build.directory}</echo>
 -----
 
-  For more information on the elements available in the POM, see the {{{http://maven.apache.org/maven-model/maven.html} descriptor reference}}.
+  For more information on the elements available in the POM, see the
+  {{{http://maven.apache.org/ref/current/maven-model/maven.html} descriptor reference}}.
 
 Accessing dependencies in the POM
 

@@ -24,8 +24,8 @@ under the License.
     <faq id="build">
       <question>How to build a Maven project with Maven Ant Tasks?</question>
       <answer>
-        <p>See the <a href="examples/mvn.html">examples page</a> for the mvn task for information about building 
-        a maven project from ant. </p>
+        <p>See the <a href="examples/mvn.html">examples page</a> for the mvn task for information about building
+        a Maven project from Ant.</p>
       </answer>
     </faq>
   </part>

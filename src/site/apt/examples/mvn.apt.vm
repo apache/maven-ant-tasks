@@ -28,7 +28,7 @@
 
 The Mvn Task
 
-  <<Note: This task is available since version 2.0.10 of the maven ant tasks>>
+  <<Note: This task is available since version 2.0.10 of the Maven Ant Tasks>>
 
   The Maven Ant Tasks have some limited support for calling a full Maven build from Ant.
   The <<<mvn>>> task is a subclass of the Ant {{{http://ant.apache.org/manual/CoreTasks/java.html}java}}
@@ -69,11 +69,11 @@ Running the Mvn Task without a Maven Installation
   </artifact:mvn>
 -----
 
-  <<Note: this will use version ${mavenVersion} of the core Maven libraries contained in the ant tasks jar>>
+  <<Note: this will use version ${mavenVersion} of the core Maven libraries, contained in the Maven Ant Tasks jar>>
 
 Using the Java Task
 
-  The java task can be used directly without any need for the Maven Ant Tasks.  However,
+  The java task can be used directly without any need for the Maven Ant Tasks. However,
   this method requires that Maven is already installed on the system. A
   property called <<<maven.home>>> must be set to point to the local Maven installation,
   then an Ant macro can be defined for calling Maven.
@@ -105,7 +105,7 @@ Using the Java Task
   </macrodef>
 -----
 
-  This example defines an Ant macro called <<<maven>>>.  The macro can then be used in
+  This example defines an Ant macro called <<<maven>>>. The macro can then be used in
   the build like this:
 
 -----
