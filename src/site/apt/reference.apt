@@ -102,7 +102,7 @@
 *------------------+--------------------------------------------------------+--------------+
 | <<<classifier>>> | The classifier of the dependency.                      | No           |
 *------------------+--------------------------------------------------------+--------------+
-| <<<scope>>>      | The scope of the usage of the dependency, which affects which of that dependency's own dependencies are also retrieved. This can be <<<compile>>>, <<<runtime>>>, <<<test>>>, <<<provided>>>. | No |
+| <<<scope>>>      | The scope of the usage of the dependency, which {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope}} affects which of that dependency's own dependencies are also retrieved}. This can be <<<compile>>> (default), <<<runtime>>>, <<<test>>>, <<<provided>>>. | No |
 *------------------+--------------------------------------------------------+--------------+
 
   The dependency can also nest multiple <<<exclusion>>> elements.

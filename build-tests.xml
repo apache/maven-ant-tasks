@@ -65,8 +65,12 @@
   <target name="test-all-deps" description="All dependencies tests"
     depends="test-pom, test-pom-profiles, test-pom-with-parent,test-no-deps,test-pom-deps,
              test-deps-two-repos,test-deps,test-legacy-pom,test-deps-mirror,test-deps-order,
-             test-deps-sources,test-deps-sources-empty,test-deps-profile,test-deps-scopes,test-system-scope">
-    <echo>test-bad-dep and test-invalid-pom-ref must be run manually, since they are intended to fail</echo>
+             test-deps-sources,test-deps-sources-empty,test-deps-profile,test-deps-scopes,test-system-scope,
+  	         test-bad-scope">
+    <echo>Some tests must be run manually, since they are intended to fail:
+        - test-bad-dep
+        - test-invalid-pom-ref
+    </echo>
   </target>
 
   <target name="test-all-pubs" description="All publication tests (install/deploy)"
@@ -93,8 +97,16 @@
   </target>
 
   <target name="test-bad-dep" depends="initTaskDefs">
+  	<echo>Expected failure because foo:foo:jar:1.0-alpha-2 artifact does not exist.</echo>
     <artifact:dependencies pathId="dependency.classpath" filesetId="dependency.fileset">
       <dependency groupId="foo" artifactId="foo" version="1.0-alpha-2"/>
+    </artifact:dependencies>
+  </target>
+
+  <target name="test-bad-scope" depends="initTaskDefs">
+  	<echo>Expected warning because 'bad-value' is not a valid scope. Error message must show official scopes. See MANTTASKS-190 for more information.</echo>
+    <artifact:dependencies>
+      <dependency groupId="commons-logging" artifactId="commons-logging" version="1.1.1" scope="bad-value"/>
     </artifact:dependencies>
   </target>
 

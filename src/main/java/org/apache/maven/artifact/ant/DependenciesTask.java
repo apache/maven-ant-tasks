@@ -44,6 +44,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -62,6 +63,14 @@ import java.util.Set;
 public class DependenciesTask
     extends AbstractArtifactWithRepositoryTask
 {
+    private static final String[] SCOPES = { Artifact.SCOPE_COMPILE, Artifact.SCOPE_PROVIDED, Artifact.SCOPE_RUNTIME,
+        Artifact.SCOPE_TEST };
+
+    private static final Set<String> SCOPES_SET;
+    static
+    {
+        SCOPES_SET = new HashSet<String>( Arrays.asList( SCOPES ) );
+    }
 
     public static final String DEFAULT_ANT_BUILD_FILE = "target/build-dependencies.xml";
 
@@ -94,8 +103,8 @@ public class DependenciesTask
     private String versionsId;
 
     /**
-     * A specific maven scope used to determine which dependencies are resolved.
-     * This takes only a single scope and uses the standard maven ScopeArtifactFilter.
+     * A specific Maven scope used to determine which dependencies are resolved.
+     * This takes only a single scope and uses the standard Maven ScopeArtifactFilter.
      */
     private String useScope;
 
@@ -178,6 +187,21 @@ public class DependenciesTask
         if ( dependencies.isEmpty() )
         {
             log( "There were no dependencies specified", Project.MSG_WARN );
+        }
+        else
+        {
+            // check scopes
+            for ( Dependency dependency : dependencies )
+            {
+                String scope = dependency.getScope();
+
+                if ( ( scope != null ) && !SCOPES_SET.contains( scope ) )
+                {
+                    // see MANTTASKS-190
+                    log( "Unknown scope='" + scope + "' for " + dependency + ", supported scopes are: " + SCOPES_SET,
+                         Project.MSG_WARN );
+                }
+            }
         }
 
         log( "Resolving dependencies...", Project.MSG_VERBOSE );
@@ -537,8 +561,8 @@ public class DependenciesTask
     }
 
     /**
-     * Use the maven artifact filtering for a particular scope.  This
-     * uses the standard maven ScopeArtifactFilter.
+     * Use the Maven artifact filtering for a particular scope.  This
+     * uses the standard Maven ScopeArtifactFilter.
      *
      * @param useScope
      */
@@ -573,7 +597,7 @@ public class DependenciesTask
      */
     public void setAddArtifactFileSetRefs( boolean addArtifactFileSetRefs )
     {
-        this.log( "Parameter addArtifactFileSetRefs is deprecated.  A fileset ref is always created" +
+        this.log( "Parameter addArtifactFileSetRefs is deprecated. A fileset ref is always created " +
         		"for each dependency.", Project.MSG_WARN );
     }
 
