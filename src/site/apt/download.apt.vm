@@ -1,9 +1,9 @@
  ------
-Download Maven Ant Tasks
+ Download Maven Ant Tasks
  ------
-Paul Gier
+ Paul Gier
  ------
-30 November 2009
+ 2009-11-30
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,10 +28,10 @@ Paul Gier
 
 Download the Maven Ant Tasks
 
-   The Maven Ant Tasks are distributed as a jar file to be included in the Ant classpath.  The complete 
+   The Maven Ant Tasks are distributed as a jar file to be included in the Ant classpath.  The complete
    sources can be downloaded as a zip file.
 
-   After selecting the file to download, you will be prompted for a mirror.  If the file is not found 
+   After selecting the file to download, you will be prompted for a mirror.  If the file is not found
    on your selected mirror, please be patient, as it may take 24 hours to reach all mirrors.
 
    The Maven Ant Tasks are distributed under the {{{http://maven.apache.org/license.html} Apache License, version 2.0}}.
@@ -49,6 +49,6 @@ Download the Maven Ant Tasks
 *-----------------+------------------------------------------------------------------------------------------------+
 | <<JDK>>         | JDK version 1.5 or above is required (This is due to dependencies on internal Maven libraries.)
 *-----------------+------------------------------------------------------------------------------------------------+
-| <<Ant>>         | Ant version 1.6.x or 1.7.x is required
+| <<Ant>>         | Ant version 1.6.x, 1.7.x or 1.8.x is required
 *-----------------+------------------------------------------------------------------------------------------------+
 

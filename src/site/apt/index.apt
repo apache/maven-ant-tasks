@@ -45,14 +45,14 @@ Maven Ant Tasks
 *-----------------+------------------------------------------------------------------------------------------------+
 | <<JDK>>         | JDK version 1.5 or above is required (This is due to dependencies on internal Maven libraries.)
 *-----------------+------------------------------------------------------------------------------------------------+
-| <<Ant>>         | Ant version 1.6.x or 1.7.x is required
+| <<Ant>>         | Ant version 1.6.x, 1.7.x or 1.8.x is required
 *-----------------+------------------------------------------------------------------------------------------------+
 
 * Usage
 
-  General instructions for installing and using the Maven Ant Tasks can be found on the 
-  {{{installation.html}installation page}} and the {{{usage.html}usage page}} respectively. 
-  Some more specific use cases are described in the examples given below. Last but not least, 
+  General instructions for installing and using the Maven Ant Tasks can be found on the
+  {{{installation.html}installation page}} and the {{{usage.html}usage page}} respectively.
+  Some more specific use cases are described in the examples given below. Last but not least,
   users occasionally contribute additional examples, tips or errata to the
   {{{http://docs.codehaus.org/display/MAVENUSER/Maven+Ant+Tasks}project's wiki page}}.
 
@@ -83,7 +83,7 @@ Maven Ant Tasks
   entire debug logs, Ant build scripts or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
   {{{source-repository.html}source repository}} and will find supplementary information in the
-  {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}. 
+  {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
 
   For more information on the Maven functionality behind the Ant tasks, try the following links:
 
