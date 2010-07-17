@@ -31,7 +31,8 @@ Using Maven Ant Tasks
 
 * Declaring Dependencies
 
-  The main purpose of the Maven Ant Tasks is to utilize Maven's {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html} dependency management features}}.
+  The main purpose of the Maven Ant Tasks is to utilize Maven's
+  {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html} dependency management features}}.
 
   This is achieved with the <<<dependencies>>> task. The simplest usage involves specifying your dependencies inline,
   such as in the following example:
@@ -165,18 +166,18 @@ Using Maven Ant Tasks
 
     * {{{http://maven.apache.org/settings.html} Information about configuring settings.xml}}.
 
-    * {{{http://maven.apache.org/maven-settings/settings.html} Settings Descriptor Reference}}.
+    * {{{http://maven.apache.org/ref/current/maven-settings/settings.html} Settings Descriptor Reference}}.
 
     * {{{http://maven.apache.org/guides/mini/guide-mirror-settings.html} Using Mirrors for Repositories}}.
 
 * More Examples
 
   * Maven Ant Tasks's
-    {{{http://svn.apache.org/repos/asf/maven/ant-tasks/branches/maven-ant-tasks-2.0.x/sample.build.xml} sample.build.xml}}
+    {{{http://svn.apache.org/repos/asf/maven/ant-tasks/trunk/build-tests.xml} build-tests.xml}}
     is a sample Ant script showing most of the functionality in action (it's used as unit-tests).
 
   * Maven itself can be bootstrapped using Maven Ant Tasks:
-    see {{{http://svn.apache.org/repos/asf/maven/components/branches/maven-2.0.x/build.xml} build.xml}} in
+    see {{{http://svn.apache.org/repos/asf/maven/maven-3/trunk/build.xml} build.xml}} in
     Maven Core sources. Note that most content is about building Maven project: there is only a little part that is
     using Maven Ant Tasks, to get dependencies, ie the <<<pull>>> target (with its <<<depends>>> targets).
 
