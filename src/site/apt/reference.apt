@@ -56,7 +56,7 @@
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<type>>>              | A comma separated list of artifact types to be retrieved. By default all artifact types will be included.   | No     |    |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<useScope>>>          | Follows the maven scope behaviour.  Can be set to <<<compile>>>, <<<runtime>>>, or <<<test>>>.  If no value is provided, all scopes will be included.  | No   |    |
+| <<<useScope>>>          | Follows the Maven scope behaviour.  Can be set to <<<compile>>>, <<<runtime>>>, or <<<test>>>.  If no value is provided, all scopes will be included.  | No   |    |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<scopes>>>            | A comma separated list of specific scopes to be retrieved.  If no value is provided, all scopes will be included.  | No   |  2.0.10  |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
@@ -87,7 +87,8 @@
 
 ** <<<dependency>>>
 
-  ~~ TODO: Is system scope supported, in the table below?
+  Dependency definition is done in Maven Ant Tasks exactly like it is done in Maven: it is summarized here, but you can look at
+  {{{http://maven.apache.org/ref/current/maven-model/maven.html#class_dependency} the reference documentation}} for more information.
 
 *------------------+--------------------------------------------------------+--------------+
 | <<Attribute>>    | <<Description>>                                        | <<Required>> |
@@ -102,10 +103,19 @@
 *------------------+--------------------------------------------------------+--------------+
 | <<<classifier>>> | The classifier of the dependency.                      | No           |
 *------------------+--------------------------------------------------------+--------------+
-| <<<scope>>>      | The scope of the usage of the dependency, which {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope}} affects which of that dependency's own dependencies are also retrieved}. This can be <<<compile>>> (default), <<<runtime>>>, <<<test>>>, <<<provided>>>. | No |
+| <<<scope>>>      | The scope of the usage of the dependency, which {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope}} affects which of that dependency's own dependencies are also retrieved}. This can be <<<compile>>> (default), <<<runtime>>>, <<<test>>>, <<<provided>>> or <<<system>>>. | No |
+*------------------+--------------------------------------------------------+--------------+
+| <<<systemPath>>> | FOR SYSTEM SCOPE ONLY. This specifies the path on the filesystem for this dependency. | No |
 *------------------+--------------------------------------------------------+--------------+
 
   The dependency can also nest multiple <<<exclusion>>> elements.
+
+*** Note about system scope
+
+  Dependencies that use the <<<system>>> scope specify a path on the local system that may be outside
+  of the local maven repository.  An Ant fileset only allows a single base directory, so these
+  dependencies will not be included in the generated fileset for resolved dependencies. They will, however, be included
+  in the path object.
 
 *** <<<exclusion>>>
 

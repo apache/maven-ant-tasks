@@ -64,7 +64,7 @@ public class DependenciesTask
     extends AbstractArtifactWithRepositoryTask
 {
     private static final String[] SCOPES = { Artifact.SCOPE_COMPILE, Artifact.SCOPE_PROVIDED, Artifact.SCOPE_RUNTIME,
-        Artifact.SCOPE_TEST };
+        Artifact.SCOPE_TEST, Artifact.SCOPE_SYSTEM };
 
     private static final Set<String> SCOPES_SET;
     static
