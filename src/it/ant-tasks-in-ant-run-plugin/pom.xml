@@ -14,13 +14,22 @@
     Try to call the ant tasks through the ant run plugin.
   </description>
 
+  <dependencies><!-- dependencies to be downloaded by ant tasks -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>1.3.2</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <finalName>testfile</finalName>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.3</version>
+        <version>1.3</version><!-- uses Ant 1.7.1 by default -->
         <executions>
           <execution>
             <id>run</id>
@@ -36,15 +45,6 @@
           </execution>
         </executions>
       </plugin>
-
     </plugins>
-
   </build>
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>1.3.2</version>
-    </dependency>
-  </dependencies>
 </project>

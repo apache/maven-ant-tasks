@@ -8,18 +8,19 @@
              classpathref="maven-ant-tasks.classpath"/>
   </target>
 
-  
   <target name="test" depends="initTaskDefs">
     <artifact:localRepository id="local.repository" path="${basedir}/target/local-repo" layout="default"/>
 
     <artifact:pom file="pom.xml" id="mypom"/>
-    <mkdir dir="target"/>
+
+  	<mkdir dir="target"/>
     <touch file="target/${mypom.build.finalName}"/>
-    
+
     <artifact:dependencies fileSetId="mydeps" pomRefId="mypom"/>
-    <copy todir="target">
+
+  	<copy todir="target">
       <fileset refid="mydeps"/>
     </copy>
   </target>
-  
+
 </project>
