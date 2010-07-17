@@ -1,0 +1,26 @@
+<project name="maven-ant-tasks" default="test" xmlns:artifact="urn:maven-artifact-ant" xmlns:test="urn:test-tasks">
+
+  <target name="initTaskDefs">
+    <xmlproperty file="../../../pom.xml" prefix="pom.xml" />
+
+    <path id="maven-ant-tasks.classpath" path="../../maven-ant-tasks-${pom.xml.project.version}.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
+             classpathref="maven-ant-tasks.classpath"/>
+  </target>
+
+  <target name="test" depends="initTaskDefs">
+    <artifact:localRepository id="local.repository" path="${basedir}/target/local-repo" layout="default"/>
+
+    <artifact:pom file="pom.xml" id="mypom"/>
+
+  	<mkdir dir="target"/>
+    <touch file="target/${mypom.build.finalName}"/>
+
+    <artifact:dependencies fileSetId="mydeps" pomRefId="mypom"/>
+
+  	<copy todir="target">
+      <fileset refid="mydeps"/>
+    </copy>
+  </target>
+
+</project>
