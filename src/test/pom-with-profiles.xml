@@ -2,22 +2,23 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>it.ant-tasks</groupId>
   <artifactId>profiles</artifactId>
+  <version>0.10-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>profiles</name>
-  <version>0.10-SNAPSHOT</version>
   <description>
     Check that the profiles work corretly.
   </description>
-  
+
   <build>
     <finalName>noprofile</finalName>
   </build>
-  
+
   <profiles>
     <profile>
       <id>default</id>
