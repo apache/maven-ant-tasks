@@ -68,7 +68,7 @@ public class Pom
     extends AbstractArtifactWithRepositoryTask
 {
     /**
-     * The id refering to an existing pom object in the current Ant project.
+     * The id referring to an existing pom object in the current Ant project.
      */
     private String refid;
 
@@ -90,7 +90,7 @@ public class Pom
     /**
      * The list of profiles to either activate or deactivate for this pom.
      */
-    private List profiles = new ArrayList();
+    private List<Profile> profiles = new ArrayList<Profile>();
 
     private boolean inheritAllProperties = true;
 
@@ -162,7 +162,7 @@ public class Pom
         this.file = file;
     }
 
-    public List getProfiles()
+    public List<Profile> getProfiles()
     {
         return profiles;
     }
@@ -402,7 +402,7 @@ public class Pom
      */
     private void addAntRepositoriesToProfileManager()
     {
-        List remoteRepositories = this.getRemoteRepositories();
+        List<RemoteRepository> remoteRepositories = this.getRemoteRepositories();
 
         if ( remoteRepositories == null || remoteRepositories.isEmpty() )
         {
@@ -411,10 +411,8 @@ public class Pom
         org.apache.maven.model.Profile repositoriesProfile = new org.apache.maven.model.Profile();
         repositoriesProfile.setId( "maven-ant-tasks-repo-profile" );
 
-        Iterator iter = remoteRepositories.iterator();
-        while ( iter.hasNext() )
+        for ( RemoteRepository antRepo : remoteRepositories )
         {
-            RemoteRepository antRepo = (RemoteRepository) iter.next();
             Repository mavenRepo = new Repository();
             mavenRepo.setId( antRepo.getId() );
             mavenRepo.setUrl( antRepo.getUrl() );
@@ -429,11 +427,8 @@ public class Pom
     {
         ProfileManager profileManager = getProfileManager();
 
-        Iterator it = getProfiles().iterator();
-        while ( it.hasNext() )
+        for ( Profile profile : getProfiles() )
         {
-            Profile profile = (Profile) it.next();
-
             if ( profile.getId() == null )
             {
                 throw new BuildException( "Attribute \"id\" is required for profile in pom type." );
