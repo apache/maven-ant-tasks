@@ -132,6 +132,15 @@ public abstract class AbstractArtifactWithRepositoryTask
      */
     public void addConfiguredRemoteRepository( RemoteRepository remoteRepository )
     {
+        if ( remoteRepository.getRefid() != null )
+        {
+            // check that the refid points to a repository that is properly defined
+            String refid = remoteRepository.getRefid();
+            if ( getProject().getReference( refid ) == null )
+            {
+                throw new BuildException( "Unknown remote repository refid='" + refid + "'." );
+            }
+        }
         // Validate the url and id parameters before adding the repository
         if ( remoteRepository.getUrl() == null )
         {

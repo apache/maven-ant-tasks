@@ -71,6 +71,7 @@
         - test-bad-dep
         - test-invalid-pom-ref
     	- test-bad-system-dep
+    	- test-bad-repo-refid
     </echo>
   </target>
 
@@ -674,6 +675,14 @@
     <artifact:dependencies>
       <dependency groupId="foo" artifactId="bar" version="1.0" scope="system"/>
       <localRepository refid="local.repository"/>
+    </artifact:dependencies>
+  </target>
+
+  <target name="test-bad-repo-refid" depends="initTaskDefs">
+  	<echo>Expected failure: undefined remoteRepository refid</echo>
+    <artifact:dependencies>
+      <remoteRepository refid="not-defined"/>
+      <dependency groupId="commons-logging" artifactId="commons-logging" version="1.1.1"/>
     </artifact:dependencies>
   </target>
 
