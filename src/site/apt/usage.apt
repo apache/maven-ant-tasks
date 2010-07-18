@@ -98,9 +98,9 @@ Using Maven Ant Tasks
 </artifact:dependencies>
 -----
 
-  If no remote repositories are specified, the default {{{http://repo1.maven.org/maven2/} http://repo1.maven.org/maven2/}}
-  is used. But if at least one remote repository is specified, repo1 is not automatically added: you have
-  to declare it if you need it.
+  The default {{{http://repo1.maven.org/maven2/} central}} repository is automatically added to remote repositories.
+  Until 2.0.10, if at least one remote repository was specified, central was not automatically added: you had
+  to declare it if you needed it.
 
   <<Note:>> to work with transitive dependencies, you <must> use a Maven 2.0 repository.
 
