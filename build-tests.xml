@@ -70,6 +70,7 @@
     <echo>Some tests must be run manually, since they are intended to fail:
         - test-bad-dep
         - test-invalid-pom-ref
+    	- test-bad-system-dep
     </echo>
   </target>
 
@@ -666,6 +667,14 @@
       <contains string="${system.scope.classpath.property}" substring="${local.repository.property}"/>
     </condition>
     <fail if="test.fail">For system scope path should not come from local repository.</fail>
+  </target>
+
+  <target name="test-bad-system-dep" depends="initTaskDefs">
+  	<echo>Expected failure: dependency with scope="system" must define systemPath attribute</echo>
+    <artifact:dependencies>
+      <dependency groupId="foo" artifactId="bar" version="1.0" scope="system"/>
+      <localRepository refid="local.repository"/>
+    </artifact:dependencies>
   </target>
 
   <macrodef name="check.file.exists">

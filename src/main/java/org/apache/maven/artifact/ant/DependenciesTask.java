@@ -195,7 +195,15 @@ public class DependenciesTask
             {
                 String scope = dependency.getScope();
 
-                if ( ( scope != null ) && !SCOPES_SET.contains( scope ) )
+                if ( Artifact.SCOPE_SYSTEM.equals( scope ) )
+                {
+                    if ( StringUtils.isBlank( dependency.getSystemPath() ) )
+                    {
+                        throw new BuildException( dependency.toString()
+                            + " is defined with scope='system': systemPath attribute is required." );
+                    }
+                }
+                else if ( ( scope != null ) && !SCOPES_SET.contains( scope ) )
                 {
                     // see MANTTASKS-190
                     log( "Unknown scope='" + scope + "' for " + dependency + ", supported scopes are: " + SCOPES_SET,
