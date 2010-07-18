@@ -44,7 +44,7 @@
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<filesetId>>>         | The reference ID to store a fileset under, for the resolved dependencies. | No           |             |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<javadocFilesetId>>>  | The reference ID to store a fileset under, for the javadoc attachements of the resolved dependencies. | No | 2.0.9 |
+| <<<javadocFilesetId>>>  | The reference ID to store a fileset under, for the javadoc attachments of the resolved dependencies. | No | 2.0.9 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<pathId>>>            | The reference ID to store a path under, for the resolved dependencies.    | No           |             |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
@@ -52,7 +52,7 @@
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<settingsFile>>>      | The settings file to use. Defaults to <<<$\{user.home\}/.ant/settings.xml>>> or if that doesn't exist <<<$\{user.home\}/.m2/settings.xml>>>. | No | 2.0.6 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<sourcesFilesetId>>>  | The reference ID to store a fileset under, for the sources attachements of the resolved dependencies. | No | 2.0.6 |
+| <<<sourcesFilesetId>>>  | The reference ID to store a fileset under, for the sources attachments of the resolved dependencies. | No | 2.0.6 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<type>>>              | A comma separated list of artifact types to be retrieved. By default all artifact types will be included.   | No     |    |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
@@ -64,9 +64,7 @@
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<cacheDependencyRefs>>> | If set to true, will generate an Ant build file that contains properties and fileset references for the dependencies.  Then try to load information from this file in subsequent builds.  Default is <false>.  | No | 2.1.0 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<addArtifactFileSetRefs>>> | Defines the name of the file in which to store properties and references to the paths of dependency artifacts.  Default is <false>.  | No | 2.1.0 |
-*-------------------------+---------------------------------------------------------------------------+--------------+-------------+
-| <<<addArtifactFileSetRefs>>> | <<Deprecated>> in version 2.1.0.  The dependencies task will always add a fileset with id of <<<groupId:artifactId:type[:classifier]>>>.  Default is <true>.  |   | 2.0.10 |
+| <<<addArtifactFileSetRefs>>> | <<Deprecated>> Add a fileset for each resolved dependency. The fileset has an id of <<<groupId:artifactId:type[:classifier]>>>.  Default is <true> (was <false> in 2.0.10).  | No | 2.0.10 |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
 | <<<verbose>>>           | <<Deprecated>> in version 2.1.0.  Use the Ant command line -v option for verbose output.     | No | |
 *-------------------------+---------------------------------------------------------------------------+--------------+-------------+
