@@ -40,6 +40,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -326,9 +327,9 @@ public class DependenciesTask
             {
                 setDependencyRefsBuildFile( DEFAULT_ANT_BUILD_FILE );
             }
-            log( "Building ant file: " + getDependencyRefsBuildFile());
+            log( "Building ant file: " + getDependencyRefsBuildFile() );
             AntBuildWriter antBuildWriter = new AntBuildWriter();
-            File antBuildFile = new File( getProject().getBaseDir(), getDependencyRefsBuildFile() );
+            File antBuildFile = FileUtils.resolveFile( getProject().getBaseDir(), getDependencyRefsBuildFile() );
             try
             {
                 antBuildWriter.openAntBuild( antBuildFile, "maven-dependencies", "init-dependencies" );
@@ -337,16 +338,16 @@ public class DependenciesTask
 
                 for ( Iterator<Artifact> i = result.getArtifacts().iterator(); i.hasNext(); )
                 {
-                    Artifact artifact = (Artifact) i.next();
+                    Artifact artifact = i.next();
                     String conflictId = artifact.getDependencyConflictId();
                     antBuildWriter.writeProperty( conflictId, artifact.getFile().getAbsolutePath() );
-                    FileSet singleArtifactFileSet = (FileSet)getProject().getReference( conflictId );
+                    FileSet singleArtifactFileSet = (FileSet) getProject().getReference( conflictId );
                     antBuildWriter.writeFileSet( singleArtifactFileSet, conflictId );
                 }
 
                 if ( pathId != null )
                 {
-                    Path thePath = (Path)getProject().getReference( pathId );
+                    Path thePath = (Path) getProject().getReference( pathId );
                     antBuildWriter.writePath( thePath, pathId );
                 }
 
@@ -385,7 +386,7 @@ public class DependenciesTask
      */
     private boolean checkCachedDependencies()
     {
-        File cacheBuildFile = new File( getProject().getBaseDir(), getDependencyRefsBuildFile() );
+        File cacheBuildFile = FileUtils.resolveFile( getProject().getBaseDir(), getDependencyRefsBuildFile() );
         if ( ! cacheBuildFile.exists() )
         {
             return false;
