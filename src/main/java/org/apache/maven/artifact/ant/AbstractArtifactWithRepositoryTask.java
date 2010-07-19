@@ -22,7 +22,9 @@ package org.apache.maven.artifact.ant;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.model.Repository;
@@ -94,8 +96,14 @@ public abstract class AbstractArtifactWithRepositoryTask
 
         log( "Using remote repositories:", Project.MSG_VERBOSE );
         List<ArtifactRepository> list = new ArrayList<ArtifactRepository>();
+        Set<String> ids = new HashSet<String>();
         for ( RemoteRepository remoteRepository : remoteRepositories )
         {
+            if ( !ids.add( remoteRepository.getId() ) )
+            {
+                // repository id already added to the list: ignore it, since it has been overridden
+                continue;
+            }
             updateRepositoryWithSettings( remoteRepository );
 
             StringBuffer msg = new StringBuffer();

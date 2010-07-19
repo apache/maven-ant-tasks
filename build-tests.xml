@@ -326,6 +326,16 @@
     </artifact:dependencies>
   </target>
 
+  <target name="test-deps-repo-override" depends="initTaskDefs">
+  	<echo>Expected failure: central has been overrided.</echo>
+    <delete dir="target/tmp"/>
+    <artifact:dependencies settingsFile="${basedir}/src/test/settings-empty.xml">
+      <localRepository path="target/tmp"/>
+      <remoteRepository id="central" url="file://${user.dir}/src/test/repo"/>
+      <dependency groupId="commons-logging" artifactId="commons-logging" version="1.1.1"/>
+    </artifact:dependencies>
+  </target>
+
   <target name="test-deps-order" depends="initTaskDefs">
     <artifact:dependencies pathId="order.path">
       <dependency groupId="junit" artifactId="junit" version="3.8.1"/>
