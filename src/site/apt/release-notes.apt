@@ -3,7 +3,7 @@
   ------
   Hervé Boutemy
   ------
-  2008-10-12
+  2010-07-19
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -28,6 +28,45 @@
 
 Maven Ant Tasks
 
+* 2.1.1 Release Notes
+
+  The full list of changes can be found in our {{{http://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=11533&version=16024}issue management system}}, and is reproduced below.
+
+** Bug
+
+    * [MANTTASKS-173] - Value of project.build.finalName is not resolved
+
+    * [MANTTASKS-178] - artifact:pom task not working with Ant 1.8.0
+
+    * [MANTTASKS-179] - Variables nested in pom.xml are not being interpolated
+
+    * [MANTTASKS-185] - null pointer exception when caching dependency information
+
+    * [MANTTASKS-187] - maven ant tasks 2.1.0 pom task no longer extrapolates properties
+
+    * [MANTTASKS-188] - dependencyrefsbuildfile attribute doesn't work with absolute paths.
+
+    * [MANTTASKS-189] - NPE when using scope="system"
+
+    * [MANTTASKS-190] - dependency scope attribute is not validated
+
+    * [MANTTASKS-191] - No explanation of how to use multiple Maven repositories to resolve dependencies
+
+    * [MANTTASKS-192] - NPE when using remoteRepository with refid which has not been defined
+
+    * [MANTTASKS-193] - POM properties aren't available as ANT properties contrary to the documentation
+
+    * [MANTTASKS-195] - Cannot override central repository with my own
+
+** Improvement
+
+    * [MANTTASKS-181] - update tasks code to use Java 5
+
+** Wish
+
+    * [MANTTASKS-172] - extend scope of 'result' variable in org.apache.maven.artifact.ant.DependenciesTask.doExecute()
+
+
 * 2.1.0 Release Notes
 
   The full list of changes can be found in our {{{http://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=11533&version=13522}issue management system}}, and is reproduced below.
@@ -35,31 +74,31 @@ Maven Ant Tasks
 ** Bug
 
     * [MANTTASKS-4] - System scope not working properly in Maven Antlib
-    
+
     * [MANTTASKS-152] - Mvn task omit localRepository param
-    
+
     * [MANTTASKS-153] - Properties defined in Ant are not passed to Maven
-    
+
     * [MANTTASKS-155] - Dependency fileset should set the current ant project
-    
+
     * [MANTTASKS-159] - Wrong credentials used for mirrored repositories
-    
+
     * [MANTTASKS-160] - Wrong metadata files created for mirrored remote repositories
-    
+
     * [MANTTASKS-167] - Generated ant build file should save version list for version mapper
 
 ** Improvement
 
     * [MANTTASKS-117] - Setting Maven user-properties not possible
-    
+
     * [MANTTASKS-169] - Dependencies "verbose" option should be deprecated in favor of standard ant verbose option
 
 ** New Feature
 
     * [MANTTASKS-151] - Support for artfacts that are 'classified' from birth
-    
+
     * [MANTTASKS-156] - Add feature to dependencies task to write file paths to a file.
-    
+
     * [MANTTASKS-168] - New task to write a pom file
 
 
