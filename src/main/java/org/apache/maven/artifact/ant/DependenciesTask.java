@@ -365,7 +365,10 @@ public class DependenciesTask
                 }
 
                 String versionsList = getProject().getProperty( versionsId );
-                antBuildWriter.writeProperty( versionsId, versionsList );
+                if ( versionsList != null )
+                {
+                    antBuildWriter.writeProperty( versionsId, versionsList );
+                }
 
                 antBuildWriter.closeTarget();
                 antBuildWriter.closeAntBuild();
