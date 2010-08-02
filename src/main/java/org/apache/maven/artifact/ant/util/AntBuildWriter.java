@@ -175,6 +175,7 @@ public class AntBuildWriter
     {
         writer.startElement( "echo" );
 
+        writer.addAttribute( "level", "info" );
         writer.addAttribute( "message", message );
 
         writer.endElement();
