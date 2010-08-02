@@ -87,7 +87,6 @@ public class WritePomTask
         {
             fw = WriterFactory.newXmlWriter( outputFile );
             new MavenXpp3Writer().write( fw, model );
-
         }
         catch ( IOException e )
         {

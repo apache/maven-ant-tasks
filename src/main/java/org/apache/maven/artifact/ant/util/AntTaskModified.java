@@ -30,9 +30,9 @@ import org.apache.tools.ant.taskdefs.Ant;
  * new sub project.
  *
  * @author pgier
- *
  */
-public class AntTaskModified extends Ant
+public class AntTaskModified
+    extends Ant
 {
 
     /**
@@ -59,8 +59,8 @@ public class AntTaskModified extends Ant
         {
             Field newProjectField = Ant.class.getDeclaredField( "newProject" );
             newProjectField.setAccessible( true );
-            Project newProjectObj = (Project) newProjectField.get( this );
-            return newProjectObj;
+
+            return (Project) newProjectField.get( this );
         }
         catch ( Exception e )
         {

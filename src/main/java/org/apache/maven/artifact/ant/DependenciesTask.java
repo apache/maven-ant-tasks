@@ -283,7 +283,7 @@ public class DependenciesTask
 
         for ( Iterator<Artifact> i = result.getArtifacts().iterator(); i.hasNext(); )
         {
-            Artifact artifact = (Artifact) i.next();
+            Artifact artifact = i.next();
 
             addArtifactToResult( localRepo, artifact, dependencyFileSet, dependencyPath );
 

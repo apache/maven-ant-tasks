@@ -128,7 +128,7 @@ public class InstallWagonProviderTask
         {
             for ( Iterator<Artifact> i = result.getArtifacts().iterator(); i.hasNext(); )
             {
-                Artifact a = (Artifact) i.next();
+                Artifact a = i.next();
 
                 getContainer().addJarResource( a.getFile() );
             }

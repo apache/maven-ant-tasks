@@ -1,10 +1,5 @@
 package org.apache.maven.artifact.ant.util;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
-
-import org.apache.tools.ant.Project;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,6 +18,11 @@ import org.apache.tools.ant.Project;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.util.Hashtable;
+import java.util.Map;
+
+import org.apache.tools.ant.Project;
 
 /**
  * Utility stuff for dealing with Ant.
@@ -51,21 +51,20 @@ public class AntUtil
      */
     public static void copyProperties( Hashtable<String,String> props, Project project )
     {
-        for ( Enumeration<String> e = props.keys(); e.hasMoreElements(); )
+        for ( Map.Entry<String, String> entry : props.entrySet() )
         {
-            String key = e.nextElement();
+            String key = entry.getKey();
             if ( "basedir".equals( key ) || "ant.file".equals( key ) )
             {
                 // basedir and ant.file get special treatment in execute()
                 continue;
             }
 
-            String value = props.get( key ).toString();
             // don't re-set user properties, avoid the warning message
             if ( project.getProperty( key ) == null )
             {
                 // no user property
-                project.setNewProperty( key, value );
+                project.setNewProperty( key, entry.getValue() );
             }
         }
     }
@@ -90,13 +89,13 @@ public class AntUtil
      */
     public static void copyReferences( Hashtable<String,String> refs, Project project )
     {
-        for ( Enumeration<String> e = refs.keys(); e.hasMoreElements(); )
+        for ( Map.Entry<String, String> entry : refs.entrySet() )
         {
-            String key = e.nextElement();
+            String key = entry.getKey();
             // don't overwrite existing references
             if ( project.getReference( key ) == null )
             {
-                project.addReference( key, refs.get( key ) );
+                project.addReference( key, entry.getValue() );
             }
         }
     }

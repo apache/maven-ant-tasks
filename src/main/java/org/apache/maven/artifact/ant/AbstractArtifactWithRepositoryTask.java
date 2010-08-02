@@ -32,7 +32,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 /**
- * Base class for atifact tasks that are able to download artifact from repote repositories.
+ * Base class for artifact tasks that are able to download artifact from remote repositories.
  * @version $Id$
  */
 public abstract class AbstractArtifactWithRepositoryTask
@@ -72,7 +72,7 @@ public abstract class AbstractArtifactWithRepositoryTask
     /**
      * Create the list of ArtifactRepository-ies where artifacts can be downloaded. If
      * no remote repository has been configured, adds central repository.
-     * @param pomRepositories additionnal repositories defined in pom (or null if none)
+     * @param pomRepositories additional repositories defined in pom (or null if none)
      * @return the list of ArtifactRepository-ies
      * @see #createRemoteArtifactRepository(RemoteRepository)
      */

@@ -1,20 +1,5 @@
 package org.apache.maven.artifact.ant.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.types.FileList;
-import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.types.Path;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
-import org.codehaus.plexus.util.xml.XMLWriter;
-import org.codehaus.plexus.util.xml.XmlWriterUtil;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -33,6 +18,21 @@ import org.codehaus.plexus.util.xml.XmlWriterUtil;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+
+import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.types.FileList;
+import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.Path;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.xml.PrettyPrintXMLWriter;
+import org.codehaus.plexus.util.xml.XMLWriter;
+import org.codehaus.plexus.util.xml.XmlWriterUtil;
 
 /**
  * Utility class for writing an Ant build file.
@@ -92,7 +92,6 @@ public class AntBuildWriter
         XmlWriterUtil.writeLineBreak( writer );
 
         IOUtil.close( outputStreamWriter );
-
     }
 
     /**

@@ -50,26 +50,28 @@ public class SpecificScopesArtifactFilter
     public SpecificScopesArtifactFilter( String scopes )
     {
         String [] scopeList = scopes.split( "," );
-        
-        for ( int i=0; i<scopeList.length; ++i )
+
+        for ( int i = 0; i < scopeList.length; ++i )
         {
-            if ( scopeList[i].trim().equals( DefaultArtifact.SCOPE_COMPILE) )
+            String scope = scopeList[i].trim();
+
+            if ( scope.equals( DefaultArtifact.SCOPE_COMPILE ) )
             {
                 compileScope = true;
             }
-            else if ( scopeList[i].trim().equals( DefaultArtifact.SCOPE_PROVIDED) )
+            else if ( scope.equals( DefaultArtifact.SCOPE_PROVIDED ) )
             {
                 providedScope = true;
             }
-            else if ( scopeList[i].trim().equals( DefaultArtifact.SCOPE_RUNTIME) )
+            else if ( scope.equals( DefaultArtifact.SCOPE_RUNTIME ) )
             {
                 runtimeScope = true;
             }
-            else if ( scopeList[i].trim().equals( DefaultArtifact.SCOPE_SYSTEM) )
+            else if ( scope.equals( DefaultArtifact.SCOPE_SYSTEM ) )
             {
                 systemScope = true;
             }
-            else if ( scopeList[i].trim().equals( DefaultArtifact.SCOPE_TEST) )
+            else if ( scope.equals( DefaultArtifact.SCOPE_TEST ) )
             {
                 testScope = true;
             }
@@ -98,9 +100,6 @@ public class SpecificScopesArtifactFilter
         {
             return systemScope;
         }
-        else
-        {
-            return true;
-        }
+        return true;
     }
 }

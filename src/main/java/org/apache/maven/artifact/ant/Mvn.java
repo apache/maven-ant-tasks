@@ -52,7 +52,8 @@ public class Mvn
     
     private LocalRepository localRepository;
     
-    public void execute() throws BuildException
+    public void execute()
+        throws BuildException
     {
         if ( batchMode )
         {
