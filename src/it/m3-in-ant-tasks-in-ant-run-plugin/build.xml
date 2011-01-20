@@ -1,0 +1,19 @@
+<project name="maven-ant-tasks" default="test" xmlns:artifact="urn:maven-artifact-ant" xmlns:test="urn:test-tasks">
+
+  <target name="initTaskDefs">
+    <xmlproperty file="../../../pom.xml" prefix="pom.xml" />
+
+    <path id="maven-ant-tasks.classpath" path="../../maven-ant-tasks-${pom.xml.project.version}.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
+             classpathref="maven-ant-tasks.classpath"/>
+  </target>
+
+
+  <target name="test" depends="initTaskDefs">
+    <mkdir dir="${basedir}/target"/>
+    <artifact:mvn mavenVersion="3.0.2" output="${basedir}/target/maven.version" fork="true">
+        <arg value="-version"/>
+    </artifact:mvn>
+  </target>
+
+</project>

@@ -20,6 +20,7 @@ package org.apache.maven.artifact.ant;
  */
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 import org.apache.maven.model.Dependency;
 import org.apache.tools.ant.BuildException;
@@ -72,6 +73,14 @@ public class Mvn
         
         if ( mavenHome == null )
         {
+            Pattern oldMaven = Pattern.compile("(2\\.0)|(2\\.0-.*)|(2\\.0\\.[1-9])");
+            if ( oldMaven.matcher( getMavenVersion() ).matches() )
+            {
+                throw new BuildException( "The requested Maven version '" + getMavenVersion() + "' is prior to " +
+                                          "version '2.0.10'. In order to launch the requested version you need to " +
+                                          "use a local Maven installation and point to that installation with the " +
+                                          "mavenHome attribute." );
+            }
             downloadAndConfigureMaven();
         }
         else
@@ -84,20 +93,23 @@ public class Mvn
     
     private void downloadAndConfigureMaven()
     {
-        Dependency mavenCore = new Dependency();
-        mavenCore.setGroupId( "org.apache.maven" );
-        mavenCore.setArtifactId( "maven-core" );
-        mavenCore.setVersion( getMavenVersion() );
+        Dependency apacheMaven = new Dependency();
+        apacheMaven.setGroupId( "org.apache.maven" );
+        apacheMaven.setArtifactId( "apache-maven" );
+        apacheMaven.setVersion( getMavenVersion() );
+        apacheMaven.setType( "pom" );
         
         DependenciesTask depsTask = new DependenciesTask();
         depsTask.addLocalRepository( getLocalRepository() );
         depsTask.setProject( getProject() );
-        depsTask.setPathId( "maven-core-dependencies" );
-        depsTask.addDependency( mavenCore );
-        
+        depsTask.setPathId( "apache-maven-dependencies" );
+        depsTask.addDependency( apacheMaven );
+        depsTask.setType( "pom,jar" );
+        depsTask.setPathType( "jar" );
+
         depsTask.execute();
         
-        this.setClasspath( (Path) getProject().getReference( "maven-core-dependencies" ) );
+        this.setClasspath( (Path) getProject().getReference( "apache-maven-dependencies" ) );
         
         this.setClassname( "org.apache.maven.cli.MavenCli" );
     }

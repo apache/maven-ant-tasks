@@ -194,6 +194,25 @@
 | <<<trim>>>       | A boolean value to determine whether unnecessary information should be removed from the POM.  Defaults to <<<true>>>.   | No           |
 *------------------+--------------------------------------------------------------------------+--------------+
 
+* <<<{mvn}>>> <(since 2.0.10)>
+
+  This task will run a Maven process either from a specific Maven Home, or by downloading the required version and
+  running from the local repository directly. The task extends th <<<java>>> task with the following additional
+  attributes.
+
+*------------------+--------------------------------------------------------------------------+--------------+-------------+
+| <<Attribute>>    | <<Description>>                                                          | <<Required>> | << Since >> |
+*------------------+--------------------------------------------------------------------------+--------------+-------------+
+| <<<pom>>>        | The pom.xml file to use.  If not specified Maven will look for a pom.xml in the current directory | No | 2.0.10 |
+*------------------+--------------------------------------------------------------------------+--------------+-------------+
+| <<<mavenHome>>>  | The MAVEN_HOME of the version of Maven to launch.  If not specified then <<<mavenVersion>>> will control the version of Maven that is launched. | No | 2.0.10 |
+*------------------+--------------------------------------------------------------------------+--------------+-------------+
+| <<<mavenVersion>>> | The version of Maven to launch. The required dependencies will be resolved and Maven will be launched directly from the local repository. There is no requirement to have Maven installed locally. This is ignored if <<<mavenHome>>> is specified. The default value is 2.0.10. Prior to Maven Ant Tasks 2.1.2 only Maven versions in the range <<<[2.0.10,2.2.1]>>> could be launched. Since Maven Ant Tasks 2.1.2 the range has been extended to <<<[2.0.10,3.0.2]>>> newer versions of Maven will probably also work but are untested at this time.| No | 2.0.10 |
+*------------------+--------------------------------------------------------------------------+--------------+-------------+
+| <<<localRepository>>> | The location of the local repository to be used by Maven. | No | 2.0.10 |
+*------------------+--------------------------------------------------------------------------+--------------+-------------+
+| <<<batchMode>>>  | Whether to launch Maven in batch mode or not. Defaults to <<<true>>>. | No | 2.0.10 |
+*------------------+--------------------------------------------------------------------------+--------------+-------------+
 
 
 {Type} Reference
