@@ -120,6 +120,11 @@ public class DependenciesTask
     private String type;
 
     /**
+     * A comma separated list of dependency types to include in the resulting path object.
+     */
+    private String pathType;
+
+    /**
      * The file name to use for the generated Ant build that contains dependency properties and references.
      */
     private String dependencyRefsBuildFile;
@@ -281,11 +286,22 @@ public class DependenciesTask
 
         Set<String> versions = new HashSet<String>();
 
+        ArtifactFilter pathFilter;
+
+        if ( pathType  != null )
+        {
+            pathFilter = new TypesArtifactFilter( pathType );
+        }
+        else
+        {
+            pathFilter = null;
+        }
+
         for ( Iterator<Artifact> i = result.getArtifacts().iterator(); i.hasNext(); )
         {
             Artifact artifact = i.next();
 
-            addArtifactToResult( localRepo, artifact, dependencyFileSet, dependencyPath );
+            addArtifactToResult( localRepo, artifact, dependencyFileSet, dependencyPath, pathFilter );
 
             versions.add( artifact.getVersion() );
 
@@ -460,11 +476,11 @@ public class DependenciesTask
     private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact,
                                       FileSet toFileSet )
     {
-        addArtifactToResult( localRepo, artifact, toFileSet, null );
+        addArtifactToResult( localRepo, artifact, toFileSet, null, null );
     }
 
     private void addArtifactToResult( ArtifactRepository localRepo, Artifact artifact,
-                                      FileSet toFileSet, Path path )
+                                      FileSet toFileSet, Path path, ArtifactFilter filter )
     {
         String filename = localRepo.pathOf( artifact );
 
@@ -477,7 +493,7 @@ public class DependenciesTask
         artifactFileSet.setFile( artifact.getFile() );
         getProject().addReference( artifact.getDependencyConflictId(), artifactFileSet );
 
-        if ( path != null )
+        if ( path != null && ( filter == null || filter.include( artifact ) ) )
         {
             path.addFileset( artifactFileSet );
         }
@@ -586,6 +602,11 @@ public class DependenciesTask
     public void setType( String type )
     {
         this.type = type;
+    }
+
+    public void setPathType( String pathType )
+    {
+        this.pathType = pathType;
     }
 
     public String getScopes()
