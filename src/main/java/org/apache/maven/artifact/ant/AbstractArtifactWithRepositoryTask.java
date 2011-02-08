@@ -80,19 +80,23 @@ public abstract class AbstractArtifactWithRepositoryTask
     protected List<ArtifactRepository> createRemoteArtifactRepositories( List<Repository> pomRepositories )
     {
         List<RemoteRepository> remoteRepositories = new ArrayList<RemoteRepository>();
+
+        // First, add repositories configured in Ant
         remoteRepositories.addAll( getRemoteRepositories() );
 
-        if ( getRemoteRepositories().isEmpty() )
-        {
-            remoteRepositories.add( getDefaultRemoteRepository() );
-        }
-
+        // Add repositories configured in POM
         if ( pomRepositories != null )
         {
             for ( Repository pomRepository : pomRepositories )
             {
                 remoteRepositories.add( createAntRemoteRepository( pomRepository ) );
             }
+        }
+
+        // Only add default repository if no repositories were configured otherwise
+        if ( remoteRepositories.isEmpty() )
+        {
+            remoteRepositories.add( getDefaultRemoteRepository() );
         }
 
         log( "Using remote repositories:", Project.MSG_VERBOSE );
