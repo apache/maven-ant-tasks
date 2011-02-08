@@ -33,6 +33,7 @@ import org.apache.maven.model.License;
 import org.apache.maven.model.MailingList;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Organization;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.Scm;
@@ -526,6 +527,11 @@ public class Pom
     public void setVersion( String version )
     {
         getMavenProject().setVersion( version );
+    }
+
+    public void addConfiguredParent( Parent parent )
+    {
+        getMavenProject().getModel().setParent( parent );
     }
 
     public void addConfiguredCiManagement( CiManagement ciManagement )
