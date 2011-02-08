@@ -72,6 +72,7 @@ public abstract class AbstractArtifactWithRepositoryTask
     /**
      * Create the list of ArtifactRepository-ies where artifacts can be downloaded. If
      * no remote repository has been configured, adds central repository.
+     * 
      * @param pomRepositories additional repositories defined in pom (or null if none)
      * @return the list of ArtifactRepository-ies
      * @see #createRemoteArtifactRepository(RemoteRepository)
@@ -126,6 +127,11 @@ public abstract class AbstractArtifactWithRepositoryTask
         return list;
     }
 
+    /**
+     * The repositories configured in the Ant task
+     * 
+     * @return The list of repositories
+     */
     public List<RemoteRepository> getRemoteRepositories()
     {
         return remoteRepositories;
