@@ -49,11 +49,28 @@ Install and Deploy
   </artifact:install>
 
   <artifact:deploy file="target/my-project-1.0.jar">
-    <remoteRepository url="file://localhost/www/repository"/>
+    <remoteRepository url="file:///www/repository"/>
     <pom refid="mypom"/>
   </artifact:deploy>
 ...
 -----
+
+Attaching Multiple Artifacts
+
+  The install and deploy tasks allow you to attach multiple artifact to a single deployment.  For example, 
+  the sources and javadoc jars can be attached using the nested <<attach>> element.
+  
+-----
+  <artifact:deploy file="target/my-project-1.0.jar">
+    <remoteRepository url="http://localhost/www/repository"/>
+    <pom refid="mypom"/>
+    <attach file="${basedir}/target/my-project-1.0-sources.jar" type="jar" classifier="sources"/>
+    <attach file="${basedir}/target/my-project-1.0-javadoc.jar" type="jar" classifier="javadoc"/>
+    <attach file="${basedir}/target/my-project-1.0-junk.zip" type="zip" classifier="junk"/>
+  </artifact:deploy>
+-----
+
+Deployment Protocols
 
   For deploying using a protocol other than local file system, you need to register a provider to make the other
   protocols available. For example:
