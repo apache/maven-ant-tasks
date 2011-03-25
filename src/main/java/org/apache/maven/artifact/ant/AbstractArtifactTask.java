@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -533,7 +534,14 @@ public abstract class AbstractArtifactTask
     {
         Pom pom = new Pom();
 
-        pom.setMavenProject( createMinimalProject( localRepository ) );
+        MavenProject minimalProject = createMinimalProject( localRepository );
+        // we nulled out these fields to allow inheritance when creating poms, but the dummy
+        // needs to be a valid pom, so set them back to something that's OK to resolve
+        minimalProject.setGroupId( "org.apache.maven" );
+        minimalProject.setArtifactId( "super-pom" );
+        minimalProject.setVersion( "2.0" );
+        minimalProject.setPackaging( "pom" );
+        pom.setMavenProject( minimalProject );
 
         return pom;
     }
@@ -553,7 +561,13 @@ public abstract class AbstractArtifactTask
 
         try
         {
-            return projectBuilder.buildStandaloneSuperProject( builderConfig );
+            MavenProject mavenProject = projectBuilder.buildStandaloneSuperProject(builderConfig);
+            // if we don't null out these fields then the pom that will be created is at the super-pom's
+            // GAV coordinates and we will not be able to inherit partial GAV coordinates from a parent GAV.
+            mavenProject.setGroupId(null);
+            mavenProject.setArtifactId(null);
+            mavenProject.setVersion(null);
+            return mavenProject;
         }
         catch ( ProjectBuildingException e )
         {
@@ -653,6 +667,25 @@ public abstract class AbstractArtifactTask
     public String getPomRefId()
     {
         return pomRefId;
+    }
+
+    /**
+     * Try to get all the poms with id's which have been added to the ANT project
+     * @return
+     */
+    public List/*<Pom>*/ getAntReactorPoms()
+    {
+        List result = new ArrayList();
+        Iterator i = getProject().getReferences().values().iterator();
+        while ( i.hasNext() )
+        {
+            Object ref = i.next();
+            if ( ref instanceof Pom )
+            {
+                result.add( (Pom)ref );
+            }
+        }
+        return result;
     }
 
     public void setPomRefId( String pomRefId )

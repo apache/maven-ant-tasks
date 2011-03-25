@@ -44,10 +44,13 @@ import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.ProjectBuilderConfiguration;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.inheritance.ModelInheritanceAssembler;
+import org.apache.maven.project.injection.ModelDefaultsInjector;
 import org.apache.maven.project.interpolation.ModelInterpolationException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -222,6 +225,44 @@ public class Pom
         {
             this.getPomFromAntProject( refid );
         }
+        else if ( mavenProject != null )
+        {
+            addAntRepositoriesToProfileManager();
+            ProjectBuilderConfiguration builderConfig = this.createProjectBuilderConfig( localRepository );
+            try
+            {
+                builder.calculateConcreteState( mavenProject, builderConfig, false );
+            }
+            catch ( ModelInterpolationException mie )
+            {
+                throw new BuildException( "Unable to interpolate POM " + file.getName() + ": " + mie.getMessage(), mie );
+            }
+
+        }
+        if ( mavenProject != null && mavenProject.getModel().getParent() != null )
+        {
+            String parentGroupId = mavenProject.getModel().getParent().getGroupId();
+            String parentArtifactId = mavenProject.getModel().getParent().getArtifactId();
+            String parentVersion = mavenProject.getModel().getParent().getVersion();
+            Iterator i = getAntReactorPoms().iterator();
+            while ( i.hasNext() )
+            {
+                Pom pom = (Pom)i.next();
+                if ( StringUtils.equals( parentGroupId, pom.getGroupId() )
+                        && StringUtils.equals( parentArtifactId, pom.getArtifactId() )
+                        && StringUtils.equals( parentVersion, pom.getVersion() ) )
+                {
+                    pom.initialiseMavenProject( builder, localRepository );
+                    mavenProject.setParent( pom.getMavenProject() );
+                    ModelInheritanceAssembler modelInheritanceAssembler =
+                            (ModelInheritanceAssembler) lookup( ModelInheritanceAssembler. ROLE );
+                    modelInheritanceAssembler.assembleModelInheritance( mavenProject.getModel(), pom.getModel() );
+                    break;
+                }
+            }
+        }
+        ModelDefaultsInjector modelDefaultsInjector = (ModelDefaultsInjector) lookup( ModelDefaultsInjector.ROLE );
+        modelDefaultsInjector.injectDefaults(mavenProject.getModel());
     }
 
     protected MavenProject getMavenProject()
@@ -551,6 +592,11 @@ public class Pom
 
     public void addConfiguredDependencyManagement( DependencyManagement dependencyManagement )
     {
+        if ( getMavenProject().getDependencyManagement() == null )
+        {
+            // is is a bit disappointing that we have to access the encapsulated model to fix the NPE
+            getMavenProject().getModel().setDependencyManagement(new DependencyManagement());
+        }
         getMavenProject().getDependencyManagement().setDependencies( dependencyManagement.getDependencies() );
     }
 
