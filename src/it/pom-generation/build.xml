@@ -1,0 +1,41 @@
+<project name="maven-ant-tasks" default="test" xmlns:artifact="urn:maven-artifact-ant" xmlns:test="urn:test-tasks">
+
+  <target name="initTaskDefs">
+    <xmlproperty file="../../../pom.xml" prefix="pom.xml" />
+
+    <path id="maven-ant-tasks.classpath" path="../../maven-ant-tasks-${pom.xml.project.version}.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
+             classpathref="maven-ant-tasks.classpath"/>
+  </target>
+
+
+  <target name="test" depends="initTaskDefs">
+
+    <artifact:pom id="parent-pom" groupId="local.maven-ant-tasks" artifactId="pom-generation-parent" version="1.0-SNAPSHOT">
+        <license name="apache" url="http://www.apache.org"/>
+        <dependencyManagement>
+          <dependency groupId="junit" artifactId="junit" version="4.1"/>
+          <dependency groupId="org.codehaus.plexus" artifactId="plexus-utils" version="1.5.5"/>
+        </dependencyManagement>
+    </artifact:pom>
+
+    <artifact:pom id="child-pom" artifactId="pom-generation-child">
+        <parent groupId="local.maven-ant-tasks" artifactId="pom-generation-parent" version="1.0-SNAPSHOT"/>
+        <dependency groupId="junit" artifactId="junit" scope="test"/>
+        <dependency groupId="org.codehaus.plexus" artifactId="plexus-utils"/>
+    </artifact:pom>
+
+    <mkdir dir="target"/>
+
+    <artifact:writepom pomRefId="parent-pom" file="target/parent-pom.xml"/>
+    <artifact:writepom pomRefId="child-pom" file="target/child-pom.xml"/>
+
+    <artifact:dependencies fileSetId="mydeps" pomRefId="child-pom"/>
+
+      <copy todir="target">
+      <fileset refid="mydeps"/>
+    </copy>
+
+  </target>
+
+</project>
