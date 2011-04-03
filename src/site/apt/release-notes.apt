@@ -28,6 +28,27 @@
 
 Maven Ant Tasks
 
+* 2.1.2 Release Notes
+
+  The full list of changes can be found in our {{{http://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=11533&version=16670}iss
+ue management system}}, and is reproduced below.
+
+** Bug
+
+    * [MANTTASKS-206] - dependecies task overrides custom definition of 'central' repository
+
+    * [MANTTASKS-208] - Change ant groupId to org.apache.ant
+
+** Improvement
+
+    * [MANTTASKS-199] - Loading dependencies from file echo is ant warning instead of info 
+
+    * [MANTTASKS-210] - When creating path objects using the dependencies task it is not possible to filter out artifacts by type.
+
+    * [MANTTASKS-211] - Support launching Maven 3.x from the mvn task
+
+    * [MANTTASKS-217] - Add a pseudo-reactor so that parent pom references can be resolved without pushing poms to the file system
+
 * 2.1.1 Release Notes
 
   The full list of changes can be found in our {{{http://jira.codehaus.org/secure/ReleaseNote.jspa?projectId=11533&version=16024}issue management system}}, and is reproduced below.
