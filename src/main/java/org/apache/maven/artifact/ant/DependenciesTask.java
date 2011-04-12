@@ -421,7 +421,7 @@ public class DependenciesTask
         if ( pom != null )
         {
             File pomFile = pom.getFile();
-            if ( pomFile == null || ( pomFile.lastModified() > cacheBuildFile.lastModified() ) )
+            if ( pomFile != null && ( pomFile.lastModified() > cacheBuildFile.lastModified() ) )
             {
                 return false;
             }
