@@ -120,6 +120,11 @@
     <url>http://jira.codehaus.org/browse/MANTTASKS</url>
   </issueManagement>
 
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>https://builds.apache.org/hudson/job/maven-ant-tasks/</url>
+  </ciManagement>
+
   <distributionManagement>
     <site>
       <id>apache.website</id>
