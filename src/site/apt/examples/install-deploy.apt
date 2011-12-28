@@ -93,18 +93,22 @@ Deployment Protocols
 
   ~~ TODO: Explain more thoroughly when you need to register a provider
 
-  Maven Ant Tasks contain <<<wagon-file>>> and <<<wagon-http-lightweight>>> providers. The other available providers are:
+  Maven Ant Tasks contain <<<wagon-file>>> and <<<wagon-http-lightweight>>>
+  providers. Some other available providers are:
 
-*--------------+--------------------------+-------------------+
-| Protocol     | Artifact ID              | Version           |
-*--------------+--------------------------+-------------------+
-| <<<http>>>   | <<<wagon-http>>>         | <<<1.0-beta-2>>>  |
-*--------------+--------------------------+-------------------+
-| <<<scp>>>    | <<<wagon-ssh>>>          | <<<1.0-beta-2>>>  |
-*--------------+--------------------------+-------------------+
-| <<<scpexe>>> | <<<wagon-ssh-external>>> | <<<1.0-beta-2>>>  |
-*--------------+--------------------------+-------------------+
-| <<<ftp>>>    | <<<wagon-ftp>>>          | <<<1.0-beta-2>>>  |
-*--------------+--------------------------+-------------------+
-| <<<webdav>>> | <<<wagon-webdav>>>       | <<<1.0-beta-2>>>  |
-*--------------+--------------------------+-------------------+
+*--------------+--------------------------+
+| Protocol     | Artifact ID              |
+*--------------+--------------------------+
+| <<<http>>>   | <<<wagon-http>>>         |
+*--------------+--------------------------+
+| <<<scp>>>    | <<<wagon-ssh>>>          |
+*--------------+--------------------------+
+| <<<scpexe>>> | <<<wagon-ssh-external>>> |
+*--------------+--------------------------+
+| <<<ftp>>>    | <<<wagon-ftp>>>          |
+*--------------+--------------------------+
+| <<<webdav>>> | <<<wagon-webdav>>>       |
+*--------------+--------------------------+
+
+  Other providers and the current versions of each can be found at
+  {{http://maven.apache.org/wagon/}}
