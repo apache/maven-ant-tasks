@@ -3,7 +3,7 @@
  ------
  Paul Gier
  ------
- 2009-11-30
+ 2012-11-17
  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -39,9 +39,9 @@ Download the Maven Ant Tasks
 *-------------------------+---------+----------+-----------+
 |                         | Mirrors | Checksum | Signature |
 *-------------------------+---------+----------+-----------+
-| Binaries (jar)          | {{{http://www.apache.org/dyn/closer.cgi/maven/binaries/maven-ant-tasks-${project.version}.jar} maven-ant-tasks-${project.version}.jar}} | {{{http://www.apache.org/dist/maven/binaries/maven-ant-tasks-${project.version}.jar.md5} maven-ant-tasks-${project.version}.jar.md5}} | {{{http://www.apache.org/dist/maven/binaries/maven-ant-tasks-${project.version}.jar.asc} maven-ant-tasks-${project.version}.jar.asc}} |
+| Binaries (jar)          | {{{http://www.apache.org/dyn/closer.cgi/maven/ant-tasks/${project.version}/binaries/maven-ant-tasks-${project.version}.jar} maven-ant-tasks-${project.version}.jar}} | {{{http://www.apache.org/dist/maven/ant-tasks/${project.version}/binaries/maven-ant-tasks-${project.version}.jar.md5} maven-ant-tasks-${project.version}.jar.md5}} | {{{http://www.apache.org/dist/maven/ant-tasks/${project.version}/binaries/maven-ant-tasks-${project.version}.jar.asc} maven-ant-tasks-${project.version}.jar.asc}} |
 *-------------------------+---------+----------+-----------+
-| Sources (zip)           | {{{http://www.apache.org/dyn/closer.cgi/maven/source/maven-ant-tasks-${project.version}-src.zip} maven-ant-tasks-${project.version}-src.zip}} | {{{http://www.apache.org/dist/maven/source/maven-ant-tasks-${project.version}-src.zip.md5} maven-ant-tasks-${project.version}-src.zip.md5}} | {{{http://www.apache.org/dist/maven/source/maven-ant-tasks-${project.version}-src.zip.asc} maven-ant-tasks-${project.version}-src.zip.asc}} |
+| Sources (zip)           | {{{http://www.apache.org/dyn/closer.cgi/maven/ant-tasks/${project.version}/source/maven-ant-tasks-${project.version}-src.zip} maven-ant-tasks-${project.version}-src.zip}} | {{{http://www.apache.org/dist/maven/ant-tasks/${project.version}/source/maven-ant-tasks-${project.version}-src.zip.md5} maven-ant-tasks-${project.version}-src.zip.md5}} | {{{http://www.apache.org/dist/maven/ant-tasks/${project.version}/source/maven-ant-tasks-${project.version}-src.zip.asc} maven-ant-tasks-${project.version}-src.zip.asc}} |
 *-------------------------+---------+----------+-----------+
 
 * System {Requirements}
