@@ -122,7 +122,7 @@
 
   <ciManagement>
     <system>Jenkins</system>
-    <url>https://builds.apache.org/hudson/job/maven-ant-tasks/</url>
+    <url>https://builds.apache.org/job/maven-ant-tasks/</url>
   </ciManagement>
 
   <distributionManagement>
