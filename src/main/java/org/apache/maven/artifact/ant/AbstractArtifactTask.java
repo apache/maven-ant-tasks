@@ -73,6 +73,8 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
 /**
  * Base class for artifact tasks.
@@ -436,7 +438,23 @@ public abstract class AbstractArtifactTask
             Server server = getSettings().getServer( repository.getId() );
             if ( server != null )
             {
-                repository.addAuthentication( new Authentication( server ) );
+                Authentication authentication = new Authentication( server );
+                
+                String password = authentication.getPassword();
+                
+                if (password != null) {
+					try {
+						SecDispatcher securityDispatcher = (SecDispatcher) container.lookup(SecDispatcher.ROLE);
+						password = securityDispatcher.decrypt(password);
+						authentication.setPassword(password);
+					} catch (SecDispatcherException e) {
+						log(e, Project.MSG_ERR);
+					} catch (ComponentLookupException e) {
+						log(e, Project.MSG_ERR);
+					}
+                }
+                
+				repository.addAuthentication( authentication );
             }
         }
 
@@ -593,7 +611,7 @@ public abstract class AbstractArtifactTask
             {
                 protocols.add( entry.getKey() );
             }
-            return (String[]) protocols.toArray( new String[protocols.size()] );
+            return protocols.toArray( new String[protocols.size()] );
         }
         catch ( ComponentLookupException e )
         {
@@ -682,7 +700,7 @@ public abstract class AbstractArtifactTask
             Object ref = i.next();
             if ( ref instanceof Pom )
             {
-                result.add( (Pom)ref );
+                result.add( ref );
             }
         }
         return result;
@@ -735,7 +753,8 @@ public abstract class AbstractArtifactTask
     }
 
     /** @noinspection RefusedBequest */
-    public void execute()
+    @Override
+	public void execute()
     {
         // Display the version if the log level is verbose
         showVersion();

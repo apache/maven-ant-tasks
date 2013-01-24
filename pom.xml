@@ -135,6 +135,7 @@
   <properties>
     <mavenVersion>2.2.1</mavenVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
+    <securityDispatcherVersion>1.3</securityDispatcherVersion>
   </properties>
 
   <dependencies>
@@ -219,6 +220,11 @@
       <groupId>org.apache.maven.wagon</groupId>
       <artifactId>wagon-provider-api</artifactId>
       <version>${wagonVersion}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sonatype.plexus</groupId>
+      <artifactId>plexus-sec-dispatcher</artifactId>
+      <version>${securityDispatcherVersion}</version>
     </dependency>
   </dependencies>
 
