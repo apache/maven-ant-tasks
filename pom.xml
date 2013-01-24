@@ -138,6 +138,12 @@
     <securityDispatcherVersion>1.3</securityDispatcherVersion>
   </properties>
 
+  <contributors>
+    <contributor>
+      <name>Ross Mellgren</name>
+    </contributor>
+  </contributors>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.ant</groupId>
