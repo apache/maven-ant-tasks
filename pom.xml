@@ -324,6 +324,33 @@
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-site-plugin</artifactId>
+            <configuration>
+              <skipDeploy>true</skipDeploy><!-- don't deploy site with maven-site-plugin -->
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-scm-publish-plugin</artifactId>
+            <version>1.0-beta-2</version>
+            <configuration>
+              <content>${project.reporting.outputDirectory}</content>
+              <pubScmUrl>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/ant-tasks-archives/ant-tasks-current</pubScmUrl>
+              <checkoutDirectory>site-content</checkoutDirectory>
+              <tryUpdate>true</tryUpdate>
+            </configuration>
+            <executions>
+              <execution>
+                <id>scm-publish</id>
+                <phase>site-deploy</phase><!-- deploy site with maven-scm-publish-plugin -->
+                <goals>
+                  <goal>publish-scm</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
             <version>1.8</version>
             <configuration>
