@@ -59,7 +59,8 @@ public class DeployTask
             repository.setId( "remote" );
         }
 
-        updateRepositoryWithSettings( repository );
+        updateRepositoryAuthentication( repository );
+        updateRepositoryProxy( repository );
 
         ArtifactRepositoryLayout repositoryLayout =
             (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, repository.getLayout() );

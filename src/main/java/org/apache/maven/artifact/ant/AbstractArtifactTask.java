@@ -425,14 +425,21 @@ public abstract class AbstractArtifactTask
         // TODO: actually, we need to not funnel this through the ant repository - we should pump settings into wagon
         // manager at the start like m2 does, and then match up by repository id
         // As is, this could potentially cause a problem with 2 remote repositories with different authentication info
+        updateRepositoryMirror( repository );
+        updateRepositoryAuthentication( repository );
+        updateRepositoryProxy( repository );
+    }
 
+    protected void updateRepositoryMirror(RemoteRepository repository) {
         Mirror mirror = getMirror( getSettings().getMirrors(), repository );
         if ( mirror != null )
         {
             repository.setUrl( mirror.getUrl() );
             repository.setId( mirror.getId() );
         }
+    }
 
+    protected void updateRepositoryAuthentication(RemoteRepository repository) {
         if ( repository.getAuthentication() == null )
         {
             Server server = getSettings().getServer( repository.getId() );
@@ -443,21 +450,23 @@ public abstract class AbstractArtifactTask
                 String password = authentication.getPassword();
                 
                 if (password != null) {
-					try {
-						SecDispatcher securityDispatcher = (SecDispatcher) container.lookup(SecDispatcher.ROLE);
-						password = securityDispatcher.decrypt(password);
-						authentication.setPassword(password);
-					} catch (SecDispatcherException e) {
-						log(e, Project.MSG_ERR);
-					} catch (ComponentLookupException e) {
-						log(e, Project.MSG_ERR);
-					}
+                    try {
+                        SecDispatcher securityDispatcher = (SecDispatcher) container.lookup(SecDispatcher.ROLE);
+                        password = securityDispatcher.decrypt(password);
+                        authentication.setPassword(password);
+                    } catch (SecDispatcherException e) {
+                        log(e, Project.MSG_ERR);
+                    } catch (ComponentLookupException e) {
+                        log(e, Project.MSG_ERR);
+                    }
                 }
                 
-				repository.addAuthentication( authentication );
+                repository.addAuthentication( authentication );
             }
         }
+    }
 
+    protected void updateRepositoryProxy(RemoteRepository repository) {
         if ( repository.getProxy() == null )
         {
             org.apache.maven.settings.Proxy proxy = getSettings().getActiveProxy();
