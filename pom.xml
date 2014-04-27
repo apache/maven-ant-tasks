@@ -25,10 +25,9 @@
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>23</version>
+    <version>24</version>
   </parent>
 
-  <groupId>org.apache.maven</groupId>
   <artifactId>maven-ant-tasks</artifactId>
   <version>2.1.4-SNAPSHOT</version>
 
@@ -114,21 +113,18 @@
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/ant-tasks/trunk</developerConnection>
     <url>http://svn.apache.org/viewvc/maven/ant-tasks/trunk</url>
   </scm>
-
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MANTTASKS</url>
   </issueManagement>
-
   <ciManagement>
     <system>Jenkins</system>
     <url>https://builds.apache.org/job/maven-ant-tasks/</url>
   </ciManagement>
-
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/ant-tasks/</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
     </site>
   </distributionManagement>
 
@@ -137,6 +133,7 @@
     <mavenVersion>2.2.1</mavenVersion>
     <wagonVersion>1.0-beta-6</wagonVersion>
     <securityDispatcherVersion>1.3</securityDispatcherVersion>
+    <maven.site.path>ant-tasks-archives/ant-tasks-LATEST</maven.site.path>
   </properties>
 
   <contributors>
@@ -252,27 +249,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
         <configuration>
-          <skipDeploy>true</skipDeploy><!-- don't deploy site with maven-site-plugin -->
+          <topSiteURL>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</topSiteURL>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-scm-publish-plugin</artifactId>
-        <configuration>
-          <content>${project.reporting.outputDirectory}</content>
-          <pubScmUrl>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/ant-tasks</pubScmUrl>
-          <checkoutDirectory>site-content</checkoutDirectory>
-          <tryUpdate>true</tryUpdate>
-        </configuration>
-        <executions>
-          <execution>
-            <id>scm-publish</id>
-            <phase>site-deploy</phase><!-- deploy site with maven-scm-publish-plugin -->
-            <goals>
-              <goal>publish-scm</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -352,7 +330,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.8</version>
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
