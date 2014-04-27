@@ -13,7 +13,7 @@ try
         return false;
     }
 
-    File depFile = new File( outputFolder, "org/apache/commons/commons-io/1.3.2/commons-io-1.3.2.jar");
+    File depFile = new File( outputFolder, "commons-io/commons-io/2.2/commons-io-2.2.jar");
     if ( !depFile.isFile() )
     {
         System.err.println( "Could not find copied dependency file: " + depFile );
