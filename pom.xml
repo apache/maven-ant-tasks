@@ -296,6 +296,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <excludes>src/test/repo/it/ant-tasks/**/*.sha1</excludes>
+            <excludes>src/test/repo/it/ant-tasks/**/*.md5</excludes>
+            <excludes>src/test/repo/it/ant-tasks/**/*.pom</excludes>
+            <excludes>src/test/repo/it/ant-tasks/**/maven-metadata.xml</excludes>
+          </excludes>            
+        </configuration>
+        <executions>
+          <execution>
+            <id>check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>      
     </plugins>
   </build>
 
