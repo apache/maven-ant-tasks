@@ -71,6 +71,18 @@ Running the Mvn Task without a Maven Installation
 
   <<Note: this will use version ${mavenVersion} of the core Maven libraries, contained in the Maven Ant Tasks jar>>
 
+  To obtain the required Maven files, the task needs to resolve them from a remote repository. The default repository as defined in
+  org.apache.maven:maven-project:2.2.1 is used (http://repo1.maven.org/maven2), but this is not available on http anymore
+  since 15 January 2020. Until we can use a newer version of maven-project, we have introduced the possibility to specify the remote
+  repositories to use for resolution, as a command line argument (-DremoteRepositories=<repo1>,<repo2>,...). Each repo can use the short
+  format (only the url) or the long format (id::layout::url).
+
+-----
+  <artifact:mvn pom="path/to/my-pom.xml">
+    <arg line="-DoutputDirectory=output -DremoteRepositories=myrepo::default::https://repo1.maven.org/maven2/"/>
+  </artifact:mvn>
+-----
+
 Using the Java Task
 
   The java task can be used directly without any need for the Maven Ant Tasks. However,
