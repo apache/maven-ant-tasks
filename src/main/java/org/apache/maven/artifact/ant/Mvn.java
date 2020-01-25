@@ -20,10 +20,12 @@ package org.apache.maven.artifact.ant;
  */
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import org.apache.maven.model.Dependency;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
@@ -107,13 +109,82 @@ public class Mvn
         depsTask.setType( "pom,jar" );
         depsTask.setPathType( "jar" );
 
+        addRemoteRepositoriesFromCommandLine(depsTask);
+
         depsTask.execute();
         
         this.setClasspath( (Path) getProject().getReference( "apache-maven-dependencies" ) );
         
         this.setClassname( "org.apache.maven.cli.MavenCli" );
     }
-    
+
+    private void addRemoteRepositoriesFromCommandLine(DependenciesTask depsTask)
+    {
+        String remoteReposArgValue = getRemoteRepositoryArgValue();
+        if (remoteReposArgValue == null || remoteReposArgValue.length() == 0)
+        {
+            return;
+        }
+
+        log("Found remote repositories (-DremoteRepositories) argument: " + remoteReposArgValue, Project.MSG_VERBOSE);
+
+        String[] remoteRepos = remoteReposArgValue.split(",");
+        for (String remoteRepoCfg : remoteRepos)
+        {
+            RemoteRepository repoSettings = extractRepoSettings(remoteRepoCfg);
+            if (repoSettings != null)
+            {
+                depsTask.addConfiguredRemoteRepository(repoSettings);
+            }
+        }
+    }
+
+    private String getRemoteRepositoryArgValue()
+    {
+        String[] args = getCommandLine().getJavaCommand().getArguments();
+        log("Used args: " + Arrays.toString(args), Project.MSG_VERBOSE);
+
+        String remoteReposArgPrefix = "-DremoteRepositories=";
+
+        String remoteReposArgValue = null;
+
+        for (String arg: args)
+        {
+            if (arg.startsWith(remoteReposArgPrefix))
+            {
+                remoteReposArgValue = arg.substring(remoteReposArgPrefix.length());
+                break;
+            }
+        }
+
+        return remoteReposArgValue;
+    }
+
+    private RemoteRepository extractRepoSettings(String remoteRepoCfg)
+    {
+        String[] repoSettings = remoteRepoCfg.split("::");
+
+        RemoteRepository repository = null;
+
+        if (repoSettings.length == 1) // only the URL is set
+        {
+            repository = new RemoteRepository();
+            repository.setUrl(repoSettings[0]);
+        }
+        else if (repoSettings.length == 3) // full format id::layout::url is set
+        {
+            repository = new RemoteRepository();
+            repository.setId(repoSettings[0]);
+            if (repoSettings[1].length() > 0) // layout is specified
+            {
+                repository.setLayout(repoSettings[1]);
+            }
+            repository.setUrl(repoSettings[2]);
+        }
+
+        return repository;
+    }
+
     private void setupLocalMaven()
     {
         // Set the required properties
