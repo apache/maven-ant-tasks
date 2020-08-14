@@ -98,7 +98,7 @@ Using Maven Ant Tasks
 </artifact:dependencies>
 -----
 
-  The default {{{http://repo1.maven.org/maven2/} central}} repository is automatically added to remote repositories.
+  The default {{{https://repo1.maven.org/maven2/} central}} repository is automatically added to remote repositories.
   Until 2.0.10, if at least one remote repository was specified, central was not automatically added: you had
   to declare it if you needed it.
 
