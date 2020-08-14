@@ -52,7 +52,7 @@ public abstract class AbstractArtifactWithRepositoryTask
         // TODO: could we utilize the super POM for this?
         RemoteRepository remoteRepository = new RemoteRepository();
         remoteRepository.setId( "central" );
-        remoteRepository.setUrl( "http://repo1.maven.org/maven2" );
+        remoteRepository.setUrl( "https://repo1.maven.org/maven2" );
         RepositoryPolicy snapshots = new RepositoryPolicy();
         snapshots.setEnabled( false );
         remoteRepository.addSnapshots( snapshots );
