@@ -50,13 +50,13 @@ import org.apache.maven.project.interpolation.ModelInterpolationException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -248,9 +248,9 @@ public class Pom
             while ( i.hasNext() )
             {
                 Pom pom = (Pom)i.next();
-                if ( StringUtils.equals( parentGroupId, pom.getGroupId() )
-                        && StringUtils.equals( parentArtifactId, pom.getArtifactId() )
-                        && StringUtils.equals( parentVersion, pom.getVersion() ) )
+                if ( Objects.equals( parentGroupId, pom.getGroupId() )
+                        && Objects.equals( parentArtifactId, pom.getArtifactId() )
+                        && Objects.equals( parentVersion, pom.getVersion() ) )
                 {
                     pom.initialiseMavenProject( builder, localRepository );
                     mavenProject.setParent( pom.getMavenProject() );
